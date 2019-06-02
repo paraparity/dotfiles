@@ -21,6 +21,10 @@
 (defvar org-directory "~/org")
 (defvar org-default-notes-file (concat org-directory "/inbox.org"))
 
+(setq org-modules
+	  '((org-bbdb org-bibtex org-docview org-eww org-gnus org-habit org-info org-irc org-mhe org-rmail org-tempo org-w3m)))
+
+
 (add-hook 'org-mode-hook 'turn-on-auto-fill)
 (add-hook 'org-mode-hook
 		  '(lambda () (setq show-trailing-whitespace nil)))
@@ -39,6 +43,12 @@
 (setq org-src-window-setup 'current-window)
 
 (org-clock-persistence-insinuate); Resume clocking task when emacs is restarted
+
+;; Links - use like: cpan:HTML or rfc-txt:7522
+(setq org-link-abbrev-alist
+	  '(("rfc-txt" . "https://tools.ietf.org/rfc/rfc%s.txt")
+		("cpan"    . "https://metacpan.org/search?q=%s")
+		("ese"     . "https://emacs.stackexchange.com/search?q=%s")))
 
 ;; Agenda Files:
 (setq org-agenda-files
