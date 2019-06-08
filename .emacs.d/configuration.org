@@ -28,13 +28,12 @@
    This section remains a wrapper for the remaining unrefactored configuration code.
 
    #+begin_src emacs-lisp
-	 ;;; init.el --- paraparity's Emacs configuration file
+	 ;;; configuration.el --- paraparity's Emacs configuration file
 	 ;;
 	 ;;; Commentary:
-	 ;; Customized init.el for Emacs
+	 ;; Customized startup for Emacs
 	 ;;
 	 ;;; Code:
-	 ;;(setq debug-on-error t)
 
 	 ;; Eternally grateful to have gleaned lessons from:
 	 ;;   http://pages.sachachua.com/.emacs.d/Sacha.html
@@ -42,29 +41,12 @@
 	 ;;   https://github.com/howardabrams/dot-files
 	 ;;   https://github.com/skeeto/.emacs.d
 
-	 (setq enable-local-eval nil
-		   enable-local-variables nil)
-
 	 ;; Configure load path
 	 (add-to-list 'load-path "~/.emacs.d/elpa")
 	 (add-to-list 'load-path "~/.emacs.d/elisp")
 
-	 ;; Encoding
-	 (set-language-environment "japanese")
-	 (set-terminal-coding-system 'utf-8)
-	 (set-keyboard-coding-system 'utf-8)
-	 (set-default-coding-systems 'utf-8)
-	 (set-selection-coding-system 'utf-8)
-	 (prefer-coding-system 'utf-8)
-
 	 (eval-when-compile
 	   (require 'use-package))
-
-	 (use-package editorconfig
-	   :ensure t
-	   :diminish editorconfig-mode
-	   :config
-	   (editorconfig-mode 1))
 
 	 (use-package abbrev
 	   :diminish abbrev-mode
@@ -104,45 +86,13 @@
 			 erc-kill-buffer-on-part t
 			 erc-scrolltobottom-mode t))
 
-	 (use-package flycheck
-	   :ensure t)
-
 	 (use-package keyfreq
 	   :config
 	   (keyfreq-mode 1)
 	   (keyfreq-autosave-mode 1))
 
-	  (use-package ledger-mode
-		:mode ("\\.ledger$")
-		:bind (:map ledger-mode-map
-					("C-x C-s" . my/ledger-save))
-		:preface
-		(defun my/ledger-save ()
-		  "Automatically clean the ledger buffer at each save."
-		  (interactive)
-		  (save-excursion
-			(when (buffer-modified-p)
-			  (with-demoted-errors (ledger-mode-clean-buffer))
-			  (save-buffer))))
-		:init
-		(setq ledger-post-amount-alignment-column 120))
-
 	 (use-package flycheck-ledger
 	   :after ledger-mode)
-
-	 (use-package multiple-cursors
-	   :ensure t
-	   :bind (;; Note that recomended 'C->' and 'C-<' are not characters in the shell.
-			  ;; Thus I use their lowercase alternatives
-			  ("C-c ."   . mc/mark-next-like-this)
-			  ("C-c ,"   . mc/mark-previous-like-this)
-			  ("C-c /"   . mc/mark-all-like-this)
-			  ("C-c m m" . mc/mark-all-like-this-dwim)
-			  ("C-c m a" . mc/edit-beginnings-of-lines)
-			  ("C-c m e" . mc/edit-ends-of-lines)
-			  ("C-c m s" . mc/mark-sgml-tag-pair)
-			  ("C-c m l" . mc/edit-lines)
-			  ))
 
 	 (use-package ob-C)
 	 (use-package ob-ditaa)
@@ -160,85 +110,11 @@
 	 (use-package tramp)
 	 (use-package uniquify)
 
-	 (use-package company
-	   :ensure t
-	   :diminish
-	   :bind (:map company-active-map
-				   ("M-n" . nil)
-				   ("M-p" . nil)
-				   ("C-n" . company-select-next)
-				   ("C-p" . company-select-previous))
-	   :init
-	   (global-company-mode)
-	   :config
-	   (setq company-idle-delay            nil)
-	   (setq company-minimum-prefix-length 2)
-	   (setq company-show-numbers          t)
-	   (setq company-tooltip-limit         20)
-	   (with-eval-after-load 'company
-		 (global-set-key (kbd "C-c SPC") 'company-complete)))
-
 	 (use-package company-lsp
 	   :after (company lsp-mode)
 	   :commands company-lsp
 	   :config
 	   (push 'company-lsp company-backends))
-
-	 (use-package helm
-	   :diminish helm-mode
-	   :init (progn
-			   (require 'helm-config)
-			   (helm-mode))
-	   :bind (("C-c h"   . helm-command-prefix)
-			  ("M-x"     . helm-M-x)
-			  ("M-y"     . helm-show-kill-ring)
-			  ("C-x b"   . helm-mini)
-			  ("C-c h a" . helm-apropos)
-			  ("C-c h f" . helm-find-files)
-			  ("C-c h o" . helm-occur)
-			  ("C-c h m" . helm-man-woman))
-	   :config
-	   (require 'helm-command)
-	   (require 'helm-for-files)
-	   (require 'helm-imenu)
-	   (require 'helm-semantic)
-	   (require 'helm-misc)
-	   (setq helm-split-window-inside-p      t
-			 helm-M-x-fuzzy-match            t
-			 helm-buffers-fuzzy-matching     t
-			 helm-recentf-fuzzy-match        t
-			 helm-semantic-fuzzy-match       t
-			 helm-imenu-fuzzy-match          t
-			 helm-apropos-fuzzy-match        t
-			 helm-candidate-number-limit   100
-			 helm-autoresize-max-height     20
-			 helm-autoresize-min-height      0)
-	   (add-to-list 'helm-sources-using-default-as-input 'heml-source-man-pages)
-	   (helm-autoresize-mode t))
-
-	 (use-package projectile
-	   :ensure t
-	   :config
-	   (setq projectile-completion-system 'helm)
-	   (setq projectile-switch-project-action 'helm-projectile)
-	   (setq projectile-enable-caching t)
-	   (setq projectile-globally-ignored-directories
-			 '(".git" "node_modules" "__pycache__" ".vs"))
-	   (setq projectile-globally-ignored-file-suffixes
-			 '("#" "~" ".swp" ".o" ".so" ".exe" ".dll" ".elc" ".pyc" ".jar"))
-	   (setq projectile-globally-ignored-files
-			 '("TAGS" "tags"))
-	   (with-eval-after-load "projectile"
-		 (projectile-mode)
-		 (helm-projectile-on)))
-
-	 (use-package helm-projectile)
-
-	 (use-package pdf-tools
-	   :pin manual
-	   :config
-	   (setq-default pdf-view-display-size 'fit-page)
-	   (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward))
 
 	 (use-package yasnippet
 	   :diminish yas-minor-mode
@@ -268,38 +144,12 @@
 				 (lambda ()
 				   (setq mode-name "js2"))))
 
-	 (use-package origami
-	   :bind (("C-<tab>" . origami-recursively-toggle-node)
-			  ("C-c u"   . origami-open-all-nodes)
-			  ("C-c f"   . origami-close-all-nodes)
-			  ("C-c n"   . origami-show-only-node)
-			  ("C-c r"   . origami-reset))
-	   :config
-	   (global-origami-mode t))
-
-	 ;; Split out auto-generated customizations
-	 (setq custom-file "~/.emacs.d/custom.el")
-	 (when (file-exists-p custom-file)
-	   (load custom-file 'noerror))
-
 	 ;; Load Custom Libraries
 	 ;;(load-library "irc")
 	 ;;(load-library "fly-conf")
 	 ;;(load-library "keybindings")
 	 ;;(load-library "org-conf")
 	 (load-library "elfeed-conf")
-
-	 ;; File Backup Management
-	 (setq backup-by-copying t
-		   backup-directory-alist `(("." . "~/saves"))
-		   delete-old-versions t
-		   kept-new-versions 6
-		   kept-old-versions 2
-		   version-control t)
-
-	 ;; Autosave File Management
-	 (setq auto-save-file-name-transforms
-		   `((".*" ,temporary-file-directory t)))
 
 	 ;; Add Abbrev-Mode Hooks
 	 (dolist (hook '(erc-mode-hook
@@ -314,23 +164,10 @@
 	 (set-default 'tramp-auto-save-directory "~/.saves/tramp/")
 	 (setq tramp-default-method "ssh")
 
-	 ;; Transparency?
-	 (set-frame-parameter (selected-frame) 'alpha '(92 . 90))
-	 (add-to-list 'default-frame-alist '(alpha . (92 . 90)))
-
 	 ;; Other Mode Customizations
 	 (desktop-save-mode 1)
 	 (setq auto-window-vscroll nil)
-	 (setq frame-title-format "Emacs")
 	 (setq require-final-newline t)
-	 (fset 'yes-or-no-p 'y-or-n-p)
-	 (global-hl-line-mode t)
-	 (display-time-mode 1)
-	 (tool-bar-mode -1)
-	 (menu-bar-mode -1)
-	 (scroll-bar-mode -1)
-	 (show-paren-mode 1)
-	 (set-frame-font "monospace-11")
 	 (setq epg-gpg-program "gpg2")
 
 	 ;; Auth
@@ -398,17 +235,203 @@
 
 	 ;;; END HELPERS
 
-	 ;; Enable flycheck globally:
-	 (add-hook 'after-init-hook #'global-flycheck-mode)
+	 ;; Above is still being refactored into a more literate structure
+	 ;;; END Old init stuff
+   #+end_src
 
-	 ;; Customize flycheck
-	 ;; Disable clang check, gcc check works better
-	 (setq-default flycheck-disabled-checkers
-				   (append flycheck-disabled-checkers
-						   '(c/c++-clang)))
 
-	 ;; Enable C++14 support for GCC
-	 (add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++14")))
+* General Settings
+** Kill Dir-Locals
+   Since I don't use directory local variables for Emacs very much if at all, and considering they could load arbitrary
+   emacs-lisp, potentially without my knowing, lets prevent that from happening.
+
+   #+begin_src emacs-lisp
+	 (setq enable-local-eval nil
+		   enable-local-variables nil)
+   #+end_src
+
+
+** Encoding Systems
+   Pretty much just set the coding system to UTF-8. Also enable the Japanese language environment to support study.
+
+   #+begin_src emacs-lisp
+	 (set-keyboard-coding-system 'utf-8)
+	 (set-terminal-coding-system 'utf-8)
+	 (set-selection-coding-system 'utf-8)
+	 (set-default-coding-systems 'utf-8)
+	 (prefer-coding-system 'utf-8)
+
+	 (set-language-environment "japanese")
+   #+end_src
+
+
+*** TODO Identify Need and Refactor
+	I wonder if I need to set all of these individually, or if I could just get by with default or something else?
+
+
+** Emacs Appearance
+*** Kill Unnecessary Default Clutter
+	Give me back my screen real estate. I don't need your newfangled and fancy GUI features, they just get in the way of
+	more lines of sweet, sweet text.
+
+	#+begin_src emacs-lisp
+	  (tool-bar-mode -1)
+	  (menu-bar-mode -1)
+	  (scroll-bar-mode -1)
+	#+end_src
+
+
+*** Style Our Frame
+	Let's give Emacs a name, I think Emacs sounds nice.
+	#+begin_src emacs-lisp
+	  (setq frame-title-format "Emacs")
+	#+end_src
+
+	Let's get some more screen real estate by using a small, code friendly font.
+	#+begin_src emacs-lisp
+	  (set-frame-font "monospace-11")
+    #+end_src
+
+	Let's keep track of time in the mode-line.
+	#+begin_src emacs-lisp
+	  (display-time-mode 1)
+	#+end_src
+
+	Let's add some transparency to make things look really slick.
+	#+begin_src emacs-lisp
+	  (set-frame-parameter (selected-frame) 'alpha '(92 . 90))
+	  (add-to-list 'default-frame-alist '(alpha . (92 . 90)))
+	#+end_src
+
+
+
+
+*** Improve Navigation Experience
+	Let's keep track of the currently focused line, always, everywhere.
+	#+begin_src emacs-lisp
+	  (global-hl-line-mode t)
+	#+end_src
+
+	Let's make it easy to see current block parens, given they're both on screen.
+	#+begin_src emacs-lisp
+	  (show-paren-mode 1)
+	#+end_src
+
+
+** Various Emacs Settings
+   Enable quick Y/N prompts.
+   #+begin_src emacs-lisp
+	 (fset 'yes-or-no-p 'y-or-n-p)
+   #+end_src
+
+*** Manage File Backups and Auto Save
+	Emacs can get a bit aggressive with file backups and autosaves. I particularly dislike how it can pollute my
+	directories and especially collaborative projects with tilde files (e.g: =myfile.txt~=). Usually things like
+	=.gitignore= are sufficient to insulate others from these, but I'd prefer not to see them myself.
+
+	#+begin_src emacs-lisp
+	  ;; File Backup Management
+	  (setq backup-by-copying t
+			backup-directory-alist `(("." . "~/saves"))
+			delete-old-versions t
+			kept-new-versions 6
+			kept-old-versions 2
+			version-control t)
+
+	  ;; Autosave File Management
+	  (setq auto-save-file-name-transforms
+			`((".*" ,temporary-file-directory t)))
+	#+end_src
+
+
+*** Offload Custom File
+	I don't want Emacs customize managed settings ending up in my init files, so lets give them their own nice little
+	home. Every now and again I should go through and convert much of whatever is there into my literate configuration.
+
+	#+begin_src emacs-lisp
+	  (setq custom-file "~/.emacs.d/custom.el")
+	  (when (file-exists-p custom-file)
+		(load custom-file 'noerror))
+	#+end_src
+
+
+* Emacs Interaction Packages
+  This section contains customizations which focus on Emacs navigation and interaction.
+
+** Multiple Cursors
+   This package lets me spin up multiple cursors across lines or matching patterns which can lead to some pretty
+   impressive editing and refactoring feats.
+
+   #+begin_src emacs-lisp
+	 (use-package multiple-cursors
+	   :ensure t
+	   :bind (;; Note that recomended 'C->' and 'C-<' are not characters in the shell.
+			  ;; Thus I use their lowercase alternatives
+			  ("C-c ."   . mc/mark-next-like-this)
+			  ("C-c ,"   . mc/mark-previous-like-this)
+			  ("C-c /"   . mc/mark-all-like-this)
+			  ("C-c m m" . mc/mark-all-like-this-dwim)
+			  ("C-c m a" . mc/edit-beginnings-of-lines)
+			  ("C-c m e" . mc/edit-ends-of-lines)
+			  ("C-c m s" . mc/mark-sgml-tag-pair)
+			  ("C-c m l" . mc/edit-lines)))
+   #+end_src
+
+
+** Helm
+   Helm gives us incremental completions and narrowing capabilities that really help find what you're looking for within
+   Emacs.
+
+   #+begin_src emacs-lisp
+	 (use-package helm
+	   :diminish helm-mode
+	   :init (progn
+			   (require 'helm-config)
+			   (helm-mode))
+	   :bind (("C-c h"   . helm-command-prefix)
+			  ("M-x"     . helm-M-x)
+			  ("M-y"     . helm-show-kill-ring)
+			  ("C-x b"   . helm-mini)
+			  ("C-c h a" . helm-apropos)
+			  ("C-c h f" . helm-find-files)
+			  ("C-c h o" . helm-occur)
+			  ("C-c h m" . helm-man-woman))
+	   :config
+	   (require 'helm-command)
+	   (require 'helm-for-files)
+	   (require 'helm-imenu)
+	   (require 'helm-semantic)
+	   (require 'helm-misc)
+	   (setq helm-split-window-inside-p      t
+			 helm-M-x-fuzzy-match            t
+			 helm-buffers-fuzzy-matching     t
+			 helm-recentf-fuzzy-match        t
+			 helm-semantic-fuzzy-match       t
+			 helm-imenu-fuzzy-match          t
+			 helm-apropos-fuzzy-match        t
+			 helm-candidate-number-limit   100
+			 helm-autoresize-max-height     20
+			 helm-autoresize-min-height      0)
+	   (add-to-list 'helm-sources-using-default-as-input 'heml-source-man-pages)
+	   (helm-autoresize-mode t))
+   #+end_src
+
+
+** Buffer Folding with Origami
+   Origami minor-mode enables text folding across Emacs. It's pretty useful, though sometimes slow and sometimes
+   buggy. With =origami-reset= you can always unfold everything and reset the file, which has always been enough to
+   ignore some of the hiccups.
+
+   #+begin_src emacs-lisp
+	 (use-package origami
+	   :bind (("C-<tab>" . origami-recursively-toggle-node)
+			  ("C-c u"   . origami-open-all-nodes)
+			  ("C-c f"   . origami-close-all-nodes)
+			  ("C-c n"   . origami-show-only-node)
+			  ("C-c r"   . origami-reset))
+	   :config
+	   (global-origami-mode t))
+
    #+end_src
 
 
@@ -748,12 +771,45 @@
 	(add-to-list 'org-src-lang-modes (quote ("plantuml" . fundamental)))
   #+end_src
 
+** TODO Org Todo
 
-* Development
-  This section contains customizations for development and working within coding environments
+*** TODO Keywords
+
+*** TODO Tags
+
+** TODO Capture Templates
+
+** TODO Agenda
+
+*** TODO Agenda Commands
+
+** TODO Org Journal
+
+** TODO Org-Babel 
+
+
+* Programming Environment
+  This section contains customizations for development and working within coding environments.
+
+** Editor Config
+   See [[https://editorconfig.org/][EditorConfig.org]] for more details. However, this helps me play nice across source repositories, and helps keep
+   contributors happily using their own editor/IDE.
+
+   #+begin_src emacs-lisp
+	 (use-package editorconfig
+	   :ensure t
+	   :diminish editorconfig-mode
+	   :config
+	   (editorconfig-mode 1))
+   #+end_src
+
+
+** Language Server
 
 ** On The Fly Checking
-   
+   Fly-Check enables on the fly syntax checking which helps me catch errors as I write them and prompts me to fix them
+   immediately. This enforces a tight feedback loop in development.
+
    #+begin_src emacs-lisp
 	 (require 'flycheck)
 	 (require 'projectile)
@@ -796,9 +852,13 @@
 	 ;;         ruby-rubylint ruby ruby-jruby sass scala scss slim verilog-verilator
 
 	 (setq-default flycheck-disabled-checkers
-				   (quote(javascript-jshint
-						  javascript-jslint
-						  javascript-gjslint)))
+				   '((javascript-jshint
+					  javascript-jslint
+					  javascript-gjslint
+					  c/c++-clang)))
+
+	 ;; Enable C++14 support for GCC
+	 (add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++14")))
 
 	 ;; Use project relative eslint; see https://emacs.stackexchange.com/questions/21205
 	 (defun my/use-eslint-from-node-modules ()
@@ -814,6 +874,9 @@
 
 	 (add-hook 'flycheck-mode-hook #'my/use-eslint-from-node-modules)
 
+	 ;; Enable flycheck globally:
+	 (add-hook 'after-init-hook #'global-flycheck-mode)
+
 	 ;; See: https://emacs.stackexchange.com/questions/13065
 	 ;; (defun setup-flycheck-clang-project-path ()
 	 ;;   "Use project local clang."
@@ -824,6 +887,93 @@
 	 ;; 	   root))))
 
 	 ;; (add-hook 'c++-mode-hook 'setup-flycheck-clang-project-path)
+   #+end_src
+
+
+** Company Completions
+   Company-mode, or complete any mode, is an extremely useful tool for text/code completion.
+
+   #+begin_src emacs-lisp
+	 (use-package company
+	   :ensure t
+	   :diminish
+	   :bind (:map company-active-map
+				   ("M-n" . nil)
+				   ("M-p" . nil)
+				   ("C-n" . company-select-next)
+				   ("C-p" . company-select-previous))
+	   :init
+	   (global-company-mode)
+	   :config
+	   (setq company-idle-delay            nil)
+	   (setq company-minimum-prefix-length 2)
+	   (setq company-show-numbers          t)
+	   (setq company-tooltip-limit         20)
+	   (with-eval-after-load 'company
+		 (global-set-key (kbd "C-c SPC") 'company-complete)))
+   #+end_src
+
+
+** Projectile Project Management
+   Projectile allows for project interaction from within Emacs. Additionally, it can hook into other powerful search
+   utilities to really kick up project navigation.
+
+   #+begin_src emacs-lisp
+	 (use-package projectile
+	   :ensure t
+	   :config
+	   (setq projectile-completion-system 'helm)
+	   (setq projectile-switch-project-action 'helm-projectile)
+	   (setq projectile-enable-caching t)
+	   (setq projectile-globally-ignored-directories
+			 '(".git" "node_modules" "__pycache__" ".vs"))
+	   (setq projectile-globally-ignored-file-suffixes
+			 '("#" "~" ".swp" ".o" ".so" ".exe" ".dll" ".elc" ".pyc" ".jar"))
+	   (setq projectile-globally-ignored-files
+			 '("TAGS" "tags"))
+	   (with-eval-after-load "projectile"
+		 (projectile-mode)
+		 (helm-projectile-on)))
+
+	 (use-package helm-projectile)
+
+   #+end_src
+
+
+* More Emacs Modes
+
+** Ledger - Command Line Accounting
+   Set up ledger-mode.
+
+   #+begin_src emacs-lisp
+	 (use-package ledger-mode
+	   :mode ("\\.ledger$")
+	   :bind (:map ledger-mode-map
+				   ("C-x C-s" . my/ledger-save))
+	   :preface
+	   (defun my/ledger-save ()
+		 "Automatically clean the ledger buffer at each save."
+		 (interactive)
+		 (save-excursion
+		   (when (buffer-modified-p)
+			 (with-demoted-errors (ledger-mode-clean-buffer))
+			 (save-buffer))))
+	   :init
+	   (setq ledger-post-amount-alignment-column 120))
+   #+end_src
+
+
+* More Emacs Tools
+** PDF-Tools
+   PDF-Tools enable PDF viewing within Emacs, so I don't have to have a second application open to read and take notes
+   on PDFs. Just one more reason to neve leave Emacs.
+
+   #+begin_src emacs-lisp
+	 (use-package pdf-tools
+	   :pin manual
+	   :config
+	   (setq-default pdf-view-display-size 'fit-page)
+	   (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward))
    #+end_src
 
 
