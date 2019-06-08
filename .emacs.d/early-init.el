@@ -13,12 +13,12 @@
 ;; Package initialize occurs automatically, before `user-init-file' is
 ;; loaded, but after `early-init-file'. Doom handles package
 ;; initialization, so we must prevent Emacs from doing it early!
-(setq package-enable-at-startup nil)
+;;(setq package-enable-at-startup nil)
 
 ;; Prevent the glimpse of un-styled Emacs by setting these early.
-(add-to-list 'default-frame-alist '(tool-bar-lines . 0))
-(add-to-list 'default-frame-alist '(menu-bar-lines . 0))
-(add-to-list 'default-frame-alist '(vertical-scroll-bars))
+;;(add-to-list 'default-frame-alist '(tool-bar-lines . 0))
+;;(add-to-list 'default-frame-alist '(menu-bar-lines . 0))
+;;(add-to-list 'default-frame-alist '(vertical-scroll-bars))
 
 ;; One less file to load at startup
 (setq site-run-file nil)

@@ -7,10 +7,18 @@
 ;;; Code:
 (setq debug-on-error t)
 
-;; I have often seen and considerd using gc-cons-threshold init optimizations, but haven't fully understood the why
-;; https://www.gnu.org/software/emacs/manual/html_node/elisp/Garbage-Collection.html
-;; For now, lets just take a measurement to see if this warrants my attention
+;; Since Emacs 27 hasn't yet been released, let's duplicate my gc code from my preemptive early-init.el
+;; Defer garbage collection further back in the startup process
+(setq gc-cons-threshold 268435456)
+
+;; Restore after startup
+(add-hook 'after-init-hook
+		  (lambda ()
+			(setq gc-cons-threshold 1000000)
+			(message "gc-cons-threshold restored to %s" gc-cons-threshold)))
+
 ;; Per: https://blog.d46.us/advanced-emacs-startup/
+;; Let's monitor startup performance
 (add-hook 'emacs-startup-hook
 		  (lambda ()
 			(message "Emacs ready in %s with %d garbage collections."
@@ -29,6 +37,14 @@
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
+
+;; Since we're benchmarking. Let's see where I can do better
+(use-package benchmark-init
+  :config
+  (add-hook 'after-init-hook 'benchmark-init/deactivate))
+
+(add-hook 'after-init-hook
+		  (lambda () (message "loaded in $s" (emacs-init-time))))
 
 ;; Load from literate configuration
 (org-babel-load-file "~/.emacs.d/configuration.org")

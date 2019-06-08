@@ -1,31 +1,35 @@
 #+TITLE: Paraparity's Literate Emacs Configuration
+#+PROPERTY: header-args :tangle yes
 
-* Planning
-  I want my Emacs configuration to be a fully literate configuration. Meaning almost every part of it, save for a few
-  sensative bits, are available all through an org-mode file containing emacs-lisp blocks which are tangled into my
-  ~configuration.el~ file. 
+* Overview
+  A literate configuration is an org-mode file containing a heirarchical textual description of the reasoning behind
+  configuration settings and ~emacs-lisp~ source blocks which contain the actual configuration settings. These source
+  blocks get "tangled" by ~org-babel~ and loaded by Emacs.
 
-  The contents herein should be easily viewed at a high level through the ToC. Most importantly, I should be able to
-  review my configuration in several months time and be able to understand why I cursed my future self, and how I might
-  remedy it. Any benefit to third parties is purely collatoral from the ongoing battle with my own memory. Nonetheless,
-  other should also be able to get some benefit from reading my configuration.
+  The reasons for and against such a file are many. Ultimately it comes down to how you personally want to write and
+  maintain your configuration. This is the Emacs way.
+
+  Personally, I've maintained ~.emacs~ configurations, ~init.el~ configurations, and configurations split into many
+  files within the ~.emacs.d~ directory, each loaded by some core config file. Like many, I've declared Emacs bankruptcy
+  before and started over again, each time trying something new. This time however, I'm transferring my balance directly
+  to a literate configuration and refactoring my debt from there.
+
+  The reasons I am doing this are twofold
+  - to try my hand at maintaining a literate configuration and collect first hand empirical evidence
+  - to tell a story about how and why I've arrived at the configuration herein
+
+  Considering that my configuration changes relatively little piece by piece, maintaining the literate side of things
+  shouldn't be too much overhead. Additionally, I'm expecting to benefit in terms of maintainability by being able to
+  re-read the context of why I've made certain configuration choices.
+
+  Welcome aboard my ship of Theseus.
 
 
-* Porting To Literate Config
+* General Settings
 
-** First pass conversion
-   This just wraps my existing configuration without really converting it to a literate
-   configuration. This just proves the behavior of org-babel to support a literate configuration.
-
-   I'm following along with [[https://harryrschwartz.com/2016/02/15/switching-to-a-literate-emacs-configuration][Switching to a Literate Emacs Configuration]] to make the jump.
-
-
-** Follow Through Refactoring
-   Having completed the first pass conversion and successfully having loaded my existing configuration from a literate
-   top level interface, the remaining work will be to refactor my configuration into something truly literate. This
-   process will take some time and re-organization, and after which, this porting section will be removed.
-
-   This section remains a wrapper for the remaining unrefactored configuration code.
+** Add Some Output Commentary
+   When tangled, all of these source blocks become an ~.el~ file. I'd still like that to be more friendly than just a
+   bunch of configuration code, so let's keep the old ~init.el~ header around with some updates.
 
    #+begin_src emacs-lisp
 	 ;;; configuration.el --- paraparity's Emacs configuration file
@@ -40,208 +44,23 @@
 	 ;;   https://github.com/purcell/emacs.d
 	 ;;   https://github.com/howardabrams/dot-files
 	 ;;   https://github.com/skeeto/.emacs.d
-
-	 ;; Configure load path
-	 (add-to-list 'load-path "~/.emacs.d/elpa")
-	 (add-to-list 'load-path "~/.emacs.d/elisp")
-
-	 (eval-when-compile
-	   (require 'use-package))
-
-	 (use-package abbrev
-	   :diminish abbrev-mode
-	   :config
-	   (setq abbrev-file-name
-			 "~/.emacs.d/abbrev_defs")
-	   (setq save-abbrevs t)
-	   (if (file-exists-p abbrev-file-name)
-		   (quietly-read-abbrev-file)))
-
-	 ;; LSP mode configuration
-	 (use-package lsp-mode
-	   :commands lsp
-	   :hook (c++-mode python-mode go-mode-hook)
-	   :init
-	   (setq lsp-prefer-flymake nil))
-
-	 (use-package lsp-ui :commands lsp-ui-mode)
-	 (use-package company-lsp :commands company-lsp)
-
-	 (use-package cperl-mode)
-
-	 (use-package erc
-	   :ensure nil
-	   :defer t
-	   :config
-	   (setq erc-hide-list '("PART" "QUIT" "JOIN" "NICK")
-			 erc-autojoin-channels-alist	'(("freenode.net"
-											"##programming"
-											"#emacs"
-											"#emacs-beginners"
-											"#org-mode"
-											"#ledger"
-											"#plaintextaccounting"))
-			 erc-server "irc.freenode.net"
-			 erc-nick "paraparity"
-			 erc-kill-buffer-on-part t
-			 erc-scrolltobottom-mode t))
-
-	 (use-package keyfreq
-	   :config
-	   (keyfreq-mode 1)
-	   (keyfreq-autosave-mode 1))
-
-	 (use-package flycheck-ledger
-	   :after ledger-mode)
-
-	 (use-package ob-C)
-	 (use-package ob-ditaa)
-	 (use-package ob-dot)
-	 (use-package ob-js)
-	 (use-package ob-perl)
-	 (use-package ob-plantuml)
-	 (use-package ob-sql)
-	 (use-package ox-html)
-	 (use-package ox-latex)
-	 (use-package ox-ascii)
-	 (use-package htmlize
-	   :ensure t)
-	 (use-package sql)
-	 (use-package tramp)
-	 (use-package uniquify)
-
-	 (use-package company-lsp
-	   :after (company lsp-mode)
-	   :commands company-lsp
-	   :config
-	   (push 'company-lsp company-backends))
-
-	 (use-package yasnippet
-	   :diminish yas-minor-mode
-	   :diminish yas-global-mode
-	   :bind (("C-c y r" . yas-reload-all)
-			  ("C-c y n" . yas-new-snippet)
-			  ("C-c y x" . yas-exit-snippet)
-			  ("C-c y d" . yas-describe-tables)
-			  ("C-c y v" . yas-visit-snippet-file)
-			  ("C-c y l" . yas-load-snippet-buffer-and-close))
-	   :config
-	   (yas-global-mode 1))
-
-	 (use-package js2-mode
-	   :defer t
-	   :mode "\\.js$"
-	   :config
-	   (require 'js2-refactor)
-	   (define-key js2-mode-map (kbd "M-.") nil)
-	   (add-hook 'js2-mode-hook #'js2-refactor-mode)
-	   (js2r-add-keybindings-with-prefix "C-c C-r")
-	   (define-key js2-mode-map (kbd "C-k") #'js2r-kill)
-	   (add-hook 'js2-mode-hook
-				 (lambda ()
-				   (add-hook 'xref-backend-functions #'xref-js2-xref-backend nil t)))
-	   (add-hook 'js2-mode-hook
-				 (lambda ()
-				   (setq mode-name "js2"))))
-
-	 ;; Load Custom Libraries
-	 ;;(load-library "irc")
-	 ;;(load-library "fly-conf")
-	 ;;(load-library "keybindings")
-	 ;;(load-library "org-conf")
-	 (load-library "elfeed-conf")
-
-	 ;; Add Abbrev-Mode Hooks
-	 (dolist (hook '(erc-mode-hook
-					 emacs-lisp-mode-hook
-					 text-mode-hook
-					 org-mode-hook))
-	   (add-hook hook (lambda () (abbrev-mode 1))))
-	 ;; (setq default-abbrev-mode t) ;; Or, default on everywhere
-
-	 ;; Tramp Configuration
-	 ; TODO: if windows: use PuTTy Plink; if *nix: use ssh
-	 (set-default 'tramp-auto-save-directory "~/.saves/tramp/")
-	 (setq tramp-default-method "ssh")
-
-	 ;; Other Mode Customizations
-	 (desktop-save-mode 1)
-	 (setq auto-window-vscroll nil)
-	 (setq require-final-newline t)
-	 (setq epg-gpg-program "gpg2")
-
-	 ;; Auth
-	 (setq auth-sources
-		   '((:source "~/.emacs.d/secrets/.authinfo.gpg")))
-
-	 ;; Disable Trailing Whitespace highlight by Mode
-	 (add-hook 'eshell-mode-hook
-			   '(lambda () (setq show-trailing-whitespace nil)))
-	 (add-hook 'buffer-menu-mode-hook
-			   '(lambda () (setq show-trailing-whitespace nil)))
-
-	 ;; Magit/VC configuration
-	 (setq vc-handled-backends (delq 'Git vc-handled-backends))
-
-	 ;; Set mode by File Ext. (generic)
-	 (add-to-list 'auto-mode-alist '("\\.py$"            . python-mode))
-	 (add-to-list 'auto-mode-alist '("\\.org$"           . org-mode))
-	 (add-to-list 'auto-mode-alist '("\\.ts$"            . typescript-mode))
-	 (add-to-list 'auto-mode-alist '("\\.css$"           . css-mode))
-	 (add-to-list 'auto-mode-alist '("\\.md$"            . markdown-mode))
-	 (add-to-list 'auto-mode-alist '("\\.markdown$"      . markdown-mode))
-	 (add-to-list 'auto-mode-alist '("\\.hbs$"           . handlebars-mode))
-	 (add-to-list 'auto-mode-alist '("\\.README\\.md$"   . gfm-mode))
-	 (add-to-list 'auto-mode-alist '("Jenkinsfile$"      . groovy-mode))
-
-	 ;; Perl Configurations
-	 (defalias 'perl-mode 'cperl-mode)
-	 (defvaralias 'c-basic-offset 'tab-width)
-	 (defvaralias 'cperl-indent-level 'tab-width)
-
-	 ;; Override perl-mode with cperl-mode
-	 (mapc
-	  (lambda (pair)
-		(if (eq (cdr pair) 'perl-mode)
-			(setcdr pair 'cperl-mode)))
-	  (append auto-mode-alist interpreter-mode-alist))
-
-	 ;;; HELPERS
-
-	 ;; Display which-function-mode, and do so in headerline instead of mode line
-	 (which-function-mode)
-	 (setq mode-line-misc-info (delete (assoc 'which-func-mode
-						  mode-line-misc-info) mode-line-misc-info)
-		   which-func-header-line-format '(which-func-mode ("" which-func-format)))
-
-	 (defadvice which-func-ff-hook (after header-line activate)
-	   (when which-func-mode
-		 (setq mode-line-misc-info (delete (assoc 'which-func-mode
-							  mode-line-misc-info) mode-line-misc-info)
-		   header-line-format which-func-header-line-format)))
-
-	 ;; Regardless of which buffer you're in, jump to the active minibuffer
-	 (defun switch-to-minibuffer ()
-	   "Switch to minibuffer window."
-	   (interactive)
-	   (if (active-minibuffer-window)
-		   (select-window (active-minibuffer-window))
-		 (error "Minibuffer is not active")))
-
-	 (defun occur-non-ascii ()
-	   "Find any non-ascii characters in the current buffer."
-	   (interactive)
-	   (occur "[[:nonascii:]]"))
-
-	 ;;; END HELPERS
-
-	 ;; Above is still being refactored into a more literate structure
-	 ;;; END Old init stuff
    #+end_src
 
 
-* General Settings
-  Set up user info, it's me!
+** Setup Load Paths
+   Emacs only includes packages under the ~user-emacs-directory~ (default ~~/.emacs.d/elpa/~), so if we want to load anything
+   else up we'll need to tell Emacs where to look.
+
+   #+begin_src emacs-lisp
+	 (add-to-list 'load-path "~/.emacs.d/elpa")
+	 (add-to-list 'load-path "~/.emacs.d/elisp/")
+   #+end_src
+
+   Load my machine local custom librariers directly.
+   #+begin_src emacs-lisp
+     (load-library "elfeed-conf")
+   #+end_src
+
 
 ** Kill Dir-Locals
    Since I don't use directory local variables for Emacs very much if at all, and considering they could load arbitrary
@@ -289,6 +108,12 @@
 	  (setq frame-title-format "Emacs")
 	#+end_src
 
+	Let's make sure our buffers have unique names. If we were to open a file of the same name, but a different location
+	we only need them to be a little unique, not full file path or even relative file path unique.
+	#+begin_src emacs-lisp
+	  (use-package uniquify)
+	#+end_src
+
 	Let's get some more screen real estate by using a small, code friendly font.
 	#+begin_src emacs-lisp
 	  (set-frame-font "monospace-11")
@@ -305,7 +130,20 @@
 	  (add-to-list 'default-frame-alist '(alpha . (92 . 90)))
 	#+end_src
 
+	Display which-function-mode, and do so in headerline instead of mode line.
 
+	#+begin_src emacs-lisp
+	  (which-function-mode)
+	  (setq mode-line-misc-info (delete (assoc 'which-func-mode
+						   mode-line-misc-info) mode-line-misc-info)
+			which-func-header-line-format '(which-func-mode ("" which-func-format)))
+
+	  (defadvice which-func-ff-hook (after header-line activate)
+		(when which-func-mode
+		  (setq mode-line-misc-info (delete (assoc 'which-func-mode
+							   mode-line-misc-info) mode-line-misc-info)
+			header-line-format which-func-header-line-format)))
+	#+end_src
 
 
 *** Improve Navigation Experience
@@ -320,10 +158,53 @@
 	#+end_src
 
 
+*** Hunt Trailing Whitespace, Sometimes
+	I personally disdain trailing whitespace, but also dislike how visually congested whitespace-mode can be
+	sometimes. As such, lets make things toggleable so I can inspect whitespace on demand with only a key chord. Also,
+	lets give ourselves a nuclear option for stripping trailing whitespace.
+
+	#+begin_src emacs-lisp
+	  (defun para/toggle-trailing-whitespace ()
+		"Toggle 'show-trailing-whitespace' between t and nil."
+		(interactive)
+		(setq show-trailing-whitespace (not show-trailing-whitespace)))
+
+	  (global-set-key (kbd "C-c w m") 'whitespace-mode)
+	  (global-set-key (kbd "C-c w t") 'para/toggle-trailing-whitespace)
+	  (global-set-key (kbd "<f5>") 'delete-trailing-whitespace)
+	#+end_src
+
+
 ** Various Emacs Settings
    Enable quick Y/N prompts.
    #+begin_src emacs-lisp
 	 (fset 'yes-or-no-p 'y-or-n-p)
+   #+end_src
+
+   Get rid of that annoying bell.
+   #+begin_src emacs-lisp
+	 (setq ring-bell-function 'ignore)
+   #+end_src
+
+   Enable final newline in all files. It's pretty common in software projects, and it's just a habit by now, I'll
+   include it everywhere until I find somewhere that bites me because of it.
+   #+begin_src emacs-lisp
+	 (setq require-final-newline t)
+   #+end_src
+
+   At one point I had some slowness with cursor movement and scrolling. I forget why at this point, but I stumpled upon
+   some answer that said disable this, and I've never looked back since.
+   #+begin_src emacs-lisp
+	 (setq auto-window-vscroll nil)
+   #+end_src
+
+   This probably deserves it's own section and some more configuration, but for now here's a minimal GPG setup.
+   #+begin_src emacs-lisp
+	 (setq epg-gpg-program "gpg2")
+
+	 ;; Auth
+	 (setq auth-sources
+		   '((:source "~/.emacs.d/secrets/.authinfo.gpg")))
    #+end_src
 
 *** Manage File Backups and Auto Save
@@ -357,7 +238,31 @@
 	#+end_src
 
 
-* Emacs Interaction Packages
+** Easy Config Editing
+   Let's make it a only take a key-chord to pull up my literate configuration.
+
+   #+begin_src emacs-lisp
+	 (defun para/locate-literate-config ()
+	   "Locate and load my literate configuration file"
+	   (interactive)
+	   (find-file "~/.emacs.d/configuration.org"))
+
+	 (global-set-key (kbd "C-c I") 'para/locate-literate-config)
+   #+end_src
+
+
+** Key Frequency Tracking
+   This helps identify frequently used commands which could be bound for faster use.
+
+   #+begin_src emacs-lisp
+	 (use-package keyfreq
+	   :config
+	   (keyfreq-mode 1)
+	   (keyfreq-autosave-mode 1))
+   #+end_src
+
+
+* Emacs Interactions
   This section contains customizations which focus on Emacs navigation and interaction.
 
 ** Multiple Cursors
@@ -437,32 +342,125 @@
    #+end_src
 
 
+** Text Expansion with Abbrev
+   Abbrev triggers expansion on pressing the space bar after your word, which is incredibly useful for stream of
+   conscious text expansion. I use this mainly to expand acronyms and abbreviations, so I can be lazy typing but still
+   create readable text for those not yet familiar with those short-strings. However, this is also extremely useful for
+   creating shortcuts for words I type often.
+
+   #+begin_src emacs-lisp
+     (use-package abbrev
+       :diminish abbrev-mode
+       :config
+       (setq abbrev-file-name
+		     "~/.emacs.d/abbrev_defs")
+       (setq save-abbrevs t)
+       (if (file-exists-p abbrev-file-name)
+	       (quietly-read-abbrev-file)))
+
+     ;; Add Abbrev-Mode Hooks
+     (dolist (hook '(erc-mode-hook
+		     emacs-lisp-mode-hook
+		     text-mode-hook
+		     org-mode-hook))
+       (add-hook hook (lambda () (abbrev-mode 1))))
+     ;; (setq default-abbrev-mode t) ;; Or, default on everywhere
+   #+end_src
+
+
+** Templating with Yasnippets
+   Both for programming and regular editing I have a bunch of snippets for text expansion. It doesn't alwasy seem
+   suitable for me to use ~abbrev~, especially for large templates, but that's more of a personal choice than a "can it
+   be done" thing.
+
+   So, for anything more than abbreviation expansion or word shortcut expansions I use ~yasnippet~ to tab expand and
+   interactively fill out templates.
+
+   #+begin_src emacs-lisp
+	 (use-package yasnippet
+	   :diminish yas-minor-mode
+	   :diminish yas-global-mode
+	   :bind (("C-c y r" . yas-reload-all)
+			  ("C-c y n" . yas-new-snippet)
+			  ("C-c y x" . yas-exit-snippet)
+			  ("C-c y d" . yas-describe-tables)
+			  ("C-c y v" . yas-visit-snippet-file)
+			  ("C-c y l" . yas-load-snippet-buffer-and-close))
+	   :config
+	   (yas-global-mode 1))
+   #+end_src
+
+
+** Internet Relay Chat with ERC
+   Emacs comes with it's own Internet Relay Chat client, ERC. I use this to chat over IRC from right within Emacs.
+
+   #+begin_src emacs-lisp
+	 (use-package erc
+	   :ensure nil
+	   :defer t
+	   :config
+	   (setq erc-hide-list '("PART" "QUIT" "JOIN" "NICK")
+		 erc-autojoin-channels-alist '(("freenode.net"
+						"##programming"
+						"#emacs"
+						"#emacs-beginners"
+						"#org-mode"
+						"#ledger"
+						"#plaintextaccounting"))
+		 erc-server "irc.freenode.net"
+		 erc-nick "paraparity"
+		 erc-kill-buffer-on-part t
+		 erc-scrolltobottom-mode t))
+   #+end_src
+
+
+** TODO Remote Interactions with Tramp
+   Emacs comes packaged with a really cool utility I'm desperately underutilizing. More work to be done here still.
+
+   Let's change where Tramp saves things, and use SSH as our default method.
+
+   #+begin_src emacs-lisp
+	 (use-package tramp)
+
+	 (set-default 'tramp-auto-save-directory "~/.saves/tramp/")
+	 (setq tramp-default-method "ssh")
+
+	 ; TODO: if windows: use PuTTy Plink; if *nix: use ssh
+   #+end_src
+
+
 * Org-Mode Configuration
   Honestly, org-mode is probably my biggest anchor to Emacs. I've tried org-mode-like plugins for other editors and
   IDE's, but nothing compares to the real thing. Enshrined within this section is my configuration and customization of
   Emacs org-mode.
 
   #+begin_src emacs-lisp
-	(require 'org)
-	(require 'ob-ditaa)
-	(require 'ob-plantuml)
-	(require 'org-agenda)
-	(require 'org-capture)
-	(require 'org-clock)
-	(require 'org-journal)
-	(require 'org-tempo)
-	(require 'ox)
-	(require 'ox-asciidoc)
-	(require 'ox-pandoc)
-	(require 'ox-slimhtml)
+	(use-package org)
+	(use-package ob-C)
+	(use-package ob-ditaa)
+	(use-package ob-dot)
+	(use-package ob-js)
+	(use-package ob-perl)
+	(use-package ob-plantuml)
+	(use-package ob-sql)
+	(use-package org-agenda)
+	(use-package org-capture)
+	(use-package org-clock)
+	(use-package org-journal)
+	(use-package org-tempo)
+	(use-package ox)
+	(use-package ox-ascii)
+	(use-package ox-asciidoc)
+	(use-package ox-html)
+	(use-package ox-latex)
+	(use-package ox-pandoc)
+	(use-package ox-slimhtml)
 
 	(setq org-modules
 		  '((org-bbdb org-bibtex org-docview org-eww org-gnus org-habit org-info org-irc org-mhe org-rmail org-tempo org-w3m)))
 
 
 	(add-hook 'org-mode-hook 'turn-on-auto-fill)
-	(add-hook 'org-mode-hook
-			  '(lambda () (setq show-trailing-whitespace nil)))
 	(add-hook 'org-mode-hook
 			  '(lambda () (origami-mode nil)))
 
@@ -484,7 +482,7 @@
    Org-mode supports creating links to various resources across org-mode files and materials online.
 
    Let's create some short links for things I might reference often.
-   
+
    #+begin_src emacs-lisp
 	 ;; Links - use like: cpan:HTML or rfc-txt:7522
 	 (setq org-link-abbrev-alist
@@ -844,7 +842,7 @@
    #+end_src
 
 
-** Org-Babel 
+** Org-Babel
 
 *** Supporting Tools
 	Using org-babel, we can pull in some graphical helper tools to give it some rendering capabilities.
@@ -900,7 +898,7 @@
 	#+end_src
 
 
-* Programming Environment
+* Development Interactions
   This section contains customizations for development and working within coding environments.
 
 ** Editor Config
@@ -916,7 +914,26 @@
    #+end_src
 
 
-** Language Server
+** TODO Language Server
+   The Language Server Protocol (LSP) sets up a contract for an editor (client) to chat with a language server to reduce
+   development burden of supporting language interactions across languages and editors. Instead, the server can worry
+   about supporting language interactions and any editor with a client can get the benefit of that abstraction.
+
+   Emacs has both the [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]] and [[https://github.com/joaotavora/eglot][eglot]] packages to support client interfaces with various language server
+   backends. I've chosen to leverage =lsp-mode= as my language server client.
+
+   #+begin_src emacs-lisp
+	 ;; LSP mode configuration
+	 (use-package lsp-mode
+	   :commands lsp
+	   :hook (c++-mode python-mode go-mode-hook)
+	   :init
+	   (setq lsp-prefer-flymake nil))
+
+	 (use-package lsp-ui :commands lsp-ui-mode)
+	 (use-package company-lsp :commands company-lsp)
+   #+end_src
+
 
 ** On The Fly Checking
    Fly-Check enables on the fly syntax checking which helps me catch errors as I write them and prompts me to fix them
@@ -1025,6 +1042,15 @@
 		 (global-set-key (kbd "C-c SPC") 'company-complete)))
    #+end_src
 
+   It also plugs into ~lsp-mode~ which I'll be setting up later.
+   #+begin_src emacs-lisp
+	 (use-package company-lsp
+	   :after (company lsp-mode)
+	   :commands company-lsp
+	   :config
+	   (push 'company-lsp company-backends))
+   #+end_src
+
 
 ** Projectile Project Management
    Projectile allows for project interaction from within Emacs. Additionally, it can hook into other powerful search
@@ -1052,6 +1078,75 @@
    #+end_src
 
 
+** Magit and Version Control
+   #+begin_src emacs-lisp
+	 (setq vc-handled-backends (delq 'Git vc-handled-backends))
+   #+end_src
+
+
+** Language Configurations
+
+*** Mode Bindings by Filetype
+	Make sure certain files open in certain modes.
+
+	#+begin_src emacs-lisp
+	  (add-to-list 'auto-mode-alist '("\\.py$"          . python-mode))
+	  (add-to-list 'auto-mode-alist '("\\.org$"         . org-mode))
+	  (add-to-list 'auto-mode-alist '("\\.ts$"          . typescript-mode))
+	  (add-to-list 'auto-mode-alist '("\\.css$"         . css-mode))
+	  (add-to-list 'auto-mode-alist '("\\.md$"          . markdown-mode))
+	  (add-to-list 'auto-mode-alist '("\\.markdown$"    . markdown-mode))
+	  (add-to-list 'auto-mode-alist '("\\.hbs$"         . handlebars-mode))
+	  (add-to-list 'auto-mode-alist '("\\.README\\.md$" . gfm-mode))
+	  (add-to-list 'auto-mode-alist '("Jenkinsfile$"    . groovy-mode))
+	#+end_src
+
+
+*** Perl Customizations
+	I used to write mostly in Perl for work, and ~cperl-mode~ was what my Emacs wielding colleagues used at my
+	employer. It was definitely better than the Vanilla Emacs defaults.
+
+	#+begin_src emacs-lisp
+	  (use-package cperl-mode)
+
+	  (defalias 'perl-mode 'cperl-mode)
+	  (defvaralias 'c-basic-offset 'tab-width)
+	  (defvaralias 'cperl-indent-level 'tab-width)
+
+	  ;; Override perl-mode with cperl-mode
+	  (mapc
+	   (lambda (pair)
+		 (if (eq (cdr pair) 'perl-mode)
+			 (setcdr pair 'cperl-mode)))
+	   (append auto-mode-alist interpreter-mode-alist))
+	#+end_src
+
+
+*** Javascript
+	From time to time I've developed either tangentially or immersively in Javascript, both in the Web and in
+	Node. ~js2-mode~ has been good to me for that. I tried ~js3-mode~, but found it lacked features and had fallen out
+	of support. I'm somewhat eyeing ~indium~, but would likely prefer to just use a ~lsp-mode~ solution that also
+	supports Typescript.
+
+	#+begin_src emacs-lisp
+	  (use-package js2-mode
+		:defer t
+		:mode "\\.js$"
+		:config
+		(require 'js2-refactor)
+		(define-key js2-mode-map (kbd "M-.") nil)
+		(add-hook 'js2-mode-hook #'js2-refactor-mode)
+		(js2r-add-keybindings-with-prefix "C-c C-r")
+		(define-key js2-mode-map (kbd "C-k") #'js2r-kill)
+		(add-hook 'js2-mode-hook
+				  (lambda ()
+					(add-hook 'xref-backend-functions #'xref-js2-xref-backend nil t)))
+		(add-hook 'js2-mode-hook
+				  (lambda ()
+					(setq mode-name "js2"))))
+	#+end_src
+
+
 * More Emacs Modes
 ** Ledger - Command Line Accounting
    Set up ledger-mode.
@@ -1071,6 +1166,9 @@
 			 (save-buffer))))
 	   :init
 	   (setq ledger-post-amount-alignment-column 120))
+
+	 (use-package flycheck-ledger
+	   :after ledger-mode)
    #+end_src
 
 
@@ -1088,7 +1186,29 @@
    #+end_src
 
 
-* Keybinding Overrides
+* TODO Helper Functions
+  This section contains custom functions I'll sometimes invoke. These should probably live elsewhere, but for now, this
+  is their home.
+
+  #+begin_src emacs-lisp
+	;; Regardless of which buffer you're in, jump to the active minibuffer
+	(defun switch-to-minibuffer ()
+	  "Switch to minibuffer window."
+	  (interactive)
+	  (if (active-minibuffer-window)
+		  (select-window (active-minibuffer-window))
+		(error "Minibuffer is not active")))
+
+	(defun occur-non-ascii ()
+	  "Find any non-ascii characters in the current buffer."
+	  (interactive)
+	  (occur "[[:nonascii:]]"))
+  #+end_src
+
+
+* TODO Keybinding Overrides
+  - Refactor to their relavant mode configurations. Only defaults or net new bindings should remain here.
+
   This section contains my keybinding overrides. After all the work we've done to get things set up or customized to my
   liking, I still need to sing to my own tune and play my own chords.
 
@@ -1112,24 +1232,9 @@
 	(global-set-key (kbd "C-x w") 'elfeed)
 
 	;; Misc Keybindings
-	(global-set-key (kbd "<f5>") 'delete-trailing-whitespace)
 	(global-set-key (kbd "C-x #") 'comment-or-uncomment-region)
 	(global-set-key (kbd "C-c d") 'duplicate-current-line-or-region)
 	;;(global-set-key (kbd "M-.") 'find-tag-other-window)
-
-	;; Numpad Key Bindings
-	(global-set-key "\eOp" "0")
-	(global-set-key "\eOq" "1")
-	(global-set-key "\eOr" "2")
-	(global-set-key "\eOs" "3")
-	(global-set-key "\eOt" "4")
-	(global-set-key "\eOu" "5")
-	(global-set-key "\eOv" "6")
-	(global-set-key "\eOw" "7")
-	(global-set-key "\eOx" "8")
-	(global-set-key "\eOy" "9")
-	(global-set-key "\eOl" "+")
-	(global-set-key "\eOn" ".")
 
 	;; Modal Key Bindings
 	(add-hook 'cperl-mode-hook
@@ -1141,6 +1246,26 @@
 	(global-unset-key (kbd "C-x C-z"))
   #+end_src
 
+** Enable Full Keboard Num-Pad
+   Unfortunately I've found Emacs doesn't natively support full size keyboards, however this allows us to get our numpad
+   working.
+
+   #+begin_src emacs-lisp
+	 ;; Numpad Key Bindings
+	 (global-set-key "\eOp" "0")
+	 (global-set-key "\eOq" "1")
+	 (global-set-key "\eOr" "2")
+	 (global-set-key "\eOs" "3")
+	 (global-set-key "\eOt" "4")
+	 (global-set-key "\eOu" "5")
+	 (global-set-key "\eOv" "6")
+	 (global-set-key "\eOw" "7")
+	 (global-set-key "\eOx" "8")
+	 (global-set-key "\eOy" "9")
+	 (global-set-key "\eOl" "+")
+	 (global-set-key "\eOn" ".")
+   #+end_src
+
 
 * Final Countdown
   This section contains the last moment configurations that wrap up my personal customization and Emacs load. Here we'll
@@ -1151,6 +1276,9 @@
 	(diminish 'auto-revert-mode)
 	(diminish 'visual-line-mode)
 	(diminish 'js2-refactor-mode)
+
+	;; Make it so I can recover old sessions after close or reboot
+	(desktop-save-mode 1)
 
 	;; Start the Emacs server
 	(require 'server)
