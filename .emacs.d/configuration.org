@@ -1,412 +1,910 @@
 #+TITLE: Paraparity's Literate Emacs Configuration
 
-* Porting To Literate Config
-  First pass conversion. This just wraps my existing configuration without really converting it to a literate
-  configuration. This just proves the behavior of org-babel to support a literate configuration.
+* Planning
+  I want my Emacs configuration to be a fully literate configuration. Meaning almost every part of it, save for a few
+  sensative bits, are available all through an org-mode file containing emacs-lisp blocks which are tangled into my
+  ~configuration.el~ file. 
 
-  I'm following along with [[https://harryrschwartz.com/2016/02/15/switching-to-a-literate-emacs-configuration][Switching to a Literate Emacs Configuration]] to make the jump.
+  The contents herein should be easily viewed at a high level through the ToC. Most importantly, I should be able to
+  review my configuration in several months time and be able to understand why I cursed my future self, and how I might
+  remedy it. Any benefit to third parties is purely collatoral from the ongoing battle with my own memory. Nonetheless,
+  other should also be able to get some benefit from reading my configuration.
+
+
+* Porting To Literate Config
+
+** First pass conversion
+   This just wraps my existing configuration without really converting it to a literate
+   configuration. This just proves the behavior of org-babel to support a literate configuration.
+
+   I'm following along with [[https://harryrschwartz.com/2016/02/15/switching-to-a-literate-emacs-configuration][Switching to a Literate Emacs Configuration]] to make the jump.
+
+
+** Follow Through Refactoring
+   Having completed the first pass conversion and successfully having loaded my existing configuration from a literate
+   top level interface, the remaining work will be to refactor my configuration into something truly literate. This
+   process will take some time and re-organization, and after which, this porting section will be removed.
+
+   This section remains a wrapper for the remaining unrefactored configuration code.
+
+   #+begin_src emacs-lisp
+	 ;;; init.el --- paraparity's Emacs configuration file
+	 ;;
+	 ;;; Commentary:
+	 ;; Customized init.el for Emacs
+	 ;;
+	 ;;; Code:
+	 ;;(setq debug-on-error t)
+
+	 ;; Eternally grateful to have gleaned lessons from:
+	 ;;   http://pages.sachachua.com/.emacs.d/Sacha.html
+	 ;;   https://github.com/purcell/emacs.d
+	 ;;   https://github.com/howardabrams/dot-files
+	 ;;   https://github.com/skeeto/.emacs.d
+
+	 ;; test
+
+	 (setq enable-local-eval nil
+		   enable-local-variables nil)
+
+	 ;; Configure load path
+	 (add-to-list 'load-path "~/.emacs.d/elpa")
+	 (add-to-list 'load-path "~/.emacs.d/elisp")
+
+	 ;; Encoding
+	 (set-language-environment "japanese")
+	 (set-terminal-coding-system 'utf-8)
+	 (set-keyboard-coding-system 'utf-8)
+	 (set-default-coding-systems 'utf-8)
+	 (set-selection-coding-system 'utf-8)
+	 (prefer-coding-system 'utf-8)
+
+	 ;; Configure Package Manager
+	 (when (>= emacs-major-version 24)
+	   (require 'package)
+	   (defvar package-enabled-at-startup nil)
+	   (unless (assoc-default "melpa" package-archives)
+		 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/")    t))
+	   (unless (assoc-default "gnu" package-archives)
+		 (add-to-list 'package-archives '("gnu"   . "https://elpa.gnu.org/packages/") t))
+	   (unless (assoc-default "org" package-archives)
+		 (add-to-list 'package-archives '("org"   . "https://orgmode.org/elpa/")      t))
+	   (package-initialize))
+
+	 (unless (package-installed-p 'use-package)
+	   (package-refresh-contents)
+	   (package-install 'use-package))
+
+	 (eval-when-compile
+	   (require 'use-package))
+
+	 (use-package editorconfig
+	   :ensure t
+	   :diminish editorconfig-mode
+	   :config
+	   (editorconfig-mode 1))
+
+	 (use-package abbrev
+	   :diminish abbrev-mode
+	   :config
+	   (setq abbrev-file-name
+			 "~/.emacs.d/abbrev_defs")
+	   (setq save-abbrevs t)
+	   (if (file-exists-p abbrev-file-name)
+		   (quietly-read-abbrev-file)))
+
+	 ;; LSP mode configuration
+	 (use-package lsp-mode
+	   :commands lsp
+	   :hook (c++-mode python-mode go-mode-hook)
+	   :init
+	   (setq lsp-prefer-flymake nil))
+
+	 (use-package lsp-ui :commands lsp-ui-mode)
+	 (use-package company-lsp :commands company-lsp)
+
+	 (use-package cperl-mode)
+
+	 (use-package erc
+	   :ensure nil
+	   :defer t
+	   :config
+	   (setq erc-hide-list '("PART" "QUIT" "JOIN" "NICK")
+			 erc-autojoin-channels-alist	'(("freenode.net"
+											"##programming"
+											"#emacs"
+											"#emacs-beginners"
+											"#org-mode"
+											"#ledger"
+											"#plaintextaccounting"))
+			 erc-server "irc.freenode.net"
+			 erc-nick "paraparity"
+			 erc-kill-buffer-on-part t
+			 erc-scrolltobottom-mode t))
+
+	 (use-package flycheck
+	   :ensure t)
+
+	 (use-package keyfreq
+	   :config
+	   (keyfreq-mode 1)
+	   (keyfreq-autosave-mode 1))
+
+	  (use-package ledger-mode
+		:mode ("\\.ledger$")
+		:bind (:map ledger-mode-map
+					("C-x C-s" . my/ledger-save))
+		:preface
+		(defun my/ledger-save ()
+		  "Automatically clean the ledger buffer at each save."
+		  (interactive)
+		  (save-excursion
+			(when (buffer-modified-p)
+			  (with-demoted-errors (ledger-mode-clean-buffer))
+			  (save-buffer))))
+		:init
+		(setq ledger-post-amount-alignment-column 120))
+
+	 (use-package flycheck-ledger
+	   :after ledger-mode)
+
+	 (use-package multiple-cursors
+	   :ensure t
+	   :bind (;; Note that recomended 'C->' and 'C-<' are not characters in the shell.
+			  ;; Thus I use their lowercase alternatives
+			  ("C-c ."   . mc/mark-next-like-this)
+			  ("C-c ,"   . mc/mark-previous-like-this)
+			  ("C-c /"   . mc/mark-all-like-this)
+			  ("C-c m m" . mc/mark-all-like-this-dwim)
+			  ("C-c m a" . mc/edit-beginnings-of-lines)
+			  ("C-c m e" . mc/edit-ends-of-lines)
+			  ("C-c m s" . mc/mark-sgml-tag-pair)
+			  ("C-c m l" . mc/edit-lines)
+			  ))
+
+	 (use-package ob-C)
+	 (use-package ob-ditaa)
+	 (use-package ob-dot)
+	 (use-package ob-js)
+	 (use-package ob-perl)
+	 (use-package ob-plantuml)
+	 (use-package ob-sql)
+	 (use-package ox-html)
+	 (use-package ox-latex)
+	 (use-package ox-ascii)
+	 (use-package htmlize
+	   :ensure t)
+	 (use-package sql)
+	 (use-package tramp)
+	 (use-package uniquify)
+
+	 (use-package company
+	   :ensure t
+	   :diminish
+	   :bind (:map company-active-map
+				   ("M-n" . nil)
+				   ("M-p" . nil)
+				   ("C-n" . company-select-next)
+				   ("C-p" . company-select-previous))
+	   :init
+	   (global-company-mode)
+	   :config
+	   (setq company-idle-delay            nil)
+	   (setq company-minimum-prefix-length 2)
+	   (setq company-show-numbers          t)
+	   (setq company-tooltip-limit         20)
+	   (with-eval-after-load 'company
+		 (global-set-key (kbd "C-c SPC") 'company-complete)))
+
+	 (use-package company-lsp
+	   :after (company lsp-mode)
+	   :commands company-lsp
+	   :config
+	   (push 'company-lsp company-backends))
+
+	 (use-package helm
+	   :diminish helm-mode
+	   :init (progn
+			   (require 'helm-config)
+			   (helm-mode))
+	   :bind (("C-c h"   . helm-command-prefix)
+			  ("M-x"     . helm-M-x)
+			  ("M-y"     . helm-show-kill-ring)
+			  ("C-x b"   . helm-mini)
+			  ("C-c h a" . helm-apropos)
+			  ("C-c h f" . helm-find-files)
+			  ("C-c h o" . helm-occur)
+			  ("C-c h m" . helm-man-woman))
+	   :config
+	   (require 'helm-command)
+	   (require 'helm-for-files)
+	   (require 'helm-imenu)
+	   (require 'helm-semantic)
+	   (require 'helm-misc)
+	   (setq helm-split-window-inside-p      t
+			 helm-M-x-fuzzy-match            t
+			 helm-buffers-fuzzy-matching     t
+			 helm-recentf-fuzzy-match        t
+			 helm-semantic-fuzzy-match       t
+			 helm-imenu-fuzzy-match          t
+			 helm-apropos-fuzzy-match        t
+			 helm-candidate-number-limit   100
+			 helm-autoresize-max-height     20
+			 helm-autoresize-min-height      0)
+	   (add-to-list 'helm-sources-using-default-as-input 'heml-source-man-pages)
+	   (helm-autoresize-mode t))
+
+	 (use-package projectile
+	   :ensure t
+	   :config
+	   (setq projectile-completion-system 'helm)
+	   (setq projectile-switch-project-action 'helm-projectile)
+	   (setq projectile-enable-caching t)
+	   (setq projectile-globally-ignored-directories
+			 '(".git" "node_modules" "__pycache__" ".vs"))
+	   (setq projectile-globally-ignored-file-suffixes
+			 '("#" "~" ".swp" ".o" ".so" ".exe" ".dll" ".elc" ".pyc" ".jar"))
+	   (setq projectile-globally-ignored-files
+			 '("TAGS" "tags"))
+	   (with-eval-after-load "projectile"
+		 (projectile-mode)
+		 (helm-projectile-on)))
+
+	 (use-package helm-projectile)
+
+	 (use-package pdf-tools
+	   :pin manual
+	   :config
+	   (setq-default pdf-view-display-size 'fit-page)
+	   (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward))
+
+	 (use-package yasnippet
+	   :diminish yas-minor-mode
+	   :diminish yas-global-mode
+	   :bind (("C-c y r" . yas-reload-all)
+			  ("C-c y n" . yas-new-snippet)
+			  ("C-c y x" . yas-exit-snippet)
+			  ("C-c y d" . yas-describe-tables)
+			  ("C-c y v" . yas-visit-snippet-file)
+			  ("C-c y l" . yas-load-snippet-buffer-and-close))
+	   :config
+	   (yas-global-mode 1))
+
+	 (use-package js2-mode
+	   :defer t
+	   :mode "\\.js$"
+	   :config
+	   (require 'js2-refactor)
+	   (define-key js2-mode-map (kbd "M-.") nil)
+	   (add-hook 'js2-mode-hook #'js2-refactor-mode)
+	   (js2r-add-keybindings-with-prefix "C-c C-r")
+	   (define-key js2-mode-map (kbd "C-k") #'js2r-kill)
+	   (add-hook 'js2-mode-hook
+				 (lambda ()
+				   (add-hook 'xref-backend-functions #'xref-js2-xref-backend nil t)))
+	   (add-hook 'js2-mode-hook
+				 (lambda ()
+				   (setq mode-name "js2"))))
+
+	 (use-package origami
+	   :bind (("C-<tab>" . origami-recursively-toggle-node)
+			  ("C-c u"   . origami-open-all-nodes)
+			  ("C-c f"   . origami-close-all-nodes)
+			  ("C-c n"   . origami-show-only-node)
+			  ("C-c r"   . origami-reset))
+	   :config
+	   (global-origami-mode t))
+
+	 ;; Split out auto-generated customizations
+	 (setq custom-file "~/.emacs.d/custom.el")
+	 (when (file-exists-p custom-file)
+	   (load custom-file 'noerror))
+
+	 ;; Load Custom Libraries
+	 ;;(load-library "irc")
+	 ;;(load-library "fly-conf")
+	 ;;(load-library "keybindings")
+	 ;;(load-library "org-conf")
+	 (load-library "elfeed-conf")
+
+	 ;; File Backup Management
+	 (setq backup-by-copying t
+		   backup-directory-alist `(("." . "~/saves"))
+		   delete-old-versions t
+		   kept-new-versions 6
+		   kept-old-versions 2
+		   version-control t)
+
+	 ;; Autosave File Management
+	 (setq auto-save-file-name-transforms
+		   `((".*" ,temporary-file-directory t)))
+
+	 ;; Add Abbrev-Mode Hooks
+	 (dolist (hook '(erc-mode-hook
+					 emacs-lisp-mode-hook
+					 text-mode-hook
+					 org-mode-hook))
+	   (add-hook hook (lambda () (abbrev-mode 1))))
+	 ;; (setq default-abbrev-mode t) ;; Or, default on everywhere
+
+	 ;; Tramp Configuration
+	 ; TODO: if windows: use PuTTy Plink; if *nix: use ssh
+	 (set-default 'tramp-auto-save-directory "~/.saves/tramp/")
+	 (setq tramp-default-method "ssh")
+
+	 ;; Transparency?
+	 (set-frame-parameter (selected-frame) 'alpha '(92 . 90))
+	 (add-to-list 'default-frame-alist '(alpha . (92 . 90)))
+
+	 ;; Other Mode Customizations
+	 (desktop-save-mode 1)
+	 (setq auto-window-vscroll nil)
+	 (setq frame-title-format "Emacs")
+	 (setq require-final-newline t)
+	 (fset 'yes-or-no-p 'y-or-n-p)
+	 (global-hl-line-mode t)
+	 (display-time-mode 1)
+	 (tool-bar-mode -1)
+	 (menu-bar-mode -1)
+	 (scroll-bar-mode -1)
+	 (show-paren-mode 1)
+	 (set-frame-font "monospace-11")
+	 (setq epg-gpg-program "gpg2")
+
+	 ;; Auth
+	 (setq auth-sources
+		   '((:source "~/.emacs.d/secrets/.authinfo.gpg")))
+
+	 ;; Disable Trailing Whitespace highlight by Mode
+	 (add-hook 'eshell-mode-hook
+			   '(lambda () (setq show-trailing-whitespace nil)))
+	 (add-hook 'buffer-menu-mode-hook
+			   '(lambda () (setq show-trailing-whitespace nil)))
+
+	 ;; Magit/VC configuration
+	 (setq vc-handled-backends (delq 'Git vc-handled-backends))
+
+	 ;; Set mode by File Ext. (generic)
+	 (add-to-list 'auto-mode-alist '("\\.py$"            . python-mode))
+	 (add-to-list 'auto-mode-alist '("\\.org$"           . org-mode))
+	 (add-to-list 'auto-mode-alist '("\\.ts$"            . typescript-mode))
+	 (add-to-list 'auto-mode-alist '("\\.css$"           . css-mode))
+	 (add-to-list 'auto-mode-alist '("\\.md$"            . markdown-mode))
+	 (add-to-list 'auto-mode-alist '("\\.markdown$"      . markdown-mode))
+	 (add-to-list 'auto-mode-alist '("\\.hbs$"           . handlebars-mode))
+	 (add-to-list 'auto-mode-alist '("\\.README\\.md$"   . gfm-mode))
+	 (add-to-list 'auto-mode-alist '("Jenkinsfile$"      . groovy-mode))
+
+	 ;; Perl Configurations
+	 (defalias 'perl-mode 'cperl-mode)
+	 (defvaralias 'c-basic-offset 'tab-width)
+	 (defvaralias 'cperl-indent-level 'tab-width)
+
+	 ;; Override perl-mode with cperl-mode
+	 (mapc
+	  (lambda (pair)
+		(if (eq (cdr pair) 'perl-mode)
+			(setcdr pair 'cperl-mode)))
+	  (append auto-mode-alist interpreter-mode-alist))
+
+	 ;;; HELPERS
+
+	 ;; Display which-function-mode, and do so in headerline instead of mode line
+	 (which-function-mode)
+	 (setq mode-line-misc-info (delete (assoc 'which-func-mode
+						  mode-line-misc-info) mode-line-misc-info)
+		   which-func-header-line-format '(which-func-mode ("" which-func-format)))
+
+	 (defadvice which-func-ff-hook (after header-line activate)
+	   (when which-func-mode
+		 (setq mode-line-misc-info (delete (assoc 'which-func-mode
+							  mode-line-misc-info) mode-line-misc-info)
+		   header-line-format which-func-header-line-format)))
+
+	 ;; Regardless of which buffer you're in, jump to the active minibuffer
+	 (defun switch-to-minibuffer ()
+	   "Switch to minibuffer window."
+	   (interactive)
+	   (if (active-minibuffer-window)
+		   (select-window (active-minibuffer-window))
+		 (error "Minibuffer is not active")))
+
+	 (defun occur-non-ascii ()
+	   "Find any non-ascii characters in the current buffer."
+	   (interactive)
+	   (occur "[[:nonascii:]]"))
+
+	 ;;; END HELPERS
+
+	 ;; Enable flycheck globally:
+	 (add-hook 'after-init-hook #'global-flycheck-mode)
+
+	 ;; Customize flycheck
+	 ;; Disable clang check, gcc check works better
+	 (setq-default flycheck-disabled-checkers
+				   (append flycheck-disabled-checkers
+						   '(c/c++-clang)))
+
+	 ;; Enable C++14 support for GCC
+	 (add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++14")))
+   #+end_src
+
+
+* Org-Mode Configuration
+  Honestly, org-mode is probably my biggest anchor to Emacs. I've tried org-mode-like plugins for other editors and
+  IDE's, but nothing compares to the real thing. Enshrined within this section is my configuration and customization of
+  Emacs org-mode.
 
   #+begin_src emacs-lisp
-	;;; init.el --- paraparity's Emacs configuration file
-	;;
-	;;; Commentary:
-	;; Customized init.el for Emacs
-	;;
-	;;; Code:
-	;;(setq debug-on-error t)
+	(require 'org)
+	(require 'ob-ditaa)
+	(require 'ob-plantuml)
+	(require 'org-agenda)
+	(require 'org-capture)
+	(require 'org-clock)
+	(require 'org-journal)
+	(require 'org-tempo)
+	(require 'ox)
+	(require 'ox-asciidoc)
+	(require 'ox-pandoc)
+	(require 'ox-slimhtml)
 
-	;; Eternally grateful to have gleaned lessons from:
-	;;   http://pages.sachachua.com/.emacs.d/Sacha.html
-	;;   https://github.com/purcell/emacs.d
-	;;   https://github.com/howardabrams/dot-files
-	;;   https://github.com/skeeto/.emacs.d
+	(defvar org-directory "~/org")
+	(defvar org-default-notes-file (concat org-directory "/inbox.org"))
 
-	;; test
+	(setq org-modules
+		  '((org-bbdb org-bibtex org-docview org-eww org-gnus org-habit org-info org-irc org-mhe org-rmail org-tempo org-w3m)))
 
-	(setq enable-local-eval nil
-		  enable-local-variables nil)
 
-	;; Configure load path
-	(add-to-list 'load-path "~/.emacs.d/elpa")
-	(add-to-list 'load-path "~/.emacs.d/elisp")
-
-	;; Encoding
-	(set-language-environment "japanese")
-	(set-terminal-coding-system 'utf-8)
-	(set-keyboard-coding-system 'utf-8)
-	(set-default-coding-systems 'utf-8)
-	(set-selection-coding-system 'utf-8)
-	(prefer-coding-system 'utf-8)
-
-	;; Configure Package Manager
-	(when (>= emacs-major-version 24)
-	  (require 'package)
-	  (defvar package-enabled-at-startup nil)
-	  (unless (assoc-default "melpa" package-archives)
-		(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/")    t))
-	  (unless (assoc-default "gnu" package-archives)
-		(add-to-list 'package-archives '("gnu"   . "https://elpa.gnu.org/packages/") t))
-	  (unless (assoc-default "org" package-archives)
-		(add-to-list 'package-archives '("org"   . "https://orgmode.org/elpa/")      t))
-	  (package-initialize))
-
-	(unless (package-installed-p 'use-package)
-	  (package-refresh-contents)
-	  (package-install 'use-package))
-
-	(eval-when-compile
-	  (require 'use-package))
-
-	(use-package editorconfig
-	  :ensure t
-	  :diminish editorconfig-mode
-	  :config
-	  (editorconfig-mode 1))
-
-	(use-package abbrev
-	  :diminish abbrev-mode
-	  :config
-	  (setq abbrev-file-name
-			"~/.emacs.d/abbrev_defs")
-	  (setq save-abbrevs t)
-	  (if (file-exists-p abbrev-file-name)
-		  (quietly-read-abbrev-file)))
-
-	;; LSP mode configuration
-	(use-package lsp-mode
-	  :commands lsp
-	  :hook (c++-mode python-mode go-mode-hook)
-	  :init
-	  (setq lsp-prefer-flymake nil))
-
-	(use-package lsp-ui :commands lsp-ui-mode)
-	(use-package company-lsp :commands company-lsp)
-
-	(use-package cperl-mode)
-
-	(use-package erc
-	  :ensure nil
-	  :defer t
-	  :config
-	  (setq erc-hide-list '("PART" "QUIT" "JOIN" "NICK")
-			erc-autojoin-channels-alist	'(("freenode.net"
-										   "##programming"
-										   "#emacs"
-										   "#emacs-beginners"
-										   "#org-mode"
-										   "#ledger"
-										   "#plaintextaccounting"))
-			erc-server "irc.freenode.net"
-			erc-nick "paraparity"
-			erc-kill-buffer-on-part t
-			erc-scrolltobottom-mode t))
-
-	(use-package flycheck
-	  :ensure t)
-
-	(use-package keyfreq
-	  :config
-	  (keyfreq-mode 1)
-	  (keyfreq-autosave-mode 1))
-
-	 (use-package ledger-mode
-	   :mode ("\\.ledger$")
-	   :bind (:map ledger-mode-map
-				   ("C-x C-s" . my/ledger-save))
-	   :preface
-	   (defun my/ledger-save ()
-		 "Automatically clean the ledger buffer at each save."
-		 (interactive)
-		 (save-excursion
-		   (when (buffer-modified-p)
-			 (with-demoted-errors (ledger-mode-clean-buffer))
-			 (save-buffer))))
-	   :init
-	   (setq ledger-post-amount-alignment-column 120))
-
-	(use-package flycheck-ledger
-	  :after ledger-mode)
-
-	(use-package multiple-cursors
-	  :ensure t
-	  :bind (;; Note that recomended 'C->' and 'C-<' are not characters in the shell.
-			 ;; Thus I use their lowercase alternatives
-			 ("C-c ."   . mc/mark-next-like-this)
-			 ("C-c ,"   . mc/mark-previous-like-this)
-			 ("C-c /"   . mc/mark-all-like-this)
-			 ("C-c m m" . mc/mark-all-like-this-dwim)
-			 ("C-c m a" . mc/edit-beginnings-of-lines)
-			 ("C-c m e" . mc/edit-ends-of-lines)
-			 ("C-c m s" . mc/mark-sgml-tag-pair)
-			 ("C-c m l" . mc/edit-lines)
-			 ))
-
-	(use-package ob-C)
-	(use-package ob-ditaa)
-	(use-package ob-dot)
-	(use-package ob-js)
-	(use-package ob-perl)
-	(use-package ob-plantuml)
-	(use-package ob-sql)
-	(use-package ox-html)
-	(use-package ox-latex)
-	(use-package ox-ascii)
-	(use-package htmlize
-	  :ensure t)
-	(use-package sql)
-	(use-package tramp)
-	(use-package uniquify)
-
-	(use-package company
-	  :ensure t
-	  :diminish
-	  :bind (:map company-active-map
-				  ("M-n" . nil)
-				  ("M-p" . nil)
-				  ("C-n" . company-select-next)
-				  ("C-p" . company-select-previous))
-	  :init
-	  (global-company-mode)
-	  :config
-	  (setq company-idle-delay            nil)
-	  (setq company-minimum-prefix-length 2)
-	  (setq company-show-numbers          t)
-	  (setq company-tooltip-limit         20)
-	  (with-eval-after-load 'company
-		(global-set-key (kbd "C-c SPC") 'company-complete)))
-
-	(use-package company-lsp
-	  :after (company lsp-mode)
-	  :commands company-lsp
-	  :config
-	  (push 'company-lsp company-backends))
-
-	(use-package helm
-	  :diminish helm-mode
-	  :init (progn
-			  (require 'helm-config)
-			  (helm-mode))
-	  :bind (("C-c h"   . helm-command-prefix)
-			 ("M-x"     . helm-M-x)
-			 ("M-y"     . helm-show-kill-ring)
-			 ("C-x b"   . helm-mini)
-			 ("C-c h a" . helm-apropos)
-			 ("C-c h f" . helm-find-files)
-			 ("C-c h o" . helm-occur)
-			 ("C-c h m" . helm-man-woman))
-	  :config
-	  (require 'helm-command)
-	  (require 'helm-for-files)
-	  (require 'helm-imenu)
-	  (require 'helm-semantic)
-	  (require 'helm-misc)
-	  (setq helm-split-window-inside-p      t
-			helm-M-x-fuzzy-match            t
-			helm-buffers-fuzzy-matching     t
-			helm-recentf-fuzzy-match        t
-			helm-semantic-fuzzy-match       t
-			helm-imenu-fuzzy-match          t
-			helm-apropos-fuzzy-match        t
-			helm-candidate-number-limit   100
-			helm-autoresize-max-height     20
-			helm-autoresize-min-height      0)
-	  (add-to-list 'helm-sources-using-default-as-input 'heml-source-man-pages)
-	  (helm-autoresize-mode t))
-
-	(use-package projectile
-	  :ensure t
-	  :config
-	  (setq projectile-completion-system 'helm)
-	  (setq projectile-switch-project-action 'helm-projectile)
-	  (setq projectile-enable-caching t)
-	  (setq projectile-globally-ignored-directories
-			'(".git" "node_modules" "__pycache__" ".vs"))
-	  (setq projectile-globally-ignored-file-suffixes
-			'("#" "~" ".swp" ".o" ".so" ".exe" ".dll" ".elc" ".pyc" ".jar"))
-	  (setq projectile-globally-ignored-files
-			'("TAGS" "tags"))
-	  (with-eval-after-load "projectile"
-		(projectile-mode)
-		(helm-projectile-on)))
-
-	(use-package helm-projectile)
-
-	(use-package pdf-tools
-	  :pin manual
-	  :config
-	  (setq-default pdf-view-display-size 'fit-page)
-	  (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward))
-
-	(use-package yasnippet
-	  :diminish yas-minor-mode
-	  :diminish yas-global-mode
-	  :bind (("C-c y r" . yas-reload-all)
-			 ("C-c y n" . yas-new-snippet)
-			 ("C-c y x" . yas-exit-snippet)
-			 ("C-c y d" . yas-describe-tables)
-			 ("C-c y v" . yas-visit-snippet-file)
-			 ("C-c y l" . yas-load-snippet-buffer-and-close))
-	  :config
-	  (yas-global-mode 1))
-
-	(use-package js2-mode
-	  :defer t
-	  :mode "\\.js$"
-	  :config
-	  (require 'js2-refactor)
-	  (define-key js2-mode-map (kbd "M-.") nil)
-	  (add-hook 'js2-mode-hook #'js2-refactor-mode)
-	  (js2r-add-keybindings-with-prefix "C-c C-r")
-	  (define-key js2-mode-map (kbd "C-k") #'js2r-kill)
-	  (add-hook 'js2-mode-hook
-				(lambda ()
-				  (add-hook 'xref-backend-functions #'xref-js2-xref-backend nil t)))
-	  (add-hook 'js2-mode-hook
-				(lambda ()
-				  (setq mode-name "js2"))))
-
-	(use-package origami
-	  :bind (("C-<tab>" . origami-recursively-toggle-node)
-			 ("C-c u"   . origami-open-all-nodes)
-			 ("C-c f"   . origami-close-all-nodes)
-			 ("C-c n"   . origami-show-only-node)
-			 ("C-c r"   . origami-reset))
-	  :config
-	  (global-origami-mode t))
-
-	;; Split out auto-generated customizations
-	(setq custom-file "~/.emacs.d/custom.el")
-	(when (file-exists-p custom-file)
-	  (load custom-file 'noerror))
-
-	;; Load Custom Libraries
-	;;(load-library "irc")
-	;;(load-library "fly-conf")
-	(load-library "keybindings")
-	(load-library "org-conf")
-	(load-library "elfeed-conf")
-
-	;; File Backup Management
-	(setq backup-by-copying t
-		  backup-directory-alist `(("." . "~/saves"))
-		  delete-old-versions t
-		  kept-new-versions 6
-		  kept-old-versions 2
-		  version-control t)
-
-	;; Autosave File Management
-	(setq auto-save-file-name-transforms
-		  `((".*" ,temporary-file-directory t)))
-
-	;; Add Abbrev-Mode Hooks
-	(dolist (hook '(erc-mode-hook
-					emacs-lisp-mode-hook
-					text-mode-hook
-					org-mode-hook))
-	  (add-hook hook (lambda () (abbrev-mode 1))))
-	;; (setq default-abbrev-mode t) ;; Or, default on everywhere
-
-	;; Tramp Configuration
-	; TODO: if windows: use PuTTy Plink; if *nix: use ssh
-	(set-default 'tramp-auto-save-directory "~/.saves/tramp/")
-	(setq tramp-default-method "ssh")
-
-	;; Transparency?
-	(set-frame-parameter (selected-frame) 'alpha '(92 . 90))
-	(add-to-list 'default-frame-alist '(alpha . (92 . 90)))
-
-	;; Other Mode Customizations
-	(desktop-save-mode 1)
-	(setq auto-window-vscroll nil)
-	(setq frame-title-format "Emacs")
-	(setq require-final-newline t)
-	(fset 'yes-or-no-p 'y-or-n-p)
-	(global-hl-line-mode t)
-	(display-time-mode 1)
-	(tool-bar-mode -1)
-	(menu-bar-mode -1)
-	(scroll-bar-mode -1)
-	(show-paren-mode 1)
-	(set-frame-font "monospace-11")
-	(setq epg-gpg-program "gpg2")
-
-	;; Auth
-	(setq auth-sources
-		  '((:source "~/.emacs.d/secrets/.authinfo.gpg")))
-
-	;; Disable Trailing Whitespace highlight by Mode
-	(add-hook 'eshell-mode-hook
+	(add-hook 'org-mode-hook 'turn-on-auto-fill)
+	(add-hook 'org-mode-hook
 			  '(lambda () (setq show-trailing-whitespace nil)))
-	(add-hook 'buffer-menu-mode-hook
-			  '(lambda () (setq show-trailing-whitespace nil)))
+	(add-hook 'org-mode-hook
+			  '(lambda () (origami-mode nil)))
 
-	;; Magit/VC configuration
-	(setq vc-handled-backends (delq 'Git vc-handled-backends))
+	(setq org-clock-in-switch-to-state "STARTED")
+	(setq org-clock-report-include-clocking-task t)
+	(setq org-log-into-drawer "LOGBOOK")
+	(setq org-clock-into-drawer 1)
+	(setq org-log-done 'time)
 
-	;; Set mode by File Ext. (generic)
-	(add-to-list 'auto-mode-alist '("\\.py$"            . python-mode))
-	(add-to-list 'auto-mode-alist '("\\.org$"           . org-mode))
-	(add-to-list 'auto-mode-alist '("\\.ts$"            . typescript-mode))
-	(add-to-list 'auto-mode-alist '("\\.css$"           . css-mode))
-	(add-to-list 'auto-mode-alist '("\\.md$"            . markdown-mode))
-	(add-to-list 'auto-mode-alist '("\\.markdown$"      . markdown-mode))
-	(add-to-list 'auto-mode-alist '("\\.hbs$"           . handlebars-mode))
-	(add-to-list 'auto-mode-alist '("\\.README\\.md$"   . gfm-mode))
-	(add-to-list 'auto-mode-alist '("Jenkinsfile$"      . groovy-mode))
+	(setq org-clock-continuously t)
+	(setq org-clock-in-resume t)
+	(setq org-expiry-inactive-timestamps t)
+	(setq org-src-window-setup 'current-window)
 
-	;; Perl Configurations
-	(defalias 'perl-mode 'cperl-mode)
-	(defvaralias 'c-basic-offset 'tab-width)
-	(defvaralias 'cperl-indent-level 'tab-width)
+	(org-clock-persistence-insinuate); Resume clocking task when emacs is restarted
 
-	;; Override perl-mode with cperl-mode
-	(mapc
-	 (lambda (pair)
-	   (if (eq (cdr pair) 'perl-mode)
-		   (setcdr pair 'cperl-mode)))
-	 (append auto-mode-alist interpreter-mode-alist))
+	;; Links - use like: cpan:HTML or rfc-txt:7522
+	(setq org-link-abbrev-alist
+		  '(("rfc-txt" . "https://tools.ietf.org/rfc/rfc%s.txt")
+			("cpan"    . "https://metacpan.org/search?q=%s")
+			("ese"     . "https://emacs.stackexchange.com/search?q=%s")))
 
-	;;; HELPERS
+	;; Agenda Files:
+	(setq org-agenda-files
+		  '("~/org/agendas/organizer.org"
+			"~/org/agendas/tickler.org"
+			"~/org/agendas/waiting-on.org"
+			;;"~/org/agendas/<person>.org"
+			"~/org/agendas/review.org"
+			"~/org/agendas/inbox.org"))
 
-	;; Display which-function-mode, and do so in headerline instead of mode line
-	(which-function-mode)
-	(setq mode-line-misc-info (delete (assoc 'which-func-mode
-						 mode-line-misc-info) mode-line-misc-info)
-		  which-func-header-line-format '(which-func-mode ("" which-func-format)))
+	;; Org Todo Configuration:
+	(setq org-todo-keywords
+		  '((sequence "TODO(t)" "STARTED(s)" "WAITING(w@)" "|" "DONE(d)" "DROP(x@)")
+			(sequence "REVIEW(r)"                          "|" "REVIEWED(v)")
+			(sequence "MAYBE(m)"                           "|" "DROP(x@)")
+			(sequence "OPEN(o)"                            "|" "CLOSED(c)")))
 
-	(defadvice which-func-ff-hook (after header-line activate)
-	  (when which-func-mode
-		(setq mode-line-misc-info (delete (assoc 'which-func-mode
-							 mode-line-misc-info) mode-line-misc-info)
-		  header-line-format which-func-header-line-format)))
+	;; Faces Customization
+	(setq org-todo-keyword-faces
+		  '(("STARTED" . "cyan")
+			("MAYBE"   . "purple")
+			("WAITING" . (:foreground "yellow" :weight bold))
+			("DROP"    . "DimGray")))
 
-	;; Regardless of which buffer you're in, jump to the active minibuffer
-	(defun switch-to-minibuffer ()
-	  "Switch to minibuffer window."
-	  (interactive)
-	  (if (active-minibuffer-window)
-		  (select-window (active-minibuffer-window))
-		(error "Minibuffer is not active")))
+	(setq org-tag-alist
+		  '(("@apartment"   . ?A)
+			("@career"      . ?C)
+			("@finances"    . ?F)
+			("@guild"       . ?G)
+			("@health"      . ?H)
+			("@learn"       . ?L)
+			("@network"     . ?N)
+			("@office"      . ?O)
+			("@read"        . ?R)
+			("@self"        . ?S)
+			("@travel"      . ?V)
+			("@workstation" . ?W)
+			("PROJECT"      . ?P)
+			("TASK"         . ?T)
+			("NEXT"         . ?X)
+			("org-journal"  . ?j)
+			))
 
-	(defun occur-non-ascii ()
-	  "Find any non-ascii characters in the current buffer."
-	  (interactive)
-	  (occur "[[:nonascii:]]"))
+	(setq org-tags-exclude-from-inheritance '("PROJECT")
+		  org-stuck-projects '("+PROJECT/-WAITING-DONE"
+							   ("TODO" "STARTED") ()))
 
+	;; Org Agenda Custom Commands
+	;;; BEGIN HELPERS
+	(defun air/org-skip-subtree-if-priority (priority)
+	  "Skip an agenda subtree if it has a priority of PRIORITY.
+
+	PRIORITY may be one of the characters ?A, ?B, or ?C."
+	  (let ((subtree-end (save-excursion (org-end-of-subtree t)))
+			(pri-value (* 1000 (- org-lowest-priority priority)))
+			(pri-current (org-get-priority (thing-at-point 'line t))))
+		(if (= pri-value pri-current)
+			subtree-end
+		  nil)))
+
+	(defun air/org-skip-subtree-if-habit ()
+	  "Skip an agenda entry if it has a STYLE property equal to \"habit\"."
+	  (let ((subtree-end (save-excursion (org-end-of-subtree t))))
+		(if (string= (org-entry-get nil "STYLE") "habit")
+			subtree-end
+		  nil)))
 	;;; END HELPERS
 
-	;; Enable flycheck globally:
-	(add-hook 'after-init-hook #'global-flycheck-mode)
 
-	;; Customize flycheck
-	;; Disable clang check, gcc check works better
-	(setq-default flycheck-disabled-checkers
-				  (append flycheck-disabled-checkers
-						  '(c/c++-clang)))
+	;; Org Agenda Conf
+	(setq org-agenda-skip-deadline-if-done t
+		  org-agenda-skip-scheduled-if-done t)
 
-	;; Enable C++14 support for GCC
-	(add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++14")))
+	;; (setq org-agenda-custom-commands
+	;; 	  ;; (1 key) (2 description (optional)) (3 type of search) (4 search term)
+	;; 	  '(("c" "Desk Work" tags-todo "computer"
+	;; 		 ((org-agenda-files '("~/org/widgets.org" "~/org/clients.org")) ;; (5 settings (optional))
+	;; 		  (org-agenda-sorting-strategy '(priority-up effort-down))) ;; (5 cont)
+	;; 		 ("~/computer.html")) ;; (6 export files (optional))
+	;; 		;; ... other commands
+	;; 		))
+	(setq org-agenda-custom-commands
+		  '(("d" "Daily agenda and all TODOs"
+			 ((tags "PRIORITY=\"A\""
+					((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+					 (org-agenda-overriding-header "High-Priority Unfinished Tasks:")))
+			  (agenda ""
+					  ((org-agenda-span 1)))
+			  (alltodo ""
+					   ((org-agenda-skip-function
+						 '(or (air/org-skip-subtree-if-habit)
+							  (air/org-skip-subtree-if-priority ?A)
+							  (org-agenda-skip-if nil '(scheduled deadline))))
+						(org-agenda-overriding-header "All Normal Priority Tasks:"))))
+			  ((org-agenda-compact-blocks t)))
+			("D" "Daily Action List"
+			 ((agenda ""
+					  ((org-agenda-span 1)
+					   (org-agenda-sorting-strategy
+					   '((agenda time-up priority-down tag-up)))
+					   (org-deadline-warning-ndays 0)))
+			  ))
+			("w" "Weekly Review"
+			 ((agenda ""
+					  ((org-agenda-span 7)))
+			  (stuck "")
+			  (tags "PROJECT")
+			  (todo "WAITING")
+			  ))
+			("y" "Someday Maybe"
+			 ((todo "MAYBE"
+					((org-agenda-files '("~/org/maybe.org"))))
+			  ))
+			("r" "Review"
+			 ((todo "REVIEW"
+					((org-agenda-files '("~/org/review.org"))))
+			  ))
+			("X" "Upcoming Deadlines"
+			 ((agenda ""
+					  ((org-agenda-entry-types '(:deadline))
+					   (org-agenda-span 1)
+					   (org-deadline-warning-days 60)
+					   (org-agenda-time-grid nil)))
+			  ))
+			("P" "Printed agenda"
+			 ((agenda ""
+					  ((org-agenda-span 7)
+					   (org-agenda-start-on-weekday nil)
+					   (org-agenda-repeating-timestamp-show-all t)
+					   (org-agenda-entry-types '(:timestamp :sexp))))
+			  (agenda ""
+					  ((org-agenda-span 1)
+					   (org-deadline-warning-days 7)
+					   (org-agenda-todo-keyword-format "[ ]")
+					   (org-agenda-scheduled-leaders '("" ""))
+					   (org-agenda-prefix-format "%t%s")))
+			  (todo "TODO"
+					((org-agenda-prefix-format "[ ] %T: ")
+					 (org-agenda-sorting-strategy '(tag-up prority-down))
+					 (org-agenda-todo-keyword-format "")
+					 (org-agenda-overriding-header "\nTasks by Context\n-----------------\n"))))
+			 ((org-agenda-with-colors nil)
+			  (org-agenda-compact-blocks t)
+			  (org-agenda-remove-tags t)
+			  (ps-number-of-columns 2)
+			  (ps-landscape-mode t))
+			 ("~/agenda.ps"))
+			("Q" . "Custom Queries")
+			("Qa" "Archive Search"
+			 ((search ""
+					  ((org-agenda-files
+						(file-expand-wildcards "~/org/archive/*.org"))))
+			  ))
+			("QA" "Archive Tags Search"
+			 ((org-tags-view ""
+							 ((org-agenda-files
+							   (file-expand-wildcards "~/org/archive/*.org"))))
+			 ))
+			))
 
+	;; Org Journal Configuration
+	(setq org-journal-dir "~/org/journal/")
+	(setq org-journal-file-format "%Y%m%d")
+	(setq org-journal-date-format "%e %b %Y (%A)")
+	;;(setq org-journal-time-format "")
+
+	(defun get-journal-file-yesterday ()
+	  "Gets filename for yesterday's journal entry."
+	  (let* ((yesterday (time-subtract (current-time) (days-to-time 1)))
+			 (daily-name (format-time-string "%Y%m%d" yesterday)))
+		(expand-file-name (concat org-journal-dir daily-name))))
+
+	(defun journal-file-yesterday ()
+	  "Create and load a file based on yesterday's date."
+	  (interactive)
+	  (find-file (get-journal-file-yesterday)))
+
+	(defun org-journal-find-location ()
+	  "Open today's journal.
+	Specify a non-nil prefix to inhibit inserting the heading"
+	  (org-journal-new-entry t)
+	  (goto-char (point-min)))
+
+	;; Org Capture Configuration
+	(defvar org-capture-templates (list))
+
+	(add-to-list 'org-capture-templates
+				 `("t" "Todo" entry (file+headline "~/org/inbox.org" "Tasks")
+				   "\n* TODO %? :TASK:\n %i\n %a" :empty-lines 1))
+
+	(add-to-list 'org-capture-templates
+				 `("p" "Project" entry (file+headline "~/org/inbox.org" "Projects")
+				   "\n* TODO %? :PROJECT:\n %i\n %a" :empty-lines 1))
+
+	(add-to-list 'org-capture-templates
+				 `("j" "Journal" entry (function org-journal-find-location)
+				   "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?"))
+
+	(add-to-list 'org-capture-templates
+				 `("n" "Note" entry (file+headline "~/org/refile.org" "Notes")
+				   "* %?\n %i\n See: %a" :empty-lines 1))
+
+	(add-to-list 'org-capture-templates
+				 `("T" "Tickler" entry (file+headline "~/org/tickler.org" "Tickler")
+				   "\n* %i%? \n %U" :empty-lines 1))
+
+	(add-to-list 'org-capture-templates
+				 `("c" "Item to Current Clock" item
+				   (clock)
+				   "%i%?" :empty-lines 1))
+
+	(add-to-list 'org-capture-templates
+				 `("r" "Region to Current Clock" plain
+				   (clock)
+				   "%i" :immediate-finish t :empty-lines 1))
+
+
+	;;; BEGIN Capture Helpers
+	(defun region-to-clocked-task (start end)
+	  "Copies the selected text, from START to END, to the currently clocked in `org-mode` task."
+	  (interactive "r")
+	  (org-capture-string (buffer-substring-no-properties-start end) "C"))
+	(global-set-key (kbd "C-<F1>") 'region-to-clocked-task)
+
+	;; Meeting Focus
+	(defun meeting-notes ()
+	  "Call this after creating an `org-mode` heading for a meeting's notes.
+	After calling this function, call 'meeting-done' to reset the environment."
+	  (interactive)
+	  (outline-mark-subtree)
+	  (narrow-to-region (region-beginning) (region-ending))
+	  (deactivate-mark)
+	  (delete-other-windows)
+	  (text-scale-set 2)
+	  (fringe-mode 0)
+	  (message "When finished taking notes, run meeting-done"))
+
+	(defun meeting-done ()
+	  "Mostly restore the pre-meeting settings."
+	  (interactive)
+	  (widen)
+	  (text-scale-set 0)
+	  (fringe-mode 1)
+	  (winner-undo))
+	;;; END Capture Helpers
+
+	;; Org Refile Configuration
+	(setq org-refile-targets '((org-agenda-files :maxlevel . 6)))
+	;(setq org-outline-path-complete-in-steps nil)
+	(setq org-refile-allow-creating-parent-nodes 'confirm)
+
+	;; Org Babel Configuration
+	(setq org-ditaa-jar-path "/usr/bin/ditaa.jar")
+	(setq org-plantuml-jar-path "/usr/share/plantuml/plantuml.jar")
+
+	(add-hook 'org-babel-after-execute-hook 'bh/display-inline-images 'append)
+
+	(setq org-src-fontify-natively t
+		  org-src-tab-acts-natively t)
+
+	(defun bh/display-inline-images ()
+	  "Display inline images."
+	  (condition-case nil
+		  (org-display-inline-images)
+		(error nil)))
+
+	(org-babel-do-load-languages
+	 'org-babel-load-languages
+	 '((C          . t)
+	   (ditaa      . t)
+	   (dot        . t)
+	   (emacs-lisp . t)
+	   (gnuplot    . t)
+	   (js         . t)
+	   (latex      . t)
+	   (ledger     . t)
+	   (org        . t)
+	   (perl       . t)
+	   (plantuml   . t)
+	   (python     . t)
+	   (sh         . t)
+	   (sql        . t)))
+
+	(add-to-list 'org-src-lang-modes (quote ("plantuml" . fundamental)))
+  #+end_src
+
+
+* Development
+  This section contains customizations for development and working within coding environments
+
+** On The Fly Checking
+   
+   #+begin_src emacs-lisp
+	 (require 'flycheck)
+	 (require 'projectile)
+
+	 (add-hook 'after-init-hook #'global-flycheck-mode)
+
+	 (setq flycheck-checkers
+		   (quote (asciidoc
+				   c/c++-clang
+				   c/c++-cppcheck
+				   css-csslint
+				   emacs-lisp
+				   emacs-lisp-checkdoc
+				   handlebars
+				   html-tidy
+				   javascript-eslint
+				   json-jsonlint
+				   less
+				   make
+				   perl
+				   perl-perlcritic
+				   python-flak8
+				   python-pylint
+				   rust
+				   sh-bash
+				   sh-posix-bash
+				   sh-zsh
+				   sh-spellcheck
+				   tex-chktex
+				   tex-lacheck
+				   texinfo
+				   xml-xmlstarlet
+				   xml-xmllint
+				   yaml-jayaml
+				   yaml-ruby)))
+	 ;; Others: cfenging chef-foodcritic coffee coffee-coffeelint d-dmd elixir
+	 ;;         erlang eruby-erubis go-gofmt go-golint go-vet go-build go-test
+	 ;;         haml haskell-ghc haskell-hlint lua php php-phpmd php-phpcs
+	 ;;         puppet-parser puppet-lint racket rst rst-sphinx ruby-rubocop
+	 ;;         ruby-rubylint ruby ruby-jruby sass scala scss slim verilog-verilator
+
+	 (setq-default flycheck-disabled-checkers
+				   (quote(javascript-jshint
+						  javascript-jslint
+						  javascript-gjslint)))
+
+	 ;; Use project relative eslint; see https://emacs.stackexchange.com/questions/21205
+	 (defun my/use-eslint-from-node-modules ()
+	   "Use project local eslint node modules."
+	   (let* ((root (locate-dominating-file
+					 (or (buffer-file-name) default-directory)
+					 "node_modules"))
+			  (eslint (and root
+						   (expand-file-name "node_modules/eslint/bin/eslint.js"
+											 root))))
+		 (when (and eslint (file-executable-p eslint))
+		   (setq-local flycheck-javascript-eslint-executable eslint))))
+
+	 (add-hook 'flycheck-mode-hook #'my/use-eslint-from-node-modules)
+
+	 ;; See: https://emacs.stackexchange.com/questions/13065
+	 ;; (defun setup-flycheck-clang-project-path ()
+	 ;;   "Use project local clang."
+	 ;;   (let ((root (ignore-errors (projectile-project-root))))
+	 ;; 	(when root
+	 ;; 	  (add-to-list
+	 ;; 	   (make-variable-buffer-local 'flycheck-clang-include-path)
+	 ;; 	   root))))
+
+	 ;; (add-hook 'c++-mode-hook 'setup-flycheck-clang-project-path)
+   #+end_src
+
+
+* Keybinding Overrides
+  This section contains my keybinding overrides. After all the work we've done to get things set up or customized to my
+  liking, I still need to sing to my own tune and play my own chords.
+
+  #+begin_src emacs-lisp
+	;; Buffer Key Bindings
+	(global-set-key (kbd "C-S-<left>") 'shrink-window-horizontally)
+	(global-set-key (kbd "C-S-<right>") 'enlarge-window-horizontally)
+	(global-set-key (kbd "C-S-<down>") 'shrink-window)
+	(global-set-key (kbd "C-S-<up>") 'enlarge-window)
+	(global-set-key (kbd "C-x |") 'window-toggle-split-direction)
+	(global-set-key (kbd "C-c o") 'switch-to-minibuffer)
+	(global-set-key (kbd "<f8>") 'flyspell-buffer)
+	(global-set-key (kbd "<f6>") 'speedbar)
+
+	;; Org-Mode Keybindings
+	(global-set-key (kbd "C-c a") 'org-agenda)
+	(global-set-key (kbd "C-c c") 'org-capture)
+	(global-set-key (kbd "C-c l") 'org-store-link)
+
+	;; Elfeed Keybindings
+	(global-set-key (kbd "C-x w") 'elfeed)
+
+	;; Misc Keybindings
+	(global-set-key (kbd "<f5>") 'delete-trailing-whitespace)
+	(global-set-key (kbd "C-x #") 'comment-or-uncomment-region)
+	(global-set-key (kbd "C-c d") 'duplicate-current-line-or-region)
+	;;(global-set-key (kbd "M-.") 'find-tag-other-window)
+
+	;; Numpad Key Bindings
+	(global-set-key "\eOp" "0")
+	(global-set-key "\eOq" "1")
+	(global-set-key "\eOr" "2")
+	(global-set-key "\eOs" "3")
+	(global-set-key "\eOt" "4")
+	(global-set-key "\eOu" "5")
+	(global-set-key "\eOv" "6")
+	(global-set-key "\eOw" "7")
+	(global-set-key "\eOx" "8")
+	(global-set-key "\eOy" "9")
+	(global-set-key "\eOl" "+")
+	(global-set-key "\eOn" ".")
+
+	;; Modal Key Bindings
+	(add-hook 'cperl-mode-hook
+			  (lambda ()
+				(local-set-key (kbd "C-h f") 'cperl-perldoc)))
+
+	;; Kill the bane of my fat-fingers
+	(global-unset-key (kbd "C-z"))
+	(global-unset-key (kbd "C-x C-z"))
+  #+end_src
+
+
+* Final Countdown
+  This section contains the last moment configurations that wrap up my personal customization and Emacs load. Here we'll
+  kill mode-line clutter and start up the Emacs server.
+
+  #+begin_src emacs-lisp
+	;; Get rid of mode line clutter and unnecessary notifications
 	(diminish 'auto-revert-mode)
 	(diminish 'visual-line-mode)
 	(diminish 'js2-refactor-mode)
@@ -421,12 +919,11 @@
 	  (setenv "EDITOR" (concat "~/usr/local/bin/emacsclient -s " server-name)))
 
 	;;(put 'narrow-to-region 'disabled nil)
-
-	(provide 'init.el)
-	;;; init.el ends here
   #+end_src
 
+
 * Configuration Reading
-  This section collects configurations I've stumbled across and bookmarked for "eventual" reading.
+  That's mostly it folks. Configuration is done, the rest are future works. This section collects configurations or
+  Emacs other configuration readings I've stumbled across and bookmarked for "eventual" reading.
 
   - http://kitchingroup.cheme.cmu.edu/blog/category/org-mode/
