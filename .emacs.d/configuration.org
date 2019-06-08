@@ -42,8 +42,6 @@
 	 ;;   https://github.com/howardabrams/dot-files
 	 ;;   https://github.com/skeeto/.emacs.d
 
-	 ;; test
-
 	 (setq enable-local-eval nil
 		   enable-local-variables nil)
 
@@ -58,22 +56,6 @@
 	 (set-default-coding-systems 'utf-8)
 	 (set-selection-coding-system 'utf-8)
 	 (prefer-coding-system 'utf-8)
-
-	 ;; Configure Package Manager
-	 (when (>= emacs-major-version 24)
-	   (require 'package)
-	   (defvar package-enabled-at-startup nil)
-	   (unless (assoc-default "melpa" package-archives)
-		 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/")    t))
-	   (unless (assoc-default "gnu" package-archives)
-		 (add-to-list 'package-archives '("gnu"   . "https://elpa.gnu.org/packages/") t))
-	   (unless (assoc-default "org" package-archives)
-		 (add-to-list 'package-archives '("org"   . "https://orgmode.org/elpa/")      t))
-	   (package-initialize))
-
-	 (unless (package-installed-p 'use-package)
-	   (package-refresh-contents)
-	   (package-install 'use-package))
 
 	 (eval-when-compile
 	   (require 'use-package))
