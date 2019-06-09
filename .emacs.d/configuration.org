@@ -76,11 +76,11 @@
    Pretty much just set the coding system to UTF-8. Also enable the Japanese language environment to support study.
 
    #+begin_src emacs-lisp
+	 (prefer-coding-system 'utf-8)
 	 (set-keyboard-coding-system 'utf-8)
 	 (set-terminal-coding-system 'utf-8)
 	 (set-selection-coding-system 'utf-8)
 	 (set-default-coding-systems 'utf-8)
-	 (prefer-coding-system 'utf-8)
 
 	 (set-language-environment "japanese")
    #+end_src
@@ -96,6 +96,10 @@
 	more lines of sweet, sweet text.
 
 	#+begin_src emacs-lisp
+	  (setq inhibit-startup-screen t
+			inhibit-startup-message t
+			initial-scratch-message nil)
+
 	  (tool-bar-mode -1)
 	  (menu-bar-mode -1)
 	  (scroll-bar-mode -1)
@@ -265,6 +269,19 @@
 * Emacs Interactions
   This section contains customizations which focus on Emacs navigation and interaction.
 
+** Auto Revert Buffers
+   In the event something has changed on the system, I want to pull in the updated files. Magit has been good about
+   doing this for version controlled files, however I've often noticed some buffer diffs for other files. Time to change
+   that.
+
+   #+begin_src emacs-lisp
+	 (use-package autorevert
+	   :ensure nil
+	   :diminish
+	   :init (global-auto-revert-mode))
+   #+end_src
+
+
 ** Multiple Cursors
    This package lets me spin up multiple cursors across lines or matching patterns which can lead to some pretty
    impressive editing and refactoring feats.
@@ -283,6 +300,7 @@
 			  ("C-c m s" . mc/mark-sgml-tag-pair)
 			  ("C-c m l" . mc/edit-lines)))
    #+end_src
+
 
 
 ** Helm
@@ -387,6 +405,7 @@
 			  ("C-c y v" . yas-visit-snippet-file)
 			  ("C-c y l" . yas-load-snippet-buffer-and-close))
 	   :config
+	   (setq yas-verbosity 1)
 	   (yas-global-mode 1))
    #+end_src
 
@@ -396,21 +415,18 @@
 
    #+begin_src emacs-lisp
 	 (use-package erc
-	   :ensure nil
 	   :defer t
 	   :config
-	   (setq erc-hide-list '("PART" "QUIT" "JOIN" "NICK")
-		 erc-autojoin-channels-alist '(("freenode.net"
-						"##programming"
-						"#emacs"
-						"#emacs-beginners"
-						"#org-mode"
-						"#ledger"
-						"#plaintextaccounting"))
-		 erc-server "irc.freenode.net"
-		 erc-nick "paraparity"
-		 erc-kill-buffer-on-part t
-		 erc-scrolltobottom-mode t))
+	   (setq erc-nick "paraparity"
+			 erc-hide-list '("PART" "QUIT" "JOIN" "NICK")
+			 erc-server "irc.freenode.net"
+			 erc-kill-buffer-on-part t
+			 erc-scrolltobottom-mode t
+			 erc-autojoin-channels-alist '(("irc.freenode.net"
+											"##programming"
+											"#org-mode"
+											"#ledger"
+											"#plaintextaccounting"))))
    #+end_src
 
 
@@ -446,7 +462,6 @@
 	(use-package org-agenda)
 	(use-package org-capture)
 	(use-package org-clock)
-	(use-package org-journal)
 	(use-package org-tempo)
 	(use-package ox)
 	(use-package ox-ascii)
@@ -465,6 +480,8 @@
 			  '(lambda () (origami-mode nil)))
 
 	(setq org-src-fontify-natively t
+		  org-src-preserve-indentation t
+		  org-edit-src-content-indentation t
 		  org-src-tab-acts-natively t)
   #+end_src
 
@@ -733,9 +750,13 @@
    Let's set up where my journal files are stored, and the format of the entries.
 
    #+begin_src emacs-lisp
-	 (setq org-journal-dir "~/org/journal/")
-	 (setq org-journal-file-format "%Y%m%d")
-	 (setq org-journal-date-format "%e %b %Y (%A)")
+	 (use-package org-journal
+	   :init
+	   (setq org-journal-dir "~/org/journal/"
+			 org-journal-file-format "%Y%m%d"
+			 org-journal-date-format "%e %b %Y (%A)")
+	   :config
+	   (setq org-journal-date-prefix "#+TITLE: Daily Note for "))
    #+end_src
 
 *** Journal Helpers
@@ -885,7 +906,7 @@
 		 (perl       . t)
 		 (plantuml   . t)
 		 (python     . t)
-		 (sh         . t)
+		 (shell      . t)
 		 (sql        . t)))
 	#+end_src
 
@@ -990,7 +1011,7 @@
 	 (add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++14")))
 
 	 ;; Use project relative eslint; see https://emacs.stackexchange.com/questions/21205
-	 (defun my/use-eslint-from-node-modules ()
+	 (defun para/use-eslint-from-node-modules ()
 	   "Use project local eslint node modules."
 	   (let* ((root (locate-dominating-file
 					 (or (buffer-file-name) default-directory)
@@ -1001,7 +1022,7 @@
 		 (when (and eslint (file-executable-p eslint))
 		   (setq-local flycheck-javascript-eslint-executable eslint))))
 
-	 (add-hook 'flycheck-mode-hook #'my/use-eslint-from-node-modules)
+	 (add-hook 'flycheck-mode-hook #'para/use-eslint-from-node-modules)
 
 	 ;; Enable flycheck globally:
 	 (add-hook 'after-init-hook #'global-flycheck-mode)
@@ -1031,13 +1052,14 @@
 				   ("M-p" . nil)
 				   ("C-n" . company-select-next)
 				   ("C-p" . company-select-previous))
-	   :init
-	   (global-company-mode)
+	   :init (global-company-mode)
 	   :config
-	   (setq company-idle-delay            nil)
-	   (setq company-minimum-prefix-length 2)
-	   (setq company-show-numbers          t)
-	   (setq company-tooltip-limit         20)
+	   (setq company-tooltip-align-annotations t
+			 company-idle-delay nil
+			 company-minimum-prefix-length 2
+			 company-require-match nil
+			 company-show-numbers t
+			 company-tooltip-limit 20)
 	   (with-eval-after-load 'company
 		 (global-set-key (kbd "C-c SPC") 'company-complete)))
    #+end_src
@@ -1078,10 +1100,20 @@
    #+end_src
 
 
-** Magit and Version Control
+** TODO Magit and Version Control
+   Magical Git interactions in Emacs.
+
    #+begin_src emacs-lisp
 	 (setq vc-handled-backends (delq 'Git vc-handled-backends))
+
+	 (use-package magit
+	   :ensure t
+	   :defer t
+	   :bind ("C-x g" . magit-status))
    #+end_src
+
+
+** TODO Treemacs
 
 
 ** Language Configurations
@@ -1149,15 +1181,16 @@
 
 * More Emacs Modes
 ** Ledger - Command Line Accounting
-   Set up ledger-mode.
+   Ledger, the command line double booking entry system. A geeky way to track your finances, with support in Emacs via
+   ~ledger-mode~!
 
    #+begin_src emacs-lisp
 	 (use-package ledger-mode
 	   :mode ("\\.ledger$")
 	   :bind (:map ledger-mode-map
-				   ("C-x C-s" . my/ledger-save))
+				   ("C-x C-s" . para/ledger-save))
 	   :preface
-	   (defun my/ledger-save ()
+	   (defun para/ledger-save ()
 		 "Automatically clean the ledger buffer at each save."
 		 (interactive)
 		 (save-excursion
@@ -1298,3 +1331,14 @@
   Emacs other configuration readings I've stumbled across and bookmarked for "eventual" reading.
 
   - http://kitchingroup.cheme.cmu.edu/blog/category/org-mode/
+
+
+** TODO List [0/8]
+   - [ ] https://github.com/hungptit/tools and integration w/ Emacs
+   - [ ] fzf - fuzzy file finding
+   - [ ] MacOS X / Linux config
+   - [ ] exec-path-from-shell
+   - [ ] sx - stack exchange integration?
+   - [ ] restclinet
+   - [ ] org-mode blogging
+   - [ ] markdown mode

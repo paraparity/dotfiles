@@ -44,7 +44,7 @@
   (add-hook 'after-init-hook 'benchmark-init/deactivate))
 
 (add-hook 'after-init-hook
-		  (lambda () (message "loaded in $s" (emacs-init-time))))
+		  (lambda () (message "loaded in %s" (emacs-init-time))))
 
 ;; Load from literate configuration
 (org-babel-load-file "~/.emacs.d/configuration.org")
