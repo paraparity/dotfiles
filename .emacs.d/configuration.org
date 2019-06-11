@@ -422,11 +422,7 @@
 			 erc-server "irc.freenode.net"
 			 erc-kill-buffer-on-part t
 			 erc-scrolltobottom-mode t
-			 erc-autojoin-channels-alist '(("irc.freenode.net"
-											"##programming"
-											"#org-mode"
-											"#ledger"
-											"#plaintextaccounting"))))
+			 erc-autojoin-channels-alist '(("freenode.net" "##programming" "#org-mode"))))
    #+end_src
 
 
@@ -480,8 +476,6 @@
 			  '(lambda () (origami-mode nil)))
 
 	(setq org-src-fontify-natively t
-		  org-src-preserve-indentation t
-		  org-edit-src-content-indentation t
 		  org-src-tab-acts-natively t)
   #+end_src
 
@@ -968,7 +962,6 @@
 
 	 (setq flycheck-checkers
 		   (quote (asciidoc
-				   c/c++-clang
 				   c/c++-cppcheck
 				   css-csslint
 				   emacs-lisp
@@ -985,7 +978,6 @@
 				   python-pylint
 				   rust
 				   sh-bash
-				   sh-posix-bash
 				   sh-zsh
 				   sh-spellcheck
 				   tex-chktex
@@ -993,8 +985,7 @@
 				   texinfo
 				   xml-xmlstarlet
 				   xml-xmllint
-				   yaml-jayaml
-				   yaml-ruby)))
+				   yaml-jayaml)))
 	 ;; Others: cfenging chef-foodcritic coffee coffee-coffeelint d-dmd elixir
 	 ;;         erlang eruby-erubis go-gofmt go-golint go-vet go-build go-test
 	 ;;         haml haskell-ghc haskell-hlint lua php php-phpmd php-phpcs
@@ -1198,7 +1189,7 @@
 			 (with-demoted-errors (ledger-mode-clean-buffer))
 			 (save-buffer))))
 	   :init
-	   (setq ledger-post-amount-alignment-column 120))
+	   (setq ledger-post-amount-alignment-column 80))
 
 	 (use-package flycheck-ledger
 	   :after ledger-mode)
