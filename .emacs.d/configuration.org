@@ -895,7 +895,7 @@
 		 (gnuplot    . t)
 		 (js         . t)
 		 (latex      . t)
-		 (ledger     . t)
+		 ;;(ledger     . t)
 		 (org        . t)
 		 (perl       . t)
 		 (plantuml   . t)
@@ -1175,7 +1175,7 @@
    Ledger, the command line double booking entry system. A geeky way to track your finances, with support in Emacs via
    ~ledger-mode~!
 
-   #+begin_src emacs-lisp
+   #+begin_src emacs-lisp :tangle no
 	 (use-package ledger-mode
 	   :mode ("\\.ledger$")
 	   :bind (:map ledger-mode-map
@@ -1318,14 +1318,34 @@
 
 
 * Configuration Reading
-  That's mostly it folks. Configuration is done, the rest are future works. This section collects configurations or
-  Emacs other configuration readings I've stumbled across and bookmarked for "eventual" reading.
+  That's mostly it folks. Configuration is done, the rest are future works. This section collects other articles or
+  configurations I've stumbled across and bookmarked for "eventual" reading.
 
+  - https://katherine.cox-buday.com/blog/2015/03/14/writing-specs-with-org-mode/
   - http://kitchingroup.cheme.cmu.edu/blog/category/org-mode/
+  - https://ladicle.com/post/config/#screenshot
+  - https://orgmode.org/worg/org-web.html
+  - https://github.com/ianpan870102/.emacs.d
 
 
-** TODO List [0/8]
+** TODO List [0/25]
    - [ ] https://github.com/hungptit/tools and integration w/ Emacs
+   - [ ] https://github.com/yjwen/org-reveal
+   - [ ] https://github.com/fniessen/org-html-themes
+   - [ ] hydra
+   - [ ] ivy
+   - [ ] treemacs
+   - [ ] lsp-mode, lsp-ui, company-lsp, dap-mode
+   - [ ] org-journal
+   - [ ] org-brain
+   - [ ] bbdb
+   - [ ] ox-slimhtml
+   - [ ] realgud
+   - [ ] bookmarks
+   - [ ] epg
+   - [ ] semantic
+   - [ ] tramp, docker-tramp
+   - [ ] docker-tramp
    - [ ] fzf - fuzzy file finding
    - [ ] MacOS X / Linux config
    - [ ] exec-path-from-shell
@@ -1333,3 +1353,12 @@
    - [ ] restclinet
    - [ ] org-mode blogging
    - [ ] markdown mode
+   - [ ] straight.el (some kind of package management?)
+
+
+** Explore List [0/1]
+   - [ ] https://gitlab.com/jaor/geiser
+
+
+* Other Reading
+  - https://lispcookbook.github.io/cl-cookbook/emacs-ide.html

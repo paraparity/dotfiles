@@ -5,7 +5,7 @@
 ;; Contains a few initialization optimizations.
 
 ;;; Code:
-(setq debug-on-error t)
+;;(setq debug-on-error t)
 
 ;; Since Emacs 27 hasn't yet been released, let's duplicate my gc code from my preemptive early-init.el
 ;; Defer garbage collection further back in the startup process
