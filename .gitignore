@@ -1,0 +1,2 @@
+# Ignore tangled babel output
+.emacs.d/configuration.el
