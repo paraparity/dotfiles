@@ -38,6 +38,9 @@
   (package-refresh-contents)
   (package-install 'use-package))
 
+(require 'use-package-ensure)
+(setq use-package-always-ensure t)
+
 ;; Since we're benchmarking. Let's see where I can do better
 (use-package benchmark-init
   :config

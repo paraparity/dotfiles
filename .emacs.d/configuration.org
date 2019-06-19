@@ -56,10 +56,15 @@
 	 (add-to-list 'load-path "~/.emacs.d/elisp/")
    #+end_src
 
-   Load my machine local custom librariers directly.
+   Load my machine local custom librariers directly, if they exist. Elfeed is only machine local because I've been lazy
+   in sharing it, and also I only pay attention to work related feeds on my work machine.
    #+begin_src emacs-lisp
-     (load-library "elfeed-conf")
+	 (if (file-readable-p "~/.emacs.d/elisp/elfeed-conf.el")
+		 (load-library "elfeed-conf"))
    #+end_src
+
+*** TODO Revise Elfeed Configuration
+	Do as the section header says
 
 
 ** Kill Dir-Locals
@@ -115,7 +120,7 @@
 	Let's make sure our buffers have unique names. If we were to open a file of the same name, but a different location
 	we only need them to be a little unique, not full file path or even relative file path unique.
 	#+begin_src emacs-lisp
-	  (use-package uniquify)
+	  (use-package uniquify :ensure nil)
 	#+end_src
 
 	Let's get some more screen real estate by using a small, code friendly font.
@@ -367,22 +372,23 @@
    creating shortcuts for words I type often.
 
    #+begin_src emacs-lisp
-     (use-package abbrev
-       :diminish abbrev-mode
-       :config
-       (setq abbrev-file-name
-		     "~/.emacs.d/abbrev_defs")
-       (setq save-abbrevs t)
-       (if (file-exists-p abbrev-file-name)
-	       (quietly-read-abbrev-file)))
+	 (use-package abbrev
+	   :ensure nil
+	   :diminish abbrev-mode
+	   :config
+	   (setq abbrev-file-name
+			 "~/.emacs.d/abbrev_defs")
+	   (setq save-abbrevs t)
+	   (if (file-exists-p abbrev-file-name)
+		   (quietly-read-abbrev-file)))
 
-     ;; Add Abbrev-Mode Hooks
-     (dolist (hook '(erc-mode-hook
-		     emacs-lisp-mode-hook
-		     text-mode-hook
-		     org-mode-hook))
-       (add-hook hook (lambda () (abbrev-mode 1))))
-     ;; (setq default-abbrev-mode t) ;; Or, default on everywhere
+	 ;; Add Abbrev-Mode Hooks
+	 (dolist (hook '(erc-mode-hook
+			 emacs-lisp-mode-hook
+			 text-mode-hook
+			 org-mode-hook))
+	   (add-hook hook (lambda () (abbrev-mode 1))))
+	 ;; (setq default-abbrev-mode t) ;; Or, default on everywhere
    #+end_src
 
 
@@ -448,22 +454,22 @@
 
   #+begin_src emacs-lisp
 	(use-package org)
-	(use-package ob-C)
-	(use-package ob-ditaa)
-	(use-package ob-dot)
-	(use-package ob-js)
-	(use-package ob-perl)
-	(use-package ob-plantuml)
-	(use-package ob-sql)
-	(use-package org-agenda)
-	(use-package org-capture)
-	(use-package org-clock)
-	(use-package org-tempo)
-	(use-package ox)
-	(use-package ox-ascii)
+	(use-package ob-C :ensure nil)
+	(use-package ob-ditaa :ensure nil)
+	(use-package ob-dot :ensure nil)
+	(use-package ob-js :ensure nil)
+	(use-package ob-perl :ensure nil)
+	(use-package ob-plantuml :ensure nil)
+	(use-package ob-sql :ensure nil)
+	(use-package org-agenda :ensure nil)
+	(use-package org-capture :ensure nil)
+	(use-package org-clock :ensure nil)
+	(use-package org-tempo :ensure nil)
+	(use-package ox :ensure nil)
+	(use-package ox-ascii :ensure nil)
 	(use-package ox-asciidoc)
-	(use-package ox-html)
-	(use-package ox-latex)
+	(use-package ox-html :ensure nil)
+	(use-package ox-latex :ensure nil)
 	(use-package ox-pandoc)
 	(use-package ox-slimhtml)
 
@@ -955,8 +961,7 @@
    immediately. This enforces a tight feedback loop in development.
 
    #+begin_src emacs-lisp
-	 (require 'flycheck)
-	 (require 'projectile)
+	 (use-package flycheck)
 
 	 (add-hook 'after-init-hook #'global-flycheck-mode)
 
@@ -1296,11 +1301,6 @@
   kill mode-line clutter and start up the Emacs server.
 
   #+begin_src emacs-lisp
-	;; Get rid of mode line clutter and unnecessary notifications
-	(diminish 'auto-revert-mode)
-	(diminish 'visual-line-mode)
-	(diminish 'js2-refactor-mode)
-
 	;; Make it so I can recover old sessions after close or reboot
 	(desktop-save-mode 1)
 
@@ -1326,6 +1326,16 @@
   - https://ladicle.com/post/config/#screenshot
   - https://orgmode.org/worg/org-web.html
   - https://github.com/ianpan870102/.emacs.d
+  - http://emacs.cafe/emacs/orgmode/gtd/2017/06/30/orgmode-gtd.html
+  - https://joshrollinswrites.com/emacsorg/org-capture-template-1/
+  - http://www.howardism.org/Technical/Emacs/getting-boxes-done.html
+  - http://www.howardism.org/Technical/Emacs/literate-programming-tutorial.html
+  - https://orgmode.org/worg/org-tutorials/org-latex-export.html
+  - https://www.gnu.org/software/tramp/#Configuration
+  - http://doc.norang.ca/org-mode.html
+
+  Collections:
+  - https://orgmode.org/worg/org-blog-articles.html
 
 
 ** TODO List [0/25]
@@ -1362,3 +1372,4 @@
 
 * Other Reading
   - https://lispcookbook.github.io/cl-cookbook/emacs-ide.html
+  - https://edwardtufte.github.io/tufte-css/
