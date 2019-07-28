@@ -26,6 +26,9 @@
 							 (float-time (time-subtract after-init-time before-init-time)))
 					 gcs-done)))
 
+(add-to-list 'load-path "~/.emacs.d/elpa")
+(add-to-list 'load-path "~/.emacs.d/elisp/")
+
 ;; Configure package.el to include melpa
 (require 'package)
 (setq package-archives '(("org"   . "https://orgmode.org/elpa/")
@@ -33,10 +36,18 @@
 						 ("melpa" . "https://melpa.org/packages/")))
 (package-initialize)
 
-;; Ensure that use-package is installed.
-(unless (package-installed-p 'use-package)
+;; Ensure desired packages are installed, cache package refresh contents
+(unless
+	(and (package-installed-p 'use-package)
+		 (package-installed-p 'org-plus-contrib))
   (package-refresh-contents)
-  (package-install 'use-package))
+
+  (unless (package-installed-p 'use-package)
+	(package-install 'use-package)
+	(package-install 'use-package-ensure-system-package))
+
+  (unless (package-installed-p 'org-plus-contrib)
+	(package-install 'org-plus-contrib)))
 
 (require 'use-package-ensure)
 (setq use-package-always-ensure t)

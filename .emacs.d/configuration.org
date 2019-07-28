@@ -448,9 +448,9 @@
 
 
 * Org-Mode Configuration
-  Honestly, org-mode is probably my biggest anchor to Emacs. I've tried org-mode-like plugins for other editors and
-  IDE's, but nothing compares to the real thing. Enshrined within this section is my configuration and customization of
-  Emacs org-mode.
+  Org-mode is probably my biggest anchor to Emacs. I've tried org-mode-like plugins for other editors and IDE's, but
+  nothing compares to the real thing. Enshrined within this section is my configuration and customization of Emacs
+  org-mode.
 
   #+begin_src emacs-lisp
 	(use-package org)
@@ -460,11 +460,10 @@
 	(use-package ob-js :ensure nil)
 	(use-package ob-perl :ensure nil)
 	(use-package ob-plantuml :ensure nil)
-	(use-package ob-sql :ensure nil)
+	(use-package ob-sql-mode)
 	(use-package org-agenda :ensure nil)
 	(use-package org-capture :ensure nil)
 	(use-package org-clock :ensure nil)
-	(use-package org-tempo :ensure nil)
 	(use-package ox :ensure nil)
 	(use-package ox-ascii :ensure nil)
 	(use-package ox-asciidoc)
@@ -472,6 +471,9 @@
 	(use-package ox-latex :ensure nil)
 	(use-package ox-pandoc)
 	(use-package ox-slimhtml)
+
+	;; This wasn't loading well via use-package...
+	(require 'org-tempo)
 
 	(setq org-modules
 		  '((org-bbdb org-bibtex org-docview org-eww org-gnus org-habit org-info org-irc org-mhe org-rmail org-tempo org-w3m)))
@@ -586,6 +588,7 @@
 			 "~/org/agendas/tickler.org"
 			 "~/org/agendas/waiting-on.org"
 			 ;;"~/org/agendas/<person>.org"
+			 "~/org/agendas/manager.org"
 			 "~/org/agendas/review.org"
 			 "~/org/agendas/inbox.org"))
    #+end_src
@@ -782,45 +785,22 @@
 	#+end_src
 
 
-
 ** Capture Templates
    Capture templates allow us to quickly invoke a key-chord and select a template to capture some thought directly to a
    good home for it. Tasks to my organizer, new journal items to my journal, etc...
 
+   I define these by creating a new list to which I define and append each template one-by-one so I can group them in my
+   literate config to better describe each part. First we must set up this list.
+
    #+begin_src emacs-lisp
 	 ;; Org Capture Configuration
 	 (defvar org-capture-templates (list))
+   #+end_src
 
-	 (add-to-list 'org-capture-templates
-				  `("t" "Todo" entry (file+headline "~/org/inbox.org" "Tasks")
-					"\n* TODO %? :TASK:\n %i\n %a" :empty-lines 1))
+   Then lets set up helpers. These are functions I'll use in my capture templates to extend the functionality of
+   templates themselves. These help make decisions, generate names, and do anything else I could need.
 
-	 (add-to-list 'org-capture-templates
-				  `("p" "Project" entry (file+headline "~/org/inbox.org" "Projects")
-					"\n* TODO %? :PROJECT:\n %i\n %a" :empty-lines 1))
-
-	 (add-to-list 'org-capture-templates
-				  `("j" "Journal" entry (function org-journal-find-location)
-					"* %(format-time-string org-journal-time-format)%^{Title}\n%i%?"))
-
-	 (add-to-list 'org-capture-templates
-				  `("n" "Note" entry (file+headline "~/org/refile.org" "Notes")
-					"* %?\n %i\n See: %a" :empty-lines 1))
-
-	 (add-to-list 'org-capture-templates
-				  `("T" "Tickler" entry (file+headline "~/org/tickler.org" "Tickler")
-					"\n* %i%? \n %U" :empty-lines 1))
-
-	 (add-to-list 'org-capture-templates
-				  `("c" "Item to Current Clock" item
-					(clock)
-					"%i%?" :empty-lines 1))
-
-	 (add-to-list 'org-capture-templates
-				  `("r" "Region to Current Clock" plain
-					(clock)
-					"%i" :immediate-finish t :empty-lines 1))
-
+   #+begin_src emacs-lisp
 	 ;;; BEGIN Capture Helpers
 	 (defun region-to-clocked-task (start end)
 	   "Copies the selected text, from START to END, to the currently clocked in `org-mode` task."
@@ -828,27 +808,147 @@
 	   (org-capture-string (buffer-substring-no-properties-start end) "C"))
 	 (global-set-key (kbd "C-<F1>") 'region-to-clocked-task)
 
-	 ;; Meeting Focus
-	 (defun meeting-notes ()
-	   "Call this after creating an `org-mode` heading for a meeting's notes.
-		 After calling this function, call 'meeting-done' to reset the environment."
+	 (defun capture-incident-response-file (path)
+	   "Generate dated file at capture PATH using interactively provided description."
 	   (interactive)
-	   (outline-mark-subtree)
-	   (narrow-to-region (region-beginning) (region-ending))
-	   (deactivate-mark)
-	   (delete-other-windows)
-	   (text-scale-set 2)
-	   (fringe-mode 0)
-	   (message "When finished taking notes, run meeting-done"))
-
-	 (defun meeting-done ()
-	   "Mostly restore the pre-meeting settings."
-	   (interactive)
-	   (widen)
-	   (text-scale-set 0)
-	   (fringe-mode 1)
-	   (winner-undo))
+	   (let ((name (read-string "Alert Name: ")))
+		 (expand-file-name
+		  (format "%s_%s.org" (format-time-string "%Y%m%d") name)
+		  path)))
 	 ;;; END Capture Helpers
+   #+end_src
+
+   Here I define my first capture group for Sprint Work. All templates within capture some work associated directly with
+   the current sprint I'm working in.
+
+   #+begin_src emacs-lisp
+	 ;; Capture group for Sprint Work
+	 (add-to-list 'org-capture-templates
+				  '("s" "Sprint Capture Group"))
+	 (add-to-list 'org-capture-templates
+				  '("sd" "Development Task" entry (file+olp "~/org/agendas/organizer.org" "Current Sprint" "Development")
+					"* TODO [#A] %? :TASK:\n"))
+	 (add-to-list 'org-capture-templates
+				  '("sv" "Review Task" entry (file+olp "~/org/agendas/organizer.org" "Current Sprint" "Review")
+					"* TODO [#A] %? :TASK:\n"))
+	 (add-to-list 'org-capture-templates
+				  '("sr" "Research Task" entry (file+olp "~/org/agendas/organizer.org" "Current Sprint" "Research")
+					"* TODO [#A] RESEARCH: %? :TASK:\n"))
+	 (add-to-list 'org-capture-templates
+				  '("ss" "Spike Task" entry (file+olp "~/org/agendas/organizer.org" "Current Sprint" "Research")
+					"* TODO [#A] SPIKE: %? :TASK:\n"))
+	 (add-to-list 'org-capture-templates
+				  '("so" "Other Task" entry (file+olp "~/org/agendas/organizer.org" "Current Sprint" "Other")
+					"* TODO [#A] %? :TASK:\n"))
+   #+end_src
+
+   This second capture group is for capturing information observations and information related to how the sprint is
+   going. Capture in the moment, make sense through reflection, synthesize for retrospective and present to the
+   team. That's the general idea.
+
+   #+begin_src emacs-lisp
+	 ;; Capture Group for Retrospective Items
+	 (add-to-list 'org-capture-templates
+				  '("r" "Retrospective Capture Group"))
+	 (add-to-list 'org-capture-templates
+				  '("rk" "Kudos" item (file+olp "~/org/agendas/retrospective.org" "Capture" "Kudos")
+					"- %?" :empty-lines 1))
+	 (add-to-list 'org-capture-templates
+				  '("rg" "Goodness" item (file+olp "~/org/agendas/retrospective.org" "Capture" "Goodness")
+					"- %?" :empty-lines 1))
+	 (add-to-list 'org-capture-templates
+				  '("rb" "Badness" item (file+olp "~/org/agendas/retrospective.org" "Capture" "Badness")
+					"- %?" :empty-lines 1))
+	 (add-to-list 'org-capture-templates
+				  '("rz" "Kaizen" item (file+olp "~/org/agendas/retrospective.org" "Capture" "Kaizen")
+					"- %?" :empty-lines 1))
+   #+end_src
+
+   This capture group is for non-sprint related tasks, which should each go to their propper group and have a default
+   priority based on how I typically file similar tasks. These can easily be adjusted up or down via the agenda view, so
+   it's perfectly fine for them to be innaccurate for the task, as long as they're typically correct.
+
+   #+begin_src emacs-lisp
+	 ;; Non-Sprint Todo Capture Group
+	 (add-to-list 'org-capture-templates
+				  '("t" "General Todo Capture Group"))
+	 (add-to-list 'org-capture-templates
+				  '("tc" "Career Task" entry (file+headline "~/org/agendas/organizer.org" "Career")
+					"* TODO [#B] %? :TASK:\n"))
+	 (add-to-list 'org-capture-templates
+				  '("tg" "Guild Task" entry (file+headline "~/org/agendas/organizer.org" "Guild")
+					"* TODO [#C] %? :TASK:\n"))
+	 (add-to-list 'org-capture-templates
+				  '("to" "Office Task" entry (file+headline "~/org/agendas/organizer.org" "Office")
+					"* TODO [#B] %? :TASK:\n"))
+	 (add-to-list 'org-capture-templates
+				  '("tw" "Workstation Task" entry (file+headline "~/org/agendas/organizer.org" "Workstation")
+					"* TODO [#C] %? :TASK:\n"))
+	 (add-to-list 'org-capture-templates
+				  '("tt" "General Task" entry (file+headline "~/org/agendas/organizer.org" "Tasks")
+					"\n* TODO [#C] %? :TASK:\n %i\n %a\n\n"))
+   #+end_src
+
+   This capture group is for meetings, habits, and other entries that should be tied to the calendar.
+
+   #+begin_src emacs-lisp
+	 ;; Capture Group for Meetings
+	 (add-to-list 'org-capture-templates
+				  '("m" "Meeting Capture Group"))
+	 (add-to-list 'org-capture-templates
+				  '("mm" "Pop Up Meetings and One-Offs" entry (file+olp "~/org/agendas/tickler.org" "Meetings" "One Offs")
+					"* TODO %?\n"))
+   #+end_src
+
+   The remaining capture templates are things that don't fit neatly into any one group.
+
+   #+begin_src emacs-lisp
+	 ;; Other Capture Templates (un-grouped)
+	 (add-to-list 'org-capture-templates
+				  `("j" "Journal" entry (function org-journal-find-location)
+					"* %(format-time-string org-journal-time-format)%^{Title}\n%i%?"))
+	 (add-to-list 'org-capture-templates
+				  `("n" "Note" entry (file+headline "~/org/agendas/inbox.org" "Notes Capture")
+					"* %?\n %i\n See: %a" :empty-lines 1))
+	 (add-to-list 'org-capture-templates
+				  `("m" "Manager Notes" item (file+olp "~/org/agendas/manager.org" "1:1 Prep" "Capture")
+					"- %?" :empty-lines 1))
+	 (add-to-list 'org-capture-templates
+				  '("x" "Incident Notes" entry (file (capture-incident-response-file "~/org/incidents"))
+					"* Incident Trigger\n%?\n\n* Five Whys\n\n* Action Items\n\n" :clock-in t))
+	 (add-to-list 'org-capture-templates
+				  `("X" "Item to Current Clock" item
+					(clock)
+					"%i%?" :empty-lines 1))
+	 (add-to-list 'org-capture-templates
+				  `("C" "Region to Current Clock" plain
+					(clock)
+					"%i" :immediate-finish t :empty-lines 1))
+   #+end_src
+
+
+** Org Publish
+   I can even use org-mode to publish static content!
+
+   #+begin_src emacs-lisp
+	 (setq org-publish-project-alist
+		   '(("notes-content"
+			  :base-directory "~/org/testnotes"
+			  :base-extension "org"
+			  :publishing-directory "~/public_html/"
+			  :recursive t
+			  :publishing-function org-html-publish-to-html
+			  :headline-levels 4
+			  :auto-preamble t)
+			 ("notes-static"
+			  :base-directory "~/org/testnotes"
+			  :base-extensions "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
+			  :publishing-directory "~/public_html" ; could be TRAMP path
+			  :recursive t
+			  :publishing-function org-publish-attachment)
+			 ("notes" :components ("notes-content" "notes-static"))))
+
+	 ;; TODO: https://github.com/fniessen/org-html-themes or other
    #+end_src
 
 
@@ -917,6 +1017,13 @@
 	#+begin_src emacs-lisp
 	  (add-to-list 'org-src-lang-modes (quote ("plantuml" . fundamental)))
 	#+end_src
+
+
+** Org References
+   - https://orgmode.org/manual/Template-elements.html
+   - https://orgmode.org/manual/Template-expansion.html
+   - https://orgmode.org/manual/Refile-and-Copy.html
+   - https://orgmode.org/manual/Configuration.html Projects for publishing
 
 
 * Development Interactions
@@ -1202,9 +1309,13 @@
 
 
 * More Emacs Tools
-** PDF-Tools
+** TODO PDF-Tools
    PDF-Tools enable PDF viewing within Emacs, so I don't have to have a second application open to read and take notes
    on PDFs. Just one more reason to neve leave Emacs.
+
+   Unfortunately my current config has trouble doing a fresh install as this has a dependency on pdf-tools being
+   installed on the host running Emacs, which it may not be. On a system with this dependency installed we're up and
+   running no problem though.
 
    #+begin_src emacs-lisp
 	 (use-package pdf-tools
