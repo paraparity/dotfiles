@@ -120,7 +120,7 @@
 	Let's make sure our buffers have unique names. If we were to open a file of the same name, but a different location
 	we only need them to be a little unique, not full file path or even relative file path unique.
 	#+begin_src emacs-lisp
-	  (use-package uniquify :ensure nil)
+	  (require 'uniquify)
 	#+end_src
 
 	Let's get some more screen real estate by using a small, code friendly font.
@@ -142,12 +142,15 @@
 	Display which-function-mode, and do so in headerline instead of mode line.
 
 	#+begin_src emacs-lisp
+	  (defvar which-func-header-line-format)
+
 	  (which-function-mode)
 	  (setq mode-line-misc-info (delete (assoc 'which-func-mode
 						   mode-line-misc-info) mode-line-misc-info)
 			which-func-header-line-format '(which-func-mode ("" which-func-format)))
 
 	  (defadvice which-func-ff-hook (after header-line activate)
+		"Hook for which-func formatting."
 		(when which-func-mode
 		  (setq mode-line-misc-info (delete (assoc 'which-func-mode
 							   mode-line-misc-info) mode-line-misc-info)
@@ -173,13 +176,13 @@
 	lets give ourselves a nuclear option for stripping trailing whitespace.
 
 	#+begin_src emacs-lisp
-	  (defun para/toggle-trailing-whitespace ()
+	  (defun TT/toggle-trailing-whitespace ()
 		"Toggle 'show-trailing-whitespace' between t and nil."
 		(interactive)
 		(setq show-trailing-whitespace (not show-trailing-whitespace)))
 
 	  (global-set-key (kbd "C-c w m") 'whitespace-mode)
-	  (global-set-key (kbd "C-c w t") 'para/toggle-trailing-whitespace)
+	  (global-set-key (kbd "C-c w t") 'TT/toggle-trailing-whitespace)
 	  (global-set-key (kbd "<f5>") 'delete-trailing-whitespace)
 	#+end_src
 
@@ -209,11 +212,10 @@
 
    This probably deserves it's own section and some more configuration, but for now here's a minimal GPG setup.
    #+begin_src emacs-lisp
-	 (setq epg-gpg-program "gpg2")
+	 (defvar epg-gpg-program "gpg2")
 
 	 ;; Auth
-	 (setq auth-sources
-		   '((:source "~/.emacs.d/secrets/.authinfo.gpg")))
+	 (defvar auth-sources '((:source "~/.emacs.d/secrets/.authinfo.gpg")) "Auth info source location.")
    #+end_src
 
 *** Manage File Backups and Auto Save
@@ -251,12 +253,12 @@
    Let's make it a only take a key-chord to pull up my literate configuration.
 
    #+begin_src emacs-lisp
-	 (defun para/locate-literate-config ()
-	   "Locate and load my literate configuration file"
+	 (defun TT/locate-literate-config ()
+	   "Locate and load my literate configuration file."
 	   (interactive)
 	   (find-file "~/.emacs.d/configuration.org"))
 
-	 (global-set-key (kbd "C-c I") 'para/locate-literate-config)
+	 (global-set-key (kbd "C-c I") 'TT/locate-literate-config)
    #+end_src
 
 
@@ -452,6 +454,8 @@
   nothing compares to the real thing. Enshrined within this section is my configuration and customization of Emacs
   org-mode.
 
+  Let's load all the things! Well, all the things I use anyway.
+
   #+begin_src emacs-lisp
 	(use-package org)
 	(use-package ob-C :ensure nil)
@@ -478,7 +482,6 @@
 	(setq org-modules
 		  '((org-bbdb org-bibtex org-docview org-eww org-gnus org-habit org-info org-irc org-mhe org-rmail org-tempo org-w3m)))
 
-
 	(add-hook 'org-mode-hook 'turn-on-auto-fill)
 	(add-hook 'org-mode-hook
 			  '(lambda () (origami-mode nil)))
@@ -492,8 +495,28 @@
    agenda files, and the like.
 
    #+begin_src emacs-lisp
-	 (defvar org-directory "~/org")
-	 (defvar org-default-notes-file (concat org-directory "/inbox.org"))
+	 (defvar org-directory        "~/org"                                     "Root 'org-mode' directory.")
+	 (defvar TT/org-agenda-dir    (concat org-directory "/agendas")           "Top level org directory for Getting Things Done (GTD) organizer files.")
+	 (defvar TT/org-calendar      (concat TT/org-agenda-dir "/calendar.org")  "Calendar for scheduled actionables.")
+	 (defvar TT/org-directs-dir   (concat TT/org-agenda-dir "/directs")       "Directory for direct report specific organizers.")
+	 (defvar TT/org-inbox         (concat TT/org-agenda-dir "/inbox.org")     "The collection bin for everything to be refiled.")
+	 (defvar TT/org-incubate      (concat TT/org-agenda-dir "/incubate.org")  "Presently inactionable things to incubate.")
+	 (defvar TT/org-learning      (concat TT/org-agenda-dir "/learn.org")     "Learning backlog for structured learning.")
+	 (defvar TT/org-manager       (concat TT/org-agenda-dir "/manager.org")   "Actionables and captures for 1:1s with my manager.")
+	 (defvar TT/org-organizer     (concat TT/org-agenda-dir "/organizer.org") "Core organizer tracking prioritized actionable work.")
+	 (defvar TT/org-review        (concat TT/org-agenda-dir "/review.org")    "Reference on and journal for reflection.")
+	 (defvar TT/org-retrospective (concat TT/org-agenda-dir "/retro.org")     "Capture target for retro related info or actionables.")
+	 (defvar TT/org-someday       (concat TT/org-agenda-dir "/someday.org")   "Non-prioritized things I may want to revisit.")
+	 (defvar TT/org-tickler       (concat TT/org-agenda-dir "/tickler.org")   "Time relevant reminders for non-actionable items.")
+	 (defvar TT/org-team-dir      (concat TT/org-agenda-dir "/teams")         "Directory for team specific organizers.")
+	 (defvar TT/org-waiting       (concat TT/org-agenda-dir "/waiting.org")   "Delegated or blocked items awaiting external action.")
+	 (defvar TT/org-brain-dir     (concat org-directory "/brain")             "Top level org directory for 'org-brain' reference material.")
+	 (defvar TT/org-checklist-dir (concat org-directory "/checklists")        "Top level org directory for action oriented reference; do/certify.")
+	 (defvar TT/org-journal-dir   (concat org-directory "/journal")           "Top level org directory for journal entries.")
+	 (defvar TT/org-reference-dir (concat org-directory "/reference")         "Top level org directory for hierarchical reference material.")
+	 (defvar TT/org-trash-dir     (concat org-directory "/trash")             "Top level org directory for long term archival outside organizer.")
+
+	 (defvar org-default-notes-file TT/org-inbox)
    #+end_src
 
 
@@ -505,9 +528,16 @@
    #+begin_src emacs-lisp
 	 ;; Links - use like: cpan:HTML or rfc-txt:7522
 	 (setq org-link-abbrev-alist
-		   '(("rfc-txt" . "https://tools.ietf.org/rfc/rfc%s.txt")
-			 ("cpan"    . "https://metacpan.org/search?q=%s")
-			 ("ese"     . "https://emacs.stackexchange.com/search?q=%s")))
+		   '(("rfc-html" . "https://tools.ietf.org/html/rfc%s")
+			 ("rfc-txt"  . "https://tools.ietf.org/rfc/rfc%s.txt")
+			 ("rfc-pdf"  . "https://tools.ietf.org/pdf/rfc%s.pdf")
+			 ("fhir-r4"  . "https://www.hl7.org/fhir/R4/%s")
+			 ("us-core"  . "https://www.hl7.org/fhir/us/core/%s")
+			 ("cpan"     . "https://metacpan.org/search?q=%s")
+			 ("so"       . "https://stackoverflow.com/search?q=%s")
+			 ("soq"      . "https://stackoverflow.com/questions/%s")
+			 ("ese"      . "https://emacs.stackexchange.com/search?q=%s")
+			 ("eseq"     . "https://emacs.stackexchange.com/questions/%s")))
    #+end_src
 
 
@@ -540,7 +570,7 @@
 
 
 *** Tags
-	Org-mode files and headlines can be tagged to enable searching and cross-correlating information across files and
+	Org-mode files and headlines can be tagged to enable searching and correlating information across files and
 	directories.
 
 	To support my Emacs implementation of Getting Things Done (GTD), I have a set of tags I use to denote tasks,
@@ -549,22 +579,27 @@
 
 	#+begin_src emacs-lisp
 	  (setq org-tag-alist
-			'(("@apartment"   . ?A)
-			  ("@career"      . ?C)
-			  ("@finances"    . ?F)
-			  ("@guild"       . ?G)
-			  ("@health"      . ?H)
-			  ("@learn"       . ?L)
-			  ("@network"     . ?N)
-			  ("@office"      . ?O)
-			  ("@read"        . ?R)
-			  ("@self"        . ?S)
-			  ("@travel"      . ?V)
-			  ("@workstation" . ?W)
-			  ("PROJECT"      . ?P)
-			  ("TASK"         . ?T)
-			  ("NEXT"         . ?X)
-			  ("org-journal"  . ?j)))
+			'(("@administrative" . ?a) ; low-priority, variable urgency checkbox tasks I'm responsible for. Churn & burn work
+			  ("@career"         . ?c)
+			  ("@finances"       . ?f)
+			  ("@guild"          . ?g)
+			  ("@health"         . ?h)
+			  ("@home"           . ?H)
+			  ("@learn"          . ?l)
+			  ("@meeting"        . ?m)
+			  ("@office"         . ?o)
+			  ("@read"           . ?r)
+			  ("@sprint"         . ?s)
+			  ("@travel"         . ?v)
+			  ("@workstation"    . ?w)
+			  ("INTERRUPT"       . ?I)
+			  ("PROJECT"         . ?P)
+			  ("RESEARCH"        . ?R)
+			  ("REVIEW"          . ?V)
+			  ("SPIKE"           . ?S)
+			  ("TASK"            . ?T)
+			  ("NEXT"            . ?N)
+			  ("journal"         . ?j)))
 
 	  (setq org-tags-exclude-from-inheritance '("PROJECT")
 			org-stuck-projects '("+PROJECT/-WAITING-DONE"
@@ -584,13 +619,15 @@
    #+begin_src emacs-lisp
 	 ;; Agenda Files:
 	 (setq org-agenda-files
-		   '("~/org/agendas/organizer.org"
-			 "~/org/agendas/tickler.org"
-			 "~/org/agendas/waiting-on.org"
-			 ;;"~/org/agendas/<person>.org"
-			 "~/org/agendas/manager.org"
-			 "~/org/agendas/review.org"
-			 "~/org/agendas/inbox.org"))
+		   '(TT/org-calendar
+			 TT/org-inbox
+			 TT/org-incubate
+			 TT/org-learning
+			 TT/org-organizer
+			 TT/org-review
+			 TT/org-someday
+			 TT/org-tickler
+			 TT/org-waiting))
    #+end_src
 
    Let's also modify some other agenda settings.
@@ -749,20 +786,18 @@
    #+end_src
 
 
-** Org Journal
+** COMMENT Org Journal
    Let's set up where my journal files are stored, and the format of the entries.
 
    #+begin_src emacs-lisp
 	 (use-package org-journal
-	   :init
-	   (setq org-journal-dir "~/org/journal/"
-			 org-journal-file-format "%Y%m%d"
-			 org-journal-date-format "%e %b %Y (%A)")
-	   :config
-	   (setq org-journal-date-prefix "#+TITLE: Daily Note for "))
+	   :init (setq org-journal-dir TT/org-journal-dir
+				   org-journal-file-format "%Y%m%d"
+				   org-journal-date-format "%e %b %Y (%A)")
+	   :config (setq org-journal-date-prefix "#+TITLE: Daily Note for "))
    #+end_src
 
-*** Journal Helpers
+*** COMMENT Journal Helpers
 	These are functions that will later enable us to interact with org-journal via capture templates, etc...
 
 	#+begin_src emacs-lisp
@@ -787,7 +822,7 @@
 
 ** Capture Templates
    Capture templates allow us to quickly invoke a key-chord and select a template to capture some thought directly to a
-   good home for it. Tasks to my organizer, new journal items to my journal, etc...
+   good home for it. Tasks to my organizer or inbox, new journal items to my journal, etc...
 
    I define these by creating a new list to which I define and append each template one-by-one so I can group them in my
    literate config to better describe each part. First we must set up this list.
@@ -818,113 +853,119 @@
 	 ;;; END Capture Helpers
    #+end_src
 
-   Here I define my first capture group for Sprint Work. All templates within capture some work associated directly with
-   the current sprint I'm working in.
 
-   #+begin_src emacs-lisp
-	 ;; Capture group for Sprint Work
-	 (add-to-list 'org-capture-templates
-				  '("s" "Sprint Capture Group"))
-	 (add-to-list 'org-capture-templates
-				  '("sd" "Development Task" entry (file+olp "~/org/agendas/organizer.org" "Current Sprint" "Development")
-					"* TODO [#A] %? :TASK:\n"))
-	 (add-to-list 'org-capture-templates
-				  '("sv" "Review Task" entry (file+olp "~/org/agendas/organizer.org" "Current Sprint" "Review")
-					"* TODO [#A] %? :TASK:\n"))
-	 (add-to-list 'org-capture-templates
-				  '("sr" "Research Task" entry (file+olp "~/org/agendas/organizer.org" "Current Sprint" "Research")
-					"* TODO [#A] RESEARCH: %? :TASK:\n"))
-	 (add-to-list 'org-capture-templates
-				  '("ss" "Spike Task" entry (file+olp "~/org/agendas/organizer.org" "Current Sprint" "Research")
-					"* TODO [#A] SPIKE: %? :TASK:\n"))
-	 (add-to-list 'org-capture-templates
-				  '("so" "Other Task" entry (file+olp "~/org/agendas/organizer.org" "Current Sprint" "Other")
-					"* TODO [#A] %? :TASK:\n"))
-   #+end_src
+*** Sprint Work
+	Here I define my first capture group for Sprint Work. All templates within capture some work associated directly with
+	the current sprint I'm working in.
 
-   This second capture group is for capturing information observations and information related to how the sprint is
-   going. Capture in the moment, make sense through reflection, synthesize for retrospective and present to the
-   team. That's the general idea.
+	#+begin_src emacs-lisp
+	  ;; Capture group for Sprint Work
+	  (add-to-list 'org-capture-templates
+				   '("s" "Sprint Capture Group"))
+	  (add-to-list 'org-capture-templates
+				   '("sd" "Development Task" entry (file+olp TT/org-organizer "Current Sprint" "Development")
+					 "* TODO [#A] %? :TASK:\n"))
+	  (add-to-list 'org-capture-templates
+				   '("sv" "Review Task" entry (file+olp TT/org-organizer "Current Sprint" "Review")
+					 "* TODO [#A] %? :TASK:\n"))
+	  (add-to-list 'org-capture-templates
+				   '("sr" "Research Task" entry (file+olp TT/org-organizer "Current Sprint" "Research")
+					 "* TODO [#A] RESEARCH: %? :TASK:\n"))
+	  (add-to-list 'org-capture-templates
+				   '("ss" "Spike Task" entry (file+olp TT/org-organizer "Current Sprint" "Research")
+					 "* TODO [#A] SPIKE: %? :TASK:\n"))
+	  (add-to-list 'org-capture-templates
+				   '("so" "Other Task" entry (file+olp TT/org-organizer "Current Sprint" "Other")
+					 "* TODO [#A] %? :TASK:\n"))
+	#+end_src
 
-   #+begin_src emacs-lisp
-	 ;; Capture Group for Retrospective Items
-	 (add-to-list 'org-capture-templates
-				  '("r" "Retrospective Capture Group"))
-	 (add-to-list 'org-capture-templates
-				  '("rk" "Kudos" item (file+olp "~/org/agendas/retrospective.org" "Capture" "Kudos")
-					"- %?" :empty-lines 1))
-	 (add-to-list 'org-capture-templates
-				  '("rg" "Goodness" item (file+olp "~/org/agendas/retrospective.org" "Capture" "Goodness")
-					"- %?" :empty-lines 1))
-	 (add-to-list 'org-capture-templates
-				  '("rb" "Badness" item (file+olp "~/org/agendas/retrospective.org" "Capture" "Badness")
-					"- %?" :empty-lines 1))
-	 (add-to-list 'org-capture-templates
-				  '("rz" "Kaizen" item (file+olp "~/org/agendas/retrospective.org" "Capture" "Kaizen")
-					"- %?" :empty-lines 1))
-   #+end_src
+*** Retrospective Items
+	This second capture group is for capturing information observations and information related to how the sprint is
+	going. Capture in the moment, make sense through reflection, synthesize for retrospective and present to the
+	team. That's the general idea.
 
-   This capture group is for non-sprint related tasks, which should each go to their propper group and have a default
-   priority based on how I typically file similar tasks. These can easily be adjusted up or down via the agenda view, so
-   it's perfectly fine for them to be innaccurate for the task, as long as they're typically correct.
+	#+begin_src emacs-lisp
+	  ;; Capture Group for Retrospective Items
+	  (add-to-list 'org-capture-templates
+				   '("r" "Retrospective Capture Group"))
+	  (add-to-list 'org-capture-templates
+				   '("rk" "Kudos" item (file+olp TT/org-retrospective "Capture" "Kudos")
+					 "- %?" :empty-lines 1))
+	  (add-to-list 'org-capture-templates
+				   '("rg" "Goodness" item (file+olp TT/org-retrospective "Capture" "Goodness")
+					 "- %?" :empty-lines 1))
+	  (add-to-list 'org-capture-templates
+				   '("rb" "Badness" item (file+olp TT/org-retrospective "Capture" "Badness")
+					 "- %?" :empty-lines 1))
+	  (add-to-list 'org-capture-templates
+				   '("rz" "Kaizen" item (file+olp TT/org-retrospective "Capture" "Kaizen")
+					 "- %?" :empty-lines 1))
+	#+end_src
 
-   #+begin_src emacs-lisp
-	 ;; Non-Sprint Todo Capture Group
-	 (add-to-list 'org-capture-templates
-				  '("t" "General Todo Capture Group"))
-	 (add-to-list 'org-capture-templates
-				  '("tc" "Career Task" entry (file+headline "~/org/agendas/organizer.org" "Career")
-					"* TODO [#B] %? :TASK:\n"))
-	 (add-to-list 'org-capture-templates
-				  '("tg" "Guild Task" entry (file+headline "~/org/agendas/organizer.org" "Guild")
-					"* TODO [#C] %? :TASK:\n"))
-	 (add-to-list 'org-capture-templates
-				  '("to" "Office Task" entry (file+headline "~/org/agendas/organizer.org" "Office")
-					"* TODO [#B] %? :TASK:\n"))
-	 (add-to-list 'org-capture-templates
-				  '("tw" "Workstation Task" entry (file+headline "~/org/agendas/organizer.org" "Workstation")
-					"* TODO [#C] %? :TASK:\n"))
-	 (add-to-list 'org-capture-templates
-				  '("tt" "General Task" entry (file+headline "~/org/agendas/organizer.org" "Tasks")
-					"\n* TODO [#C] %? :TASK:\n %i\n %a\n\n"))
-   #+end_src
+*** General To Do Items
+	This capture group is for non-sprint related tasks, which should each go to their propper group and have a default
+	priority based on how I typically file similar tasks. These can easily be adjusted up or down via the agenda view, so
+	it's perfectly fine for them to be innaccurate for the task, as long as they're typically correct.
 
-   This capture group is for meetings, habits, and other entries that should be tied to the calendar.
+	#+begin_src emacs-lisp
+	  ;; Non-Sprint Todo Capture Group
+	  (add-to-list 'org-capture-templates
+				   '("t" "General Todo Capture Group"))
+	  (add-to-list 'org-capture-templates
+				   '("tc" "Career Task" entry (file+headline TT/org-organizer "Career")
+					 "* TODO [#B] %? :TASK:\n"))
+	  (add-to-list 'org-capture-templates
+				   '("tg" "Guild Task" entry (file+headline TT/org-organizer "Guild")
+					 "* TODO [#C] %? :TASK:\n"))
+	  (add-to-list 'org-capture-templates
+				   '("to" "Office Task" entry (file+headline TT/org-organizer "Office")
+					 "* TODO [#B] %? :TASK:\n"))
+	  (add-to-list 'org-capture-templates
+				   '("tw" "Workstation Task" entry (file+headline TT/org-organizer "Workstation")
+					 "* TODO [#C] %? :TASK:\n"))
+	  (add-to-list 'org-capture-templates
+				   '("tt" "General Task" entry (file+headline TT/org-organizer "Tasks")
+					 "\n* TODO [#C] %? :TASK:\n %i\n %a\n\n"))
+	#+end_src
 
-   #+begin_src emacs-lisp
-	 ;; Capture Group for Meetings
-	 (add-to-list 'org-capture-templates
-				  '("m" "Meeting Capture Group"))
-	 (add-to-list 'org-capture-templates
-				  '("mm" "Pop Up Meetings and One-Offs" entry (file+olp "~/org/agendas/tickler.org" "Meetings" "One Offs")
-					"* TODO %?\n"))
-   #+end_src
+*** Meetings
+	This capture group is for meetings, habits, and other entries that should be tied to the calendar.
 
-   The remaining capture templates are things that don't fit neatly into any one group.
+	#+begin_src emacs-lisp
+	  ;; Capture Group for Meetings
+	  (add-to-list 'org-capture-templates
+				   '("m" "Meeting Capture Group"))
+	  (add-to-list 'org-capture-templates
+				   '("mm" "Pop Up Meetings and One-Offs" entry (file+olp TT/org-calendar "Meetings" "One Offs")
+					 "* TODO %?\n"))
+	#+end_src
 
-   #+begin_src emacs-lisp
-	 ;; Other Capture Templates (un-grouped)
-	 (add-to-list 'org-capture-templates
-				  `("j" "Journal" entry (function org-journal-find-location)
-					"* %(format-time-string org-journal-time-format)%^{Title}\n%i%?"))
-	 (add-to-list 'org-capture-templates
-				  `("n" "Note" entry (file+headline "~/org/agendas/inbox.org" "Notes Capture")
-					"* %?\n %i\n See: %a" :empty-lines 1))
-	 (add-to-list 'org-capture-templates
-				  `("m" "Manager Notes" item (file+olp "~/org/agendas/manager.org" "1:1 Prep" "Capture")
-					"- %?" :empty-lines 1))
-	 (add-to-list 'org-capture-templates
-				  '("x" "Incident Notes" entry (file (capture-incident-response-file "~/org/incidents"))
-					"* Incident Trigger\n%?\n\n* Five Whys\n\n* Action Items\n\n" :clock-in t))
-	 (add-to-list 'org-capture-templates
-				  `("X" "Item to Current Clock" item
-					(clock)
-					"%i%?" :empty-lines 1))
-	 (add-to-list 'org-capture-templates
-				  `("C" "Region to Current Clock" plain
-					(clock)
-					"%i" :immediate-finish t :empty-lines 1))
-   #+end_src
+*** Miscellaneous
+	The remaining capture templates are things that don't fit neatly into any one group.
+
+	#+begin_src emacs-lisp
+	  ;; Other Capture Templates (un-grouped)
+	  (add-to-list 'org-capture-templates
+				   `("j" "Journal" entry (function org-journal-find-location)
+					 "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?"))
+	  (add-to-list 'org-capture-templates
+				   `("n" "Note" entry (file+headline "~/org/agendas/inbox.org" "Notes Capture")
+					 "* %?\n:PROPERTIES:\n:CREATED:%U:END:\n\n%i\n\nFrom: %a" :empty-lines 1))
+	  (add-to-list 'org-capture-templates
+				   `("m" "Manager Notes" item (file+olp TT/org-manager "1:1 Prep" "Capture")
+					 "- %?" :empty-lines 1))
+	  (add-to-list 'org-capture-templates
+				   '("x" "Incident Notes" entry (file (capture-incident-response-file "~/org/incidents"))
+					 "* Incident Trigger\n%?\n\n* Five Whys\n\n* Action Items\n\n" :clock-in t))
+	  (add-to-list 'org-capture-templates
+				   `("X" "Item to Current Clock" item
+					 (clock)
+					 "%i%?" :empty-lines 1))
+	  (add-to-list 'org-capture-templates
+				   `("C" "Region to Current Clock" plain
+					 (clock)
+					 "%i" :immediate-finish t :empty-lines 1))
+	#+end_src
 
 
 ** Org Publish
@@ -1001,7 +1042,7 @@
 		 (gnuplot    . t)
 		 (js         . t)
 		 (latex      . t)
-		 ;;(ledger     . t)
+		 (ledger     . t)
 		 (org        . t)
 		 (perl       . t)
 		 (plantuml   . t)
@@ -1114,7 +1155,7 @@
 	 (add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++14")))
 
 	 ;; Use project relative eslint; see https://emacs.stackexchange.com/questions/21205
-	 (defun para/use-eslint-from-node-modules ()
+	 (defun TT/use-eslint-from-node-modules ()
 	   "Use project local eslint node modules."
 	   (let* ((root (locate-dominating-file
 					 (or (buffer-file-name) default-directory)
@@ -1125,7 +1166,7 @@
 		 (when (and eslint (file-executable-p eslint))
 		   (setq-local flycheck-javascript-eslint-executable eslint))))
 
-	 (add-hook 'flycheck-mode-hook #'para/use-eslint-from-node-modules)
+	 (add-hook 'flycheck-mode-hook #'TT/use-eslint-from-node-modules)
 
 	 ;; Enable flycheck globally:
 	 (add-hook 'after-init-hook #'global-flycheck-mode)
@@ -1199,7 +1240,6 @@
 		 (helm-projectile-on)))
 
 	 (use-package helm-projectile)
-
    #+end_src
 
 
@@ -1282,18 +1322,21 @@
 	#+end_src
 
 
+*** TODO C/C++
+
+
 * More Emacs Modes
 ** Ledger - Command Line Accounting
    Ledger, the command line double booking entry system. A geeky way to track your finances, with support in Emacs via
    ~ledger-mode~!
 
-   #+begin_src emacs-lisp :tangle no
+   #+begin_src emacs-lisp
 	 (use-package ledger-mode
 	   :mode ("\\.ledger$")
 	   :bind (:map ledger-mode-map
-				   ("C-x C-s" . para/ledger-save))
+				   ("C-x C-s" . TT/ledger-save))
 	   :preface
-	   (defun para/ledger-save ()
+	   (defun TT/ledger-save ()
 		 "Automatically clean the ledger buffer at each save."
 		 (interactive)
 		 (save-excursion

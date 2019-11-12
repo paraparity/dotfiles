@@ -36,19 +36,20 @@
 						 ("melpa" . "https://melpa.org/packages/")))
 (package-initialize)
 
+
 ;; Ensure desired packages are installed, cache package refresh contents
-(unless
-	(and (package-installed-p 'use-package)
-		 (package-installed-p 'org-plus-contrib))
+(unless	(and (package-installed-p 'use-package)
+			 (package-installed-p 'org-plus-contrib))
   (package-refresh-contents)
 
   (unless (package-installed-p 'use-package)
-	(package-install 'use-package)
-	(package-install 'use-package-ensure-system-package))
+  	(package-install 'use-package)
+  	(package-install 'use-package-ensure-system-package))
 
   (unless (package-installed-p 'org-plus-contrib)
-	(package-install 'org-plus-contrib)))
+  	(package-install 'org-plus-contrib)))
 
+(require 'use-package)
 (require 'use-package-ensure)
 (setq use-package-always-ensure t)
 
@@ -60,5 +61,10 @@
 (add-hook 'after-init-hook
 		  (lambda () (message "loaded in %s" (emacs-init-time))))
 
+(message "Done with init...")
+
 ;; Load from literate configuration
 (org-babel-load-file "~/.emacs.d/configuration.org")
+
+(provide 'init)
+;;; init.el ends here
