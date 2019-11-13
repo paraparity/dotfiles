@@ -1,4 +1,4 @@
-FROM silex/emacs:26.2
+FROM silex/emacs:26.3
 
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends \
