@@ -2,34 +2,40 @@
 #+PROPERTY: header-args :tangle yes
 
 * Overview
-  A literate configuration is an org-mode file containing a heirarchical textual description of the reasoning behind
-  configuration settings and ~emacs-lisp~ source blocks which contain the actual configuration settings. These source
-  blocks get "tangled" by ~org-babel~ and loaded by Emacs.
+  I've maintained my Emacs configuration in a number of styles across the years, each having its own strengths and
+  weaknesses. I've even declared configuration bankruptcy a few times. I do not expect a literate configuration to be
+  some silver bullet or holy grail that comes in far above and beyond the other approaches I've tried. Instead, I expect
+  only to learn. I've never tried a literate configuration before, and it could be good experience.
 
-  The reasons for and against such a file are many. Ultimately it comes down to how you personally want to write and
-  maintain your configuration. This is the Emacs way.
+  To me, a literate configuration is a merging of documentation and source into the same body of text with the intention of using
+  prose to describe the purpose and rational behind the code. The purpose is to improve the understand-ability and
+  maintainability. It should allow me to capture the goals of each component of my configuration, and it should allow me to
+  describe why I've made certain decisions. While I could probably do the same with code comments they aren't as
+  flexible as prose alone is and they're embedded within the configuration source.
 
-  Personally, I've maintained ~.emacs~ configurations, ~init.el~ configurations, and configurations split into many
-  files within the ~.emacs.d~ directory, each loaded by some core config file. Like many, I've declared Emacs bankruptcy
-  before and started over again, each time trying something new. This time however, I'm transferring my balance directly
-  to a literate configuration and refactoring my debt from there.
+  Over time my needs of Emacs will change, the dependencies I incorporate will change, and Emacs itself will
+  change. Having the prose to provide context will prove helpful in adapting to and incorporating that change.
 
-  The reasons I am doing this are twofold
-  - to try my hand at maintaining a literate configuration and collect first hand empirical evidence
-  - to tell a story about how and why I've arrived at the configuration herein
+  Additionally, I see sharing my literate configuration as an implementation of the concept of "thinking/learning out
+  loud". The idea being that I have but one perspective to view the world with, and one set of experiences to draw upon.
+  By openly sharing them, I provide opportunity for ad-hoc collaboration which can correct mistakes, call out
+  assumptions, and provide insights which would have remained entirely unknown to me otherwise. 
 
-  Considering that my configuration changes relatively little piece by piece, maintaining the literate side of things
-  shouldn't be too much overhead. Additionally, I'm expecting to benefit in terms of maintainability by being able to
-  re-read the context of why I've made certain configuration choices.
+  As such, I invite your feedback openly. Welcome aboard my ship of Theseus.
 
-  Welcome aboard my ship of Theseus.
+** House Keeping
+
+*** Variable Naming Convention
+	As is common among Emacsers, I've opted to adopt a naming scheme that identifies personal contributions and adds a
+	bit of individual flare. Considering the name I go by is =Paraparity=, you'll notice a number of names prefixed with
+	=TT/=. This represents a so-called =pair of T's= which plays off of the =parity= portion of my handle.
 
 
 * General Settings
 
 ** Add Some Output Commentary
-   When tangled, all of these source blocks become an ~.el~ file. I'd still like that to be more friendly than just a
-   bunch of configuration code, so let's keep the old ~init.el~ header around with some updates.
+   When tangled, all of these source blocks become an =.el= file. I'd still like that to be more friendly than just a
+   bunch of configuration code, so let's keep my old =init.el= header around.
 
    #+begin_src emacs-lisp
 	 ;;; configuration.el --- paraparity's Emacs configuration file
@@ -48,23 +54,20 @@
 
 
 ** Setup Load Paths
-   Emacs only includes packages under the ~user-emacs-directory~ (default ~~/.emacs.d/elpa/~), so if we want to load anything
-   else up we'll need to tell Emacs where to look.
+   Emacs only includes packages under the =user-emacs-directory= (default =~/.emacs.d/elpa/=), so if we want to load anything
+   else up we'll need to tell Emacs where to look. I've adopted something I've seen out and about, here and there,
+   floating around the internet.
 
    #+begin_src emacs-lisp
-	 (add-to-list 'load-path "~/.emacs.d/elpa")
 	 (add-to-list 'load-path "~/.emacs.d/elisp/")
    #+end_src
 
-   Load my machine local custom librariers directly, if they exist. Elfeed is only machine local because I've been lazy
+   Load my machine local custom libraries directly, if they exist. Elfeed is only machine local because I've been lazy
    in sharing it, and also I only pay attention to work related feeds on my work machine.
    #+begin_src emacs-lisp
 	 (if (file-readable-p "~/.emacs.d/elisp/elfeed-conf.el")
 		 (load-library "elfeed-conf"))
    #+end_src
-
-*** TODO Revise Elfeed Configuration
-	Do as the section header says
 
 
 ** Kill Dir-Locals
@@ -139,12 +142,12 @@
 	  (add-to-list 'default-frame-alist '(alpha . (92 . 90)))
 	#+end_src
 
-	Display which-function-mode, and do so in headerline instead of mode line.
+	Display which-function-mode, and do so in the header line instead of mode line.
 
 	#+begin_src emacs-lisp
+	  (which-function-mode)
 	  (defvar which-func-header-line-format)
 
-	  (which-function-mode)
 	  (setq mode-line-misc-info (delete (assoc 'which-func-mode
 						   mode-line-misc-info) mode-line-misc-info)
 			which-func-header-line-format '(which-func-mode ("" which-func-format)))
@@ -164,16 +167,16 @@
 	  (global-hl-line-mode t)
 	#+end_src
 
-	Let's make it easy to see current block parens, given they're both on screen.
+	Let's make it easy to see current block parentheses, given they're both on screen.
 	#+begin_src emacs-lisp
 	  (show-paren-mode 1)
 	#+end_src
 
 
-*** Hunt Trailing Whitespace, Sometimes
-	I personally disdain trailing whitespace, but also dislike how visually congested whitespace-mode can be
-	sometimes. As such, lets make things toggleable so I can inspect whitespace on demand with only a key chord. Also,
-	lets give ourselves a nuclear option for stripping trailing whitespace.
+*** Hunt Trailing White-space, Sometimes
+	I personally disdain trailing white-space, but also dislike how visually congested =whitespace-mode= can be
+	sometimes. As such, lets make things toggle-able so I can inspect white-space on demand with only a key chord. Also,
+	lets give ourselves a nuclear option for stripping trailing white-space.
 
 	#+begin_src emacs-lisp
 	  (defun TT/toggle-trailing-whitespace ()
@@ -204,7 +207,7 @@
 	 (setq require-final-newline t)
    #+end_src
 
-   At one point I had some slowness with cursor movement and scrolling. I forget why at this point, but I stumpled upon
+   At one point I had some slowness with cursor movement and scrolling. I forget why at this point, but I stumbled upon
    some answer that said disable this, and I've never looked back since.
    #+begin_src emacs-lisp
 	 (setq auto-window-vscroll nil)
@@ -219,7 +222,7 @@
    #+end_src
 
 *** Manage File Backups and Auto Save
-	Emacs can get a bit aggressive with file backups and autosaves. I particularly dislike how it can pollute my
+	Emacs can get a bit aggressive with file backups and auto-saves. I particularly dislike how it can pollute my
 	directories and especially collaborative projects with tilde files (e.g: =myfile.txt~=). Usually things like
 	=.gitignore= are sufficient to insulate others from these, but I'd prefer not to see them myself.
 
@@ -277,7 +280,7 @@
   This section contains customizations which focus on Emacs navigation and interaction.
 
 ** Auto Revert Buffers
-   In the event something has changed on the system, I want to pull in the updated files. Magit has been good about
+   In the event something has changed on the system, I want to pull in the updated files. =Magit= has been good about
    doing this for version controlled files, however I've often noticed some buffer diffs for other files. Time to change
    that.
 
@@ -310,8 +313,8 @@
 
 
 
-** Helm
-   Helm gives us incremental completions and narrowing capabilities that really help find what you're looking for within
+** =Helm=
+   =Helm= gives us incremental completions and narrowing capabilities that really help find what you're looking for within
    Emacs.
 
    #+begin_src emacs-lisp
@@ -349,8 +352,8 @@
    #+end_src
 
 
-** Buffer Folding with Origami
-   Origami minor-mode enables text folding across Emacs. It's pretty useful, though sometimes slow and sometimes
+** Buffer Folding with =Origami=
+   =Origami= minor-mode enables text folding across Emacs. It's pretty useful, though sometimes slow and sometimes
    buggy. With =origami-reset= you can always unfold everything and reset the file, which has always been enough to
    ignore some of the hiccups.
 
@@ -367,8 +370,8 @@
    #+end_src
 
 
-** Text Expansion with Abbrev
-   Abbrev triggers expansion on pressing the space bar after your word, which is incredibly useful for stream of
+** Text Expansion with =Abbrev=
+   =Abbrev= triggers expansion on pressing the space bar after your word, which is incredibly useful for stream of
    conscious text expansion. I use this mainly to expand acronyms and abbreviations, so I can be lazy typing but still
    create readable text for those not yet familiar with those short-strings. However, this is also extremely useful for
    creating shortcuts for words I type often.
@@ -394,12 +397,12 @@
    #+end_src
 
 
-** Templating with Yasnippets
-   Both for programming and regular editing I have a bunch of snippets for text expansion. It doesn't alwasy seem
-   suitable for me to use ~abbrev~, especially for large templates, but that's more of a personal choice than a "can it
+** Templating with =Yasnippet=
+   Both for programming and regular editing I have a bunch of snippets for text expansion. It doesn't always seem
+   suitable for me to use =abbrev=, especially for large templates, but that's more of a personal choice than a "can it
    be done" thing.
 
-   So, for anything more than abbreviation expansion or word shortcut expansions I use ~yasnippet~ to tab expand and
+   So, for anything more than abbreviation expansion or word shortcut expansions I use =yasnippet= to tab expand and
    interactively fill out templates.
 
    #+begin_src emacs-lisp
@@ -418,8 +421,8 @@
    #+end_src
 
 
-** Internet Relay Chat with ERC
-   Emacs comes with it's own Internet Relay Chat client, ERC. I use this to chat over IRC from right within Emacs.
+** Internet Relay Chat with =ERC=
+   Emacs comes with it's own Internet Relay Chat client, =ERC=. I use this to chat over IRC from right within Emacs.
 
    #+begin_src emacs-lisp
 	 (use-package erc
@@ -434,8 +437,8 @@
    #+end_src
 
 
-** TODO Remote Interactions with Tramp
-   Emacs comes packaged with a really cool utility I'm desperately underutilizing. More work to be done here still.
+** TODO Remote Interactions with =Tramp=
+   Emacs comes packaged with a really cool utility I'm desperately under-utilizing. More work to be done here still.
 
    Let's change where Tramp saves things, and use SSH as our default method.
 
@@ -449,10 +452,9 @@
    #+end_src
 
 
-* Org-Mode Configuration
-  Org-mode is probably my biggest anchor to Emacs. I've tried org-mode-like plugins for other editors and IDE's, but
-  nothing compares to the real thing. Enshrined within this section is my configuration and customization of Emacs
-  org-mode.
+* =Org-Mode= Configuration
+  =org-mode= is probably my biggest anchor to Emacs. I've tried org-like plugins for other editors and IDEs, but nothing
+  compares to the real thing.
 
   Let's load all the things! Well, all the things I use anyway.
 
@@ -495,26 +497,30 @@
    agenda files, and the like.
 
    #+begin_src emacs-lisp
-	 (defvar org-directory        "~/org"                                     "Root 'org-mode' directory.")
-	 (defvar TT/org-agenda-dir    (concat org-directory "/agendas")           "Top level org directory for Getting Things Done (GTD) organizer files.")
-	 (defvar TT/org-calendar      (concat TT/org-agenda-dir "/calendar.org")  "Calendar for scheduled actionables.")
-	 (defvar TT/org-directs-dir   (concat TT/org-agenda-dir "/directs")       "Directory for direct report specific organizers.")
-	 (defvar TT/org-inbox         (concat TT/org-agenda-dir "/inbox.org")     "The collection bin for everything to be refiled.")
-	 (defvar TT/org-incubate      (concat TT/org-agenda-dir "/incubate.org")  "Presently inactionable things to incubate.")
-	 (defvar TT/org-learning      (concat TT/org-agenda-dir "/learn.org")     "Learning backlog for structured learning.")
-	 (defvar TT/org-manager       (concat TT/org-agenda-dir "/manager.org")   "Actionables and captures for 1:1s with my manager.")
-	 (defvar TT/org-organizer     (concat TT/org-agenda-dir "/organizer.org") "Core organizer tracking prioritized actionable work.")
-	 (defvar TT/org-review        (concat TT/org-agenda-dir "/review.org")    "Reference on and journal for reflection.")
-	 (defvar TT/org-retrospective (concat TT/org-agenda-dir "/retro.org")     "Capture target for retro related info or actionables.")
-	 (defvar TT/org-someday       (concat TT/org-agenda-dir "/someday.org")   "Non-prioritized things I may want to revisit.")
-	 (defvar TT/org-tickler       (concat TT/org-agenda-dir "/tickler.org")   "Time relevant reminders for non-actionable items.")
-	 (defvar TT/org-team-dir      (concat TT/org-agenda-dir "/teams")         "Directory for team specific organizers.")
-	 (defvar TT/org-waiting       (concat TT/org-agenda-dir "/waiting.org")   "Delegated or blocked items awaiting external action.")
-	 (defvar TT/org-brain-dir     (concat org-directory "/brain")             "Top level org directory for 'org-brain' reference material.")
-	 (defvar TT/org-checklist-dir (concat org-directory "/checklists")        "Top level org directory for action oriented reference; do/certify.")
-	 (defvar TT/org-journal-dir   (concat org-directory "/journal")           "Top level org directory for journal entries.")
-	 (defvar TT/org-reference-dir (concat org-directory "/reference")         "Top level org directory for hierarchical reference material.")
-	 (defvar TT/org-trash-dir     (concat org-directory "/trash")             "Top level org directory for long term archival outside organizer.")
+	 (defvar org-directory        "~/org"                                         "Root 'org-mode' directory.")
+	 (defvar TT/org-agenda-dir    (concat org-directory "/agendas")               "Top level org directory for Getting Things Done (GTD) organizer files.")
+	 (defvar TT/org-calendar      (concat TT/org-agenda-dir "/calendar.org")      "Calendar for scheduled actionables.")
+	 (defvar TT/org-inbox         (concat TT/org-agenda-dir "/inbox.org")         "The collection bin for everything to be refiled.")
+	 (defvar TT/org-incubate-dir  (concat TT/org-agenda-dir "/incubate")          "Categories of inactionable things to incubate.")
+	 (defvar TT/org-ideas         (concat TT/org-incubate-dir "/ideas.org")       "Someday agenda to capture general or 'idea?' ideas.")
+	 (defvar TT/org-projects      (concat TT/org-incubate-dir "/projects.org")    "Someday agenda for project ideas.")
+	 (defvar TT/org-travel        (concat TT/org-incubate-dir "/travel.org")      "Someday agenda for travel related things.")
+	 (defvar TT/org-someday       (concat TT/org-incubate-dir "/someday.org")     "Someday agenda for things I may want to revisit.")
+	 (defvar TT/org-emacs-maybe   (concat TT/org-incubate-dir "/emacs-maybe.org") "Someday agenda for Emacs related things.")
+	 (defvar TT/org-learning-dir  (concat TT/org-agenda-dir "/learning")          "Agendas for structured learning.")
+	 (defvar TT/org-management    (concat TT/org-learning-dir "management.org")   "Learning for engineering management.")
+	 (defvar TT/org-manager       (concat TT/org-agenda-dir "/manager.org")       "Actionables and captures for 1:1s with my manager.")
+	 (defvar TT/org-organizer     (concat TT/org-agenda-dir "/organizer.org")     "Core organizer tracking prioritized actionable work.")
+	 (defvar TT/org-review        (concat TT/org-agenda-dir "/review.org")        "Reference on and journal for reflection.")
+	 (defvar TT/org-retrospective (concat TT/org-agenda-dir "/retro.org")         "Capture target for retro related info or actionables.")
+	 (defvar TT/org-tickler       (concat TT/org-agenda-dir "/tickler.org")       "Time relevant reminders for non-actionable items.")
+	 (defvar TT/org-team-dir      (concat TT/org-agenda-dir "/teams")             "Directory for team specific organizers.")
+	 (defvar TT/org-waiting       (concat TT/org-agenda-dir "/waiting.org")       "Delegated or blocked items awaiting external action.")
+	 (defvar TT/org-brain-dir     (concat org-directory "/brain")                 "Top level org directory for 'org-brain' reference material.")
+	 (defvar TT/org-checklist-dir (concat org-directory "/checklists")            "Top level org directory for action oriented reference; do/certify.")
+	 (defvar TT/org-journal-dir   (concat org-directory "/journal")               "Top level org directory for journal entries.")
+	 (defvar TT/org-reference-dir (concat org-directory "/reference")             "Top level org directory for hierarchical reference material.")
+	 (defvar TT/org-glacier-dir   (concat org-directory "/glacier")               "Top level org directory for long term archival outside organizer.")
 
 	 (defvar org-default-notes-file TT/org-inbox)
    #+end_src
@@ -541,7 +547,7 @@
    #+end_src
 
 
-** Org Todo
+** Org To-Do
 
 *** Keywords
 	Org-mode has a set of configurable keywords, both sequenced and typed, which can be added to headlines and cycled
@@ -606,10 +612,8 @@
 								 ("TODO" "STARTED") ()))
 	#+end_src
 
-**** TODO Extend Tagging Beyond GTD
 
-
-** Agenda
+** Org Agenda
    With org-mode to-do items and tags configured, we can start unleashing the real power behind org-mode and configure
    our agendas.
 
@@ -704,30 +708,36 @@
 						((org-agenda-span 1)
 						 (org-agenda-sorting-strategy
 						  '((agenda time-up priority-down tag-up)))
-						 (org-deadline-warning-ndays 0)))
-				))
+						 (org-deadline-warning-ndays 0)))))
 			  ("w" "Weekly Review"
 			   ((agenda ""
 						((org-agenda-span 7)))
 				(stuck "")
 				(tags "PROJECT")
-				(todo "WAITING")
-				p			  ))
+				(todo "WAITING")))
 			  ("y" "Someday Maybe"
 			   ((todo "MAYBE"
-					  ((org-agenda-files '("~/org/maybe.org"))))
-				))
+					  ((org-agenda-files '("~/org/maybe.org"))))))
 			  ("r" "Review"
 			   ((todo "REVIEW"
-					  ((org-agenda-files '("~/org/review.org"))))
-				))
+					  ((org-agenda-files '("~/org/review.org"))))))
+			  ("c" "Calendar"
+			   ((agenda ""
+						((org-agenda-span 7)
+						 (org-agenda-start-on-weekday 0)
+						 (org-agenda-time-grid-nil)
+						 (org-agenda-repeating-timestamp-show-all t)
+						 (org-agenda-entry-types '(:timestamp :sexp))))))
+			  ("x" "With deadline columns"
+			   ((alltodo ""
+						 ((org-agenda-overriding-columns-format "%20ITEM %DEADLINE")
+						  (org-agenda-view-columns-initially t)))))
 			  ("X" "Upcoming Deadlines"
 			   ((agenda ""
 						((org-agenda-entry-types '(:deadline))
 						 (org-agenda-span 1)
 						 (org-deadline-warning-days 60)
-						 (org-agenda-time-grid nil)))
-				))
+						 (org-agenda-time-grid nil)))))
 			  ("P" "Printed agenda"
 			   ((agenda ""
 						((org-agenda-span 7)
@@ -755,38 +765,40 @@
 			  ("Qa" "Archive Search"
 			   ((search ""
 						((org-agenda-files
-						  (file-expand-wildcards "~/org/archive/*.org"))))
-				))
+						  (file-expand-wildcards "~/org/archive/*.org"))))))
 			  ("QA" "Archive Tags Search"
 			   ((org-tags-view ""
 							   ((org-agenda-files
-								 (file-expand-wildcards "~/org/archive/*.org"))))
-				))
-			  ))
+								 (file-expand-wildcards "~/org/archive/*.org"))))))))
 	#+end_src
 
 
 ** Org Clocking
-   Org-mode gives us the ability to track time by clocking in and out of headlines. Combined with todo items and
+   Org-mode gives us the ability to track time by clocking in and out of headlines. Combined with to-do items and
    agendas, we can really get some value out of this functionality.
 
    #+begin_src emacs-lisp
-	 (setq org-clock-in-switch-to-state "STARTED")
-	 (setq org-clock-report-include-clocking-task t)
-	 (setq org-log-into-drawer "LOGBOOK")
-	 (setq org-clock-into-drawer 1)
-	 (setq org-log-done 'time)
+	 (setq org-clock-continuously t
+		   org-clock-in-resume t
+		   org-clock-into-drawer 1
+		   org-clock-out-remove-zero-time-clocks t
+		   org-clock-out-when-done t
+		   org-clock-persist t
+		   org-clock-report-include-clocking-task t
+		   org-expiry-inactive-timestamps t
+		   org-log-done 'time
+		   org-log-into-drawer "LOGBOOK"
+		   org-clock-in-switch-to-state "STARTED")
 
-	 (setq org-clock-continuously t)
-	 (setq org-clock-in-resume t)
-	 (setq org-expiry-inactive-timestamps t)
+	 ;; TODO: Move these somewhere more appropriate
 	 (setq org-src-window-setup 'current-window)
+	 (setq org-html-postamble nil)
 
 	 (org-clock-persistence-insinuate); Resume clocking task when emacs is restarted
    #+end_src
 
 
-** COMMENT Org Journal
+** Org Journal
    Let's set up where my journal files are stored, and the format of the entries.
 
    #+begin_src emacs-lisp
@@ -797,7 +809,7 @@
 	   :config (setq org-journal-date-prefix "#+TITLE: Daily Note for "))
    #+end_src
 
-*** COMMENT Journal Helpers
+*** Journal Helpers
 	These are functions that will later enable us to interact with org-journal via capture templates, etc...
 
 	#+begin_src emacs-lisp
@@ -825,7 +837,7 @@
    good home for it. Tasks to my organizer or inbox, new journal items to my journal, etc...
 
    I define these by creating a new list to which I define and append each template one-by-one so I can group them in my
-   literate config to better describe each part. First we must set up this list.
+   literate configuration to better describe each part. First we must set up this list.
 
    #+begin_src emacs-lisp
 	 ;; Org Capture Configuration
@@ -875,6 +887,8 @@
 				   '("ss" "Spike Task" entry (file+olp TT/org-organizer "Current Sprint" "Research")
 					 "* TODO [#A] SPIKE: %? :TASK:\n"))
 	  (add-to-list 'org-capture-templates
+				   '("si" "Interrupt" entry (file+olp TT/org-organizer "Current Sprint" "Other")))
+	  (add-to-list 'org-capture-templates
 				   '("so" "Other Task" entry (file+olp TT/org-organizer "Current Sprint" "Other")
 					 "* TODO [#A] %? :TASK:\n"))
 	#+end_src
@@ -903,9 +917,9 @@
 	#+end_src
 
 *** General To Do Items
-	This capture group is for non-sprint related tasks, which should each go to their propper group and have a default
+	This capture group is for non-sprint related tasks, which should each go to their proper group and have a default
 	priority based on how I typically file similar tasks. These can easily be adjusted up or down via the agenda view, so
-	it's perfectly fine for them to be innaccurate for the task, as long as they're typically correct.
+	it's perfectly fine for them to be inaccurate for the task, as long as they're typically correct.
 
 	#+begin_src emacs-lisp
 	  ;; Non-Sprint Todo Capture Group
@@ -1053,7 +1067,7 @@
 
 
 *** Final Things
-	With org-bable mostly configured, lets plug it into some other stuff.
+	With =org-bable= mostly configured, lets plug it into some other stuff.
 
 	#+begin_src emacs-lisp
 	  (add-to-list 'org-src-lang-modes (quote ("plantuml" . fundamental)))
@@ -1208,7 +1222,7 @@
 		 (global-set-key (kbd "C-c SPC") 'company-complete)))
    #+end_src
 
-   It also plugs into ~lsp-mode~ which I'll be setting up later.
+   It also plugs into =lsp-mode= which I'll be setting up later.
    #+begin_src emacs-lisp
 	 (use-package company-lsp
 	   :after (company lsp-mode)
@@ -1243,7 +1257,7 @@
    #+end_src
 
 
-** TODO Magit and Version Control
+** TODO =Magit= and Version Control
    Magical Git interactions in Emacs.
 
    #+begin_src emacs-lisp
@@ -1256,12 +1270,12 @@
    #+end_src
 
 
-** TODO Treemacs
+** TODO =Treemacs=
 
 
 ** Language Configurations
 
-*** Mode Bindings by Filetype
+*** Mode Bindings by File Type
 	Make sure certain files open in certain modes.
 
 	#+begin_src emacs-lisp
@@ -1278,7 +1292,7 @@
 
 
 *** Perl Customizations
-	I used to write mostly in Perl for work, and ~cperl-mode~ was what my Emacs wielding colleagues used at my
+	I used to write mostly in Perl for work, and =cperl-mode= was what my Emacs wielding colleagues used at my
 	employer. It was definitely better than the Vanilla Emacs defaults.
 
 	#+begin_src emacs-lisp
@@ -1297,10 +1311,10 @@
 	#+end_src
 
 
-*** Javascript
-	From time to time I've developed either tangentially or immersively in Javascript, both in the Web and in
-	Node. ~js2-mode~ has been good to me for that. I tried ~js3-mode~, but found it lacked features and had fallen out
-	of support. I'm somewhat eyeing ~indium~, but would likely prefer to just use a ~lsp-mode~ solution that also
+*** JavaScript
+	From time to time I've developed either tangentially or immersively in JavaScript, both in the Web and in
+	Node. =js2-mode= has been good to me for that. I tried =js3-mode=, but found it lacked features and had fallen out
+	of support. I'm somewhat eyeing =indium=, but would likely prefer to just use a =lsp-mode= solution that also
 	supports Typescript.
 
 	#+begin_src emacs-lisp
@@ -1328,7 +1342,7 @@
 * More Emacs Modes
 ** Ledger - Command Line Accounting
    Ledger, the command line double booking entry system. A geeky way to track your finances, with support in Emacs via
-   ~ledger-mode~!
+   =ledger-mode=!
 
    #+begin_src emacs-lisp
 	 (use-package ledger-mode
@@ -1354,11 +1368,11 @@
 * More Emacs Tools
 ** TODO PDF-Tools
    PDF-Tools enable PDF viewing within Emacs, so I don't have to have a second application open to read and take notes
-   on PDFs. Just one more reason to neve leave Emacs.
+   on PDF files. Just one more reason to never leave Emacs.
 
-   Unfortunately my current config has trouble doing a fresh install as this has a dependency on pdf-tools being
-   installed on the host running Emacs, which it may not be. On a system with this dependency installed we're up and
-   running no problem though.
+   Unfortunately my current configuration has trouble doing a fresh install as this has a dependency on =pdf-tools=
+   being installed on the host running Emacs, which it may not be. On a system with this dependency installed we're up
+   and running no problem though.
 
    #+begin_src emacs-lisp
 	 (use-package pdf-tools
@@ -1390,7 +1404,7 @@
 
 
 * TODO Keybinding Overrides
-  - Refactor to their relavant mode configurations. Only defaults or net new bindings should remain here.
+  - Refactor to their relevant mode configurations. Only defaults or net new bindings should remain here.
 
   This section contains my keybinding overrides. After all the work we've done to get things set up or customized to my
   liking, I still need to sing to my own tune and play my own chords.
@@ -1429,8 +1443,8 @@
 	(global-unset-key (kbd "C-x C-z"))
   #+end_src
 
-** Enable Full Keboard Num-Pad
-   Unfortunately I've found Emacs doesn't natively support full size keyboards, however this allows us to get our numpad
+** Enable Full Keyboard Number Pad
+   Unfortunately I've found Emacs doesn't natively support full size keyboards, however this allows us to get our num-pad
    working.
 
    #+begin_src emacs-lisp
@@ -1496,25 +1510,24 @@
    - [ ] https://github.com/hungptit/tools and integration w/ Emacs
    - [ ] https://github.com/yjwen/org-reveal
    - [ ] https://github.com/fniessen/org-html-themes
-   - [ ] hydra
-   - [ ] ivy
-   - [ ] treemacs
-   - [ ] lsp-mode, lsp-ui, company-lsp, dap-mode
-   - [ ] org-journal
-   - [ ] org-brain
-   - [ ] bbdb
-   - [ ] ox-slimhtml
-   - [ ] realgud
+   - [ ] =hydra=
+   - [ ] =ivy=
+   - [ ] =treemacs=
+   - [ ] =lsp-mode=, =lsp-ui=, =company-lsp=, =dap-mode=
+   - [ ] =org-journal=
+   - [ ] =org-brain=
+   - [ ] =bbdb=
+   - [ ] =ox-slimhtml=
+   - [ ] =realgud=
    - [ ] bookmarks
-   - [ ] epg
+   - [ ] =epg=
    - [ ] semantic
    - [ ] tramp, docker-tramp
    - [ ] docker-tramp
-   - [ ] fzf - fuzzy file finding
+   - [ ] =fzf= - fuzzy file finding
    - [ ] MacOS X / Linux config
    - [ ] exec-path-from-shell
-   - [ ] sx - stack exchange integration?
-   - [ ] restclinet
+   - [ ] REST client
    - [ ] org-mode blogging
    - [ ] markdown mode
    - [ ] straight.el (some kind of package management?)
@@ -1527,3 +1540,4 @@
 * Other Reading
   - https://lispcookbook.github.io/cl-cookbook/emacs-ide.html
   - https://edwardtufte.github.io/tufte-css/
+	- https://edwardtufte.github.io/et-book/

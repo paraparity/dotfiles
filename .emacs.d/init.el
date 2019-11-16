@@ -61,8 +61,6 @@
 (add-hook 'after-init-hook
 		  (lambda () (message "loaded in %s" (emacs-init-time))))
 
-(message "Done with init...")
-
 ;; Load from literate configuration
 (org-babel-load-file "~/.emacs.d/configuration.org")
 
