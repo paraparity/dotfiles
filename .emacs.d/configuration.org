@@ -623,15 +623,14 @@
    #+begin_src emacs-lisp
 	 ;; Agenda Files:
 	 (setq org-agenda-files
-		   '(TT/org-calendar
-			 TT/org-inbox
-			 TT/org-incubate
-			 TT/org-learning
-			 TT/org-organizer
-			 TT/org-review
-			 TT/org-someday
-			 TT/org-tickler
-			 TT/org-waiting))
+		   (delq nil
+				 (mapcar (lambda (x) (and x (file-exists-p x) x))
+						 `("~/org/agendas/calendar.org"
+						   "~/org/agendas/inbox.org"
+						   "~/org/agendas/incubate/someday.org"
+						   "~/org/agendas/organizer.org"
+						   "~/org/agendas/review.org"
+						   "~/org/agendas/tickler.org"))))
    #+end_src
 
    Let's also modify some other agenda settings.
@@ -1374,7 +1373,7 @@
    being installed on the host running Emacs, which it may not be. On a system with this dependency installed we're up
    and running no problem though.
 
-   #+begin_src emacs-lisp
+   #+begin_src emacs-lisp :tangle no
 	 (use-package pdf-tools
 	   :pin manual
 	   :config
