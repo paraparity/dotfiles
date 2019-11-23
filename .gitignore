@@ -1,2 +1,6 @@
 # Ignore tangled babel output
 .emacs.d/configuration.el
+
+# Ignore org archive files (may be generated testing agendas)
+*org_archive
+
