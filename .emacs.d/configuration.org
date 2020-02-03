@@ -963,7 +963,7 @@
 				   '("os" "Scheduling" entry (file+olp TT/org-organizer "Office" "Scheduling")
 					 "* TODO [#B] %? :TASK:\n"))
 	  (add-to-list 'org-capture-templates
-				   '("ot" "Task" entry (file+headline TT/org-organizer "Office")
+				   '("ot" "Task" entry (file+olp TT/org-organizer "Office" "General")
 					 "* TODO [#B] %? :TASK:\n"))
 	#+end_src
 
