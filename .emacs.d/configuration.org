@@ -497,30 +497,34 @@
    agenda files, and the like.
 
    #+begin_src emacs-lisp
-	 (defvar org-directory        "~/org"                                         "Root 'org-mode' directory.")
-	 (defvar TT/org-agenda-dir    (concat org-directory "/agendas")               "Top level org directory for Getting Things Done (GTD) organizer files.")
-	 (defvar TT/org-calendar      (concat TT/org-agenda-dir "/calendar.org")      "Calendar for scheduled actionables.")
-	 (defvar TT/org-inbox         (concat TT/org-agenda-dir "/inbox.org")         "The collection bin for everything to be refiled.")
-	 (defvar TT/org-incubate-dir  (concat TT/org-agenda-dir "/incubate")          "Categories of inactionable things to incubate.")
-	 (defvar TT/org-ideas         (concat TT/org-incubate-dir "/ideas.org")       "Someday agenda to capture general or 'idea?' ideas.")
-	 (defvar TT/org-projects      (concat TT/org-incubate-dir "/projects.org")    "Someday agenda for project ideas.")
-	 (defvar TT/org-travel        (concat TT/org-incubate-dir "/travel.org")      "Someday agenda for travel related things.")
-	 (defvar TT/org-someday       (concat TT/org-incubate-dir "/someday.org")     "Someday agenda for things I may want to revisit.")
-	 (defvar TT/org-emacs-maybe   (concat TT/org-incubate-dir "/emacs-maybe.org") "Someday agenda for Emacs related things.")
-	 (defvar TT/org-learning-dir  (concat TT/org-agenda-dir "/learning")          "Agendas for structured learning.")
-	 (defvar TT/org-management    (concat TT/org-learning-dir "management.org")   "Learning for engineering management.")
-	 (defvar TT/org-manager       (concat TT/org-agenda-dir "/manager.org")       "Actionables and captures for 1:1s with my manager.")
-	 (defvar TT/org-organizer     (concat TT/org-agenda-dir "/organizer.org")     "Core organizer tracking prioritized actionable work.")
-	 (defvar TT/org-review        (concat TT/org-agenda-dir "/review.org")        "Reference on and journal for reflection.")
-	 (defvar TT/org-retrospective (concat TT/org-agenda-dir "/retro.org")         "Capture target for retro related info or actionables.")
-	 (defvar TT/org-tickler       (concat TT/org-agenda-dir "/tickler.org")       "Time relevant reminders for non-actionable items.")
-	 (defvar TT/org-team-dir      (concat TT/org-agenda-dir "/teams")             "Directory for team specific organizers.")
-	 (defvar TT/org-waiting       (concat TT/org-agenda-dir "/waiting.org")       "Delegated or blocked items awaiting external action.")
-	 (defvar TT/org-brain-dir     (concat org-directory "/brain")                 "Top level org directory for 'org-brain' reference material.")
-	 (defvar TT/org-checklist-dir (concat org-directory "/checklists")            "Top level org directory for action oriented reference; do/certify.")
-	 (defvar TT/org-journal-dir   (concat org-directory "/journal")               "Top level org directory for journal entries.")
-	 (defvar TT/org-reference-dir (concat org-directory "/reference")             "Top level org directory for hierarchical reference material.")
-	 (defvar TT/org-glacier-dir   (concat org-directory "/glacier")               "Top level org directory for long term archival outside organizer.")
+	 (defvar org-directory           "~/org"                                         "Root 'org-mode' directory.")
+	 (defvar TT/org-agenda-dir       (concat org-directory "/agendas")               "Top level org directory for Getting Things Done (GTD) organizer files.")
+	 (defvar TT/org-calendar         (concat TT/org-agenda-dir "/calendar.org")      "Calendar for scheduled actionables.")
+	 (defvar TT/org-inbox            (concat TT/org-agenda-dir "/inbox.org")         "The collection bin for everything to be refiled.")
+	 (defvar TT/org-incubate-dir     (concat TT/org-agenda-dir "/incubate")          "Categories of inactionable things to incubate.")
+	 (defvar TT/org-ideas            (concat TT/org-incubate-dir "/ideas.org")       "Someday agenda to capture general or 'idea?' ideas.")
+	 (defvar TT/org-projects         (concat TT/org-incubate-dir "/projects.org")    "Someday agenda for project ideas.")
+	 (defvar TT/org-travel           (concat TT/org-incubate-dir "/travel.org")      "Someday agenda for travel related things.")
+	 (defvar TT/org-someday          (concat TT/org-incubate-dir "/someday.org")     "Someday agenda for things I may want to revisit.")
+	 (defvar TT/org-emacs-maybe      (concat TT/org-incubate-dir "/emacs-maybe.org") "Someday agenda for Emacs related things.")
+	 (defvar TT/org-learning-dir     (concat TT/org-agenda-dir "/learning")          "Agendas for structured learning.")
+	 (defvar TT/org-management       (concat TT/org-learning-dir "management.org")   "Learning for engineering management.")
+	 (defvar TT/org-development      (concat TT/org-learning-dir "development.org")  "Learning for software development.")
+	 (defvar TT/org-manager          (concat TT/org-agenda-dir "/manager.org")       "Actionables and captures for 1:1s with my manager.")
+	 (defvar TT/org-organizer        (concat TT/org-agenda-dir "/organizer.org")     "Core organizer tracking prioritized actionable work.")
+	 (defvar TT/org-retrospective    (concat TT/org-agenda-dir "/retro.org")         "Capture target for retro related info or actionables.")
+	 (defvar TT/org-review           (concat TT/org-agenda-dir "/review.org")        "Reference on and journal for reflection.")
+	 (defvar TT/org-tickler          (concat TT/org-agenda-dir "/tickler.org")       "Time relevant reminders for 'decide to do later' items.")
+	 (defvar TT/org-team-dir         (concat TT/org-agenda-dir "/teams")             "Directory for team specific organizers.")
+	 (defvar TT/org-waiting          (concat TT/org-agenda-dir "/waiting.org")       "Delegated or blocked items awaiting external action.")
+	 (defvar TT/org-blog             (concat org-directory "/blog")                  "Top level org directory for blog posts.")
+	 (defvar TT/org-brain-dir        (concat org-directory "/brain")                 "Top level org directory for 'org-brain' reference material.")
+	 (defvar TT/org-checklist-dir    (concat org-directory "/checklists")            "Top level org directory for action oriented reference; do/certify.")
+	 (defvar TT/org-commonplace-dir  (concat org-directory "/commonplace")           "Top level org directory for 'commonplace book' material.")
+	 (defvar TT/org-eng-notebook-dir (concat org-directory "/engineering-notebook")  "Top level org directory for engineering notebook entries.")
+	 (defvar TT/org-journal-dir      (concat org-directory "/journal")               "Top level org directory for journal entries.")
+	 (defvar TT/org-ledger-dir       (concat org-directory "/ledger")                "Top level org directory for accounting/budgeting ledgers.")
+	 (defvar TT/org-glacier-dir      (concat org-directory "/glacier")               "Top level org directory for long term archival outside organizer.")
 
 	 (defvar org-default-notes-file TT/org-inbox)
    #+end_src
@@ -583,28 +587,41 @@
 	projects, and contexts. For now this is enough, though I think there's still more improvement to make here,
 	especially when it comes to searching behavior.
 
+	My tags come in three flavors:
+	1. '@context' - indicates location, headspace, or tool these tasks are associated with, or some other context in
+       which to act on them in
+	2. 'TYPE' - indicates whether the item is a project or task, if it's next up, or if it has some other classification
+	3. 'info' - represents informational tags for categorization and search
+
 	#+begin_src emacs-lisp
 	  (setq org-tag-alist
-			'(("@administrative" . ?a) ; low-priority, variable urgency checkbox tasks I'm responsible for. Churn & burn work
-			  ("@career"         . ?c)
-			  ("@finances"       . ?f)
-			  ("@guild"          . ?g)
-			  ("@health"         . ?h)
-			  ("@home"           . ?H)
-			  ("@learn"          . ?l)
-			  ("@meeting"        . ?m)
-			  ("@office"         . ?o)
-			  ("@read"           . ?r)
-			  ("@sprint"         . ?s)
-			  ("@travel"         . ?v)
-			  ("@workstation"    . ?w)
-			  ("INTERRUPT"       . ?I)
-			  ("PROJECT"         . ?P)
-			  ("RESEARCH"        . ?R)
-			  ("REVIEW"          . ?V)
-			  ("SPIKE"           . ?S)
-			  ("TASK"            . ?T)
-			  ("NEXT"            . ?N)
+			'(("@career"         . ?c) ; personal professional development (different than learn?)
+			  ("@coaching"       . ?C) ; peer professional development (work, 1:1s, feedback, stretch-opps)
+			  ("@communication"  . ?m) ; messaging, email, outreach, inquiry, and publication work
+			  ("@finances"       . ?f) ; banking, budgeting, investing, and most things money related
+			  ("@firefights"     . ?F) ; incident response, unexpected/chaotic work, high-urgency (war-room, incident team, etc...)
+			  ("@guild"          . ?g) ; involvement in communities of practice
+			  ("@health"         . ?h) ; exercise, diet, point-of-care, etc...
+			  ("@home"           . ?H) ; apartment related things
+			  ("@learn"          . ?l) ; courses, intentional learning, study (different than career?)
+			  ("@mentorship"     . ?M) ; peer professional development (non-work; volunteering)
+			  ("@networking"     . ?n) ; professional relationship building and entrepreneurship
+			  ("@office"         . ?o) ; general office tasks (un-bucketed)
+			  ("@read"           . ?r) ; books and reading nook items
+			  ("@review"         . ?R) ; periodic review - timed reminders (tickler)
+			  ("@scheduling"     . ?d) ; calendar work, planning, conflict resolution
+			  ("@sprint"         . ?s) ; sprint work (primarily development)
+			  ("@travel"         . ?t) ; trip planning, packing, and similar
+			  ("@workstation"    . ?w) ; home and office hardware, configs, etc...
+			  ("INTERRUPT"       . ?I) ; an unexpected item that forces a context switch from focus work
+			  ("PROJECT"         . ?P) ; something that takes significant effort or time, and can be decomposed into individual tasks
+			  ("RESEARCH"        . ?R) ; exploratory information gathering that doesn't require standing something up
+			  ("REVIEW"          . ?V) ; was originally for tracking code-review tasks (in sprint work; deprecate?)
+			  ("SPIKE"           . ?S) ; exploratory work that could result in a deliverable (proof-of-concepts, etc...)
+			  ("TASK"            . ?T) ; an atomic actionable thing
+			  ("NEXT"            . ?N) ; the very next thing to be doing within a project
+			  ("administrative"  . ?a) ; administrative tasks, paperwork, check-boxes, overhead, etc...
+			  ("hiring"          . ?i) ; talent acquisition: outreach, correspondence, and interviewing
 			  ("journal"         . ?j)))
 
 	  (setq org-tags-exclude-from-inheritance '("PROJECT")
@@ -627,10 +644,11 @@
 				 (mapcar (lambda (x) (and x (file-exists-p x) x))
 						 `("~/org/agendas/calendar.org"
 						   "~/org/agendas/inbox.org"
-						   "~/org/agendas/incubate/someday.org"
 						   "~/org/agendas/organizer.org"
+						   "~/org/agendas/retro.org"
 						   "~/org/agendas/review.org"
-						   "~/org/agendas/tickler.org"))))
+						   "~/org/agendas/tickler.org"
+						   "~/org/agendas/waiting.org"))))
    #+end_src
 
    Let's also modify some other agenda settings.
@@ -771,6 +789,8 @@
 								 (file-expand-wildcards "~/org/archive/*.org"))))))))
 	#+end_src
 
+**** TODO Incrementally Compose Commands for Better Literate Docs
+
 
 ** Org Clocking
    Org-mode gives us the ability to track time by clocking in and out of headlines. Combined with to-do items and
@@ -843,26 +863,27 @@
 	 (defvar org-capture-templates (list))
    #+end_src
 
-   Then lets set up helpers. These are functions I'll use in my capture templates to extend the functionality of
-   templates themselves. These help make decisions, generate names, and do anything else I could need.
+*** Helper Functions
+	Lets set up helpers. These are functions I'll use in my capture templates to extend the functionality of templates
+	themselves. These help make decisions, generate names, and do anything else I could need.
 
-   #+begin_src emacs-lisp
-	 ;;; BEGIN Capture Helpers
-	 (defun region-to-clocked-task (start end)
-	   "Copies the selected text, from START to END, to the currently clocked in `org-mode` task."
-	   (interactive "r")
-	   (org-capture-string (buffer-substring-no-properties-start end) "C"))
-	 (global-set-key (kbd "C-<F1>") 'region-to-clocked-task)
+	#+begin_src emacs-lisp
+	  ;;; BEGIN Capture Helpers
+	  (defun region-to-clocked-task (start end)
+		"Copies the selected text, from START to END, to the currently clocked in `org-mode` task."
+		(interactive "r")
+		(org-capture-string (buffer-substring-no-properties-start end) "C"))
+	  (global-set-key (kbd "C-<F1>") 'region-to-clocked-task)
 
-	 (defun capture-incident-response-file (path)
-	   "Generate dated file at capture PATH using interactively provided description."
-	   (interactive)
-	   (let ((name (read-string "Alert Name: ")))
-		 (expand-file-name
-		  (format "%s_%s.org" (format-time-string "%Y%m%d") name)
-		  path)))
-	 ;;; END Capture Helpers
-   #+end_src
+	  (defun capture-incident-response-file (path)
+		"Generate dated file at capture PATH using interactively provided description."
+		(interactive)
+		(let ((name (read-string "Alert Name: ")))
+		  (expand-file-name
+		   (format "%s_%s.org" (format-time-string "%Y%m%d") name)
+		   path)))
+	  ;;; END Capture Helpers
+	#+end_src
 
 
 *** Sprint Work
@@ -892,6 +913,7 @@
 					 "* TODO [#A] %? :TASK:\n"))
 	#+end_src
 
+
 *** Retrospective Items
 	This second capture group is for capturing information observations and information related to how the sprint is
 	going. Capture in the moment, make sense through reflection, synthesize for retrospective and present to the
@@ -915,6 +937,37 @@
 					 "- %?" :empty-lines 1))
 	#+end_src
 
+
+*** Office Work Capture
+	As I made the transition from engineering work to management I found myself overusing the "office" context I
+	originally had for non-development in-office work. This capture group helps me better capture tasks I find myself
+	regularly doing as a manager, and better categorizes things within sub-groups of the "office" context.
+
+	#+begin_src emacs-lisp
+	  ;; Capture Group for Office Work
+	  (add-to-list 'org-capture-templates
+				   '("o" "Office Capture Group"))
+	  (add-to-list 'org-capture-templates
+				   '("oa" "Administrative" entry (file+olp TT/org-organizer "Office" "Administrative")
+					 "* TODO [#B] %? :administrative:TASK:\n"))
+	  (add-to-list 'org-capture-templates
+				   '("oc" "Communications" entry (file+olp TT/org-organizer "Office" "Communications")
+					 "* TODO [#B] %? :TASK:\n"))
+	  (add-to-list 'org-capture-templates
+				   '("of" "Firefighting" entry (file+olp TT/org-organizer "Office" "Firefighting")
+					 "* TODO [#A] %? :TASK:\n"))
+	  (add-to-list 'org-capture-templates
+				   '("oh" "Hiring" entry (file+olp TT/org-organizer "Office" "Hiring")
+					 "* TODO [#B] %? :hiring:TASK:\n"))
+	  (add-to-list 'org-capture-templates
+				   '("os" "Scheduling" entry (file+olp TT/org-organizer "Office" "Scheduling")
+					 "* TODO [#B] %? :TASK:\n"))
+	  (add-to-list 'org-capture-templates
+				   '("ot" "Task" entry (file+headline TT/org-organizer "Office")
+					 "* TODO [#B] %? :TASK:\n"))
+	#+end_src
+
+
 *** General To Do Items
 	This capture group is for non-sprint related tasks, which should each go to their proper group and have a default
 	priority based on how I typically file similar tasks. These can easily be adjusted up or down via the agenda view, so
@@ -931,15 +984,13 @@
 				   '("tg" "Guild Task" entry (file+headline TT/org-organizer "Guild")
 					 "* TODO [#C] %? :TASK:\n"))
 	  (add-to-list 'org-capture-templates
-				   '("to" "Office Task" entry (file+headline TT/org-organizer "Office")
-					 "* TODO [#B] %? :TASK:\n"))
-	  (add-to-list 'org-capture-templates
 				   '("tw" "Workstation Task" entry (file+headline TT/org-organizer "Workstation")
 					 "* TODO [#C] %? :TASK:\n"))
 	  (add-to-list 'org-capture-templates
 				   '("tt" "General Task" entry (file+headline TT/org-organizer "Tasks")
 					 "\n* TODO [#C] %? :TASK:\n %i\n %a\n\n"))
 	#+end_src
+
 
 *** Meetings
 	This capture group is for meetings, habits, and other entries that should be tied to the calendar.
@@ -952,6 +1003,7 @@
 				   '("mm" "Pop Up Meetings and One-Offs" entry (file+olp TT/org-calendar "Meetings" "One Offs")
 					 "* TODO %?\n"))
 	#+end_src
+
 
 *** Miscellaneous
 	The remaining capture templates are things that don't fit neatly into any one group.
@@ -979,6 +1031,13 @@
 					 (clock)
 					 "%i" :immediate-finish t :empty-lines 1))
 	#+end_src
+
+
+*** TODO Needs Work [0/1]
+	- [ ] The =C-c c x= 'Incident Notes' capture template isn't working
+	  #+begin_example
+	  Invalid file location: nil
+	  #+end_example
 
 
 ** Org Publish
@@ -1488,24 +1547,7 @@
   That's mostly it folks. Configuration is done, the rest are future works. This section collects other articles or
   configurations I've stumbled across and bookmarked for "eventual" reading.
 
-  - https://katherine.cox-buday.com/blog/2015/03/14/writing-specs-with-org-mode/
-  - http://kitchingroup.cheme.cmu.edu/blog/category/org-mode/
-  - https://ladicle.com/post/config/#screenshot
-  - https://orgmode.org/worg/org-web.html
-  - https://github.com/ianpan870102/.emacs.d
-  - http://emacs.cafe/emacs/orgmode/gtd/2017/06/30/orgmode-gtd.html
-  - https://joshrollinswrites.com/emacsorg/org-capture-template-1/
-  - http://www.howardism.org/Technical/Emacs/getting-boxes-done.html
-  - http://www.howardism.org/Technical/Emacs/literate-programming-tutorial.html
-  - https://orgmode.org/worg/org-tutorials/org-latex-export.html
-  - https://www.gnu.org/software/tramp/#Configuration
-  - http://doc.norang.ca/org-mode.html
-
-  Collections:
-  - https://orgmode.org/worg/org-blog-articles.html
-
-
-** TODO List [0/25]
+** TODO List [0/39]
    - [ ] https://github.com/hungptit/tools and integration w/ Emacs
    - [ ] https://github.com/yjwen/org-reveal
    - [ ] https://github.com/fniessen/org-html-themes
@@ -1530,13 +1572,22 @@
    - [ ] org-mode blogging
    - [ ] markdown mode
    - [ ] straight.el (some kind of package management?)
-
-
-** Explore List [0/1]
    - [ ] https://gitlab.com/jaor/geiser
+   - [ ] https://katherine.cox-buday.com/blog/2015/03/14/writing-specs-with-org-mode/
+   - [ ] http://kitchingroup.cheme.cmu.edu/blog/category/org-mode/
+   - [ ] https://ladicle.com/post/config/#screenshot
+   - [ ] https://orgmode.org/worg/org-web.html
+   - [ ] https://github.com/ianpan870102/.emacs.d
+   - [ ] http://emacs.cafe/emacs/orgmode/gtd/2017/06/30/orgmode-gtd.html
+   - [ ] https://joshrollinswrites.com/emacsorg/org-capture-template-1/
+   - [ ] http://www.howardism.org/Technical/Emacs/getting-boxes-done.html
+   - [ ] http://www.howardism.org/Technical/Emacs/literate-programming-tutorial.html
+   - [ ] https://orgmode.org/worg/org-tutorials/org-latex-export.html
+   - [ ] https://www.gnu.org/software/tramp/#Configuration
+   - [ ] http://doc.norang.ca/org-mode.html
+   - [ ] https://orgmode.org/worg/org-blog-articles.html
+   - [ ] https://lispcookbook.github.io/cl-cookbook/emacs-ide.html
+   - [ ] https://edwardtufte.github.io/tufte-css/
+	 - https://edwardtufte.github.io/et-book/
 
 
-* Other Reading
-  - https://lispcookbook.github.io/cl-cookbook/emacs-ide.html
-  - https://edwardtufte.github.io/tufte-css/
-	- https://edwardtufte.github.io/et-book/
