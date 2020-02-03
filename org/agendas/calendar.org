@@ -1,0 +1,24 @@
+* Meetings                                                         :@meeting:
+** Ad-Hoc
+** Daily
+*** TODO Scrum
+** Weekly
+*** TODO Reflection
+*** TODO Planning
+*** TODO Write Digest
+** 1:1s
+** Bi-Weekly
+*** TODO Sprint Review
+*** TODO Retrospective
+*** TODO Sprint Planning
+** Monthly
+** Quarterly
+* Overhead
+** TODO Lunch
+** TODO Morning Comms Ingest
+** TODO Afternoon Comms Ingest
+** TODO Evening Comms Ingest
+** Disruptions
+*** Reboot
+*** Hardware Issue
+*** OS Upgrade

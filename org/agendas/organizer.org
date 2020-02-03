@@ -1,0 +1,21 @@
+* Current Sprint                                                    :@sprint:
+** Development
+** Research
+** Review
+** Other
+* Career                                                            :@career:
+* Finances                                                        :@finances:
+* Guild                                                              :@guild:
+* Health & Wellness                                                 :@health:
+* Home                                                                :@home:
+* Office                                                            :@office:
+** Administrative                                            :administrative:
+** Communication                                              :@communication:
+** Firefighting                                                :@firefights:
+** General
+** Hiring                                                            :hiring:
+** Scheduling                                                   :@scheduling:
+* Read                                                                :@read:
+* Travel                                                            :@travel:
+* Workstation                                                  :@workstation:
+* Tasks
