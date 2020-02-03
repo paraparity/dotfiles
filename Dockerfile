@@ -6,6 +6,7 @@ RUN apt-get update \
 	&& rm -rf /var/lib/apt/lists/*
 
 ADD .emacs.d /root/.emacs.d
+COPY org /root/org
 RUN emacs -batch -l ~/.emacs.d/init.el
 
 WORKDIR /root/
