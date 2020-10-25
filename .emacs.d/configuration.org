@@ -3,32 +3,19 @@
 
 * Overview
   I've maintained my Emacs configuration in a number of styles across the years, each having its own strengths and
-  weaknesses. I've even declared configuration bankruptcy a few times. I do not expect a literate configuration to be
-  some silver bullet or holy grail that comes in far above and beyond the other approaches I've tried. Instead, I expect
-  only to learn. I've never tried a literate configuration before, and it could be good experience.
+  weaknesses. I've even declared configuration bankruptcy a few times. Presently I'm experimenting with a literate
+  configuration where I hope to better capture the intent and reasons for my configuration settings. My hope is that
+  this improves my experience maintaining my configuration, and that it also helps others understand what these configs
+  do.
 
-  To me, a literate configuration is a merging of documentation and source into the same body of text with the intention of using
-  prose to describe the purpose and rational behind the code. The purpose is to improve the understand-ability and
-  maintainability. It should allow me to capture the goals of each component of my configuration, and it should allow me to
-  describe why I've made certain decisions. While I could probably do the same with code comments they aren't as
-  flexible as prose alone is and they're embedded within the configuration source.
-
-  Over time my needs of Emacs will change, the dependencies I incorporate will change, and Emacs itself will
-  change. Having the prose to provide context will prove helpful in adapting to and incorporating that change.
-
-  Additionally, I see sharing my literate configuration as an implementation of the concept of "thinking/learning out
-  loud". The idea being that I have but one perspective to view the world with, and one set of experiences to draw upon.
-  By openly sharing them, I provide opportunity for ad-hoc collaboration which can correct mistakes, call out
-  assumptions, and provide insights which would have remained entirely unknown to me otherwise. 
-
-  As such, I invite your feedback openly. Welcome aboard my ship of Theseus.
+  I invite your feedback openly. Welcome aboard my ship of Theseus.
 
 ** House Keeping
 
 *** Variable Naming Convention
 	As is common among Emacsers, I've opted to adopt a naming scheme that identifies personal contributions and adds a
 	bit of individual flare. Considering the name I go by is =Paraparity=, you'll notice a number of names prefixed with
-	=TT/=. This represents a so-called =pair of T's= which plays off of the =parity= portion of my handle.
+	=TT/=. This represents a so-called =pair of T's= playing off of the =parity= portion of my handle.
 
 
 * General Settings
@@ -604,6 +591,7 @@
 			  ("@health"         . ?h) ; exercise, diet, point-of-care, etc...
 			  ("@home"           . ?H) ; apartment related things
 			  ("@learn"          . ?l) ; courses, intentional learning, study (different than career?)
+			  ("@life"           . ?i) ; life event planning and maintenance work
 			  ("@mentorship"     . ?M) ; peer professional development (non-work; volunteering)
 			  ("@networking"     . ?n) ; professional relationship building and entrepreneurship
 			  ("@office"         . ?o) ; general office tasks (un-bucketed)
@@ -798,11 +786,11 @@
 
    #+begin_src emacs-lisp
 	 (setq org-clock-continuously t
-		   org-clock-in-resume t
+		   ;org-clock-in-resume t
 		   org-clock-into-drawer 1
 		   org-clock-out-remove-zero-time-clocks t
 		   org-clock-out-when-done t
-		   org-clock-persist t
+		   ;org-clock-persist t
 		   org-clock-report-include-clocking-task t
 		   org-expiry-inactive-timestamps t
 		   org-log-done 'time
@@ -813,7 +801,7 @@
 	 (setq org-src-window-setup 'current-window)
 	 (setq org-html-postamble nil)
 
-	 (org-clock-persistence-insinuate); Resume clocking task when emacs is restarted
+	 ;(org-clock-persistence-insinuate); Resume clocking task when emacs is restarted
    #+end_src
 
 
@@ -890,7 +878,10 @@
 	Here I define my first capture group for Sprint Work. All templates within capture some work associated directly with
 	the current sprint I'm working in.
 
-	#+begin_src emacs-lisp
+	I no longer use this as an engineering manager, however keep it around for historical purposes. It is not exported
+	from my org config.
+
+	#+begin_src emacs-lisp :tangle no
 	  ;; Capture group for Sprint Work
 	  (add-to-list 'org-capture-templates
 				   '("s" "Sprint Capture Group"))
@@ -949,7 +940,7 @@
 				   '("o" "Office Capture Group"))
 	  (add-to-list 'org-capture-templates
 				   '("oa" "Administrative" entry (file+olp TT/org-organizer "Office" "Administrative")
-					 "* TODO [#B] %? :administrative:TASK:\n"))
+					 "* TODO [#B] %? :TASK:\n"))
 	  (add-to-list 'org-capture-templates
 				   '("oc" "Communications" entry (file+olp TT/org-organizer "Office" "Communications")
 					 "* TODO [#B] %? :TASK:\n"))
@@ -958,7 +949,7 @@
 					 "* TODO [#A] %? :TASK:\n"))
 	  (add-to-list 'org-capture-templates
 				   '("oh" "Hiring" entry (file+olp TT/org-organizer "Office" "Hiring")
-					 "* TODO [#B] %? :hiring:TASK:\n"))
+					 "* TODO [#B] %? :TASK:\n"))
 	  (add-to-list 'org-capture-templates
 				   '("os" "Scheduling" entry (file+olp TT/org-organizer "Office" "Scheduling")
 					 "* TODO [#B] %? :TASK:\n"))
@@ -1477,6 +1468,7 @@
 	(global-set-key (kbd "C-c o") 'switch-to-minibuffer)
 	(global-set-key (kbd "<f8>") 'flyspell-buffer)
 	(global-set-key (kbd "<f6>") 'speedbar)
+	(global-set-key (kbd "M-+") 'comment-line)
 
 	;; Org-Mode Keybindings
 	(global-set-key (kbd "C-c a") 'org-agenda)
