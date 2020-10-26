@@ -487,6 +487,7 @@
 	 (defvar org-directory           "~/org"                                         "Root 'org-mode' directory.")
 	 (defvar TT/org-agenda-dir       (concat org-directory "/agendas")               "Top level org directory for Getting Things Done (GTD) organizer files.")
 	 (defvar TT/org-calendar         (concat TT/org-agenda-dir "/calendar.org")      "Calendar for scheduled actionables.")
+	 (defvar TT/org-habits           (concat TT/org-agenda-dir "/habits.org")        "Habits for periodic todos.")
 	 (defvar TT/org-inbox            (concat TT/org-agenda-dir "/inbox.org")         "The collection bin for everything to be refiled.")
 	 (defvar TT/org-incubate-dir     (concat TT/org-agenda-dir "/incubate")          "Categories of inactionable things to incubate.")
 	 (defvar TT/org-ideas            (concat TT/org-incubate-dir "/ideas.org")       "Someday agenda to capture general or 'idea?' ideas.")
@@ -591,7 +592,7 @@
 			  ("@health"         . ?h) ; exercise, diet, point-of-care, etc...
 			  ("@home"           . ?H) ; apartment related things
 			  ("@learn"          . ?l) ; courses, intentional learning, study (different than career?)
-			  ("@life"           . ?i) ; life event planning and maintenance work
+			  ("@live"           . ?i) ; life event planning and maintenance work
 			  ("@mentorship"     . ?M) ; peer professional development (non-work; volunteering)
 			  ("@networking"     . ?n) ; professional relationship building and entrepreneurship
 			  ("@office"         . ?o) ; general office tasks (un-bucketed)
@@ -631,10 +632,9 @@
 		   (delq nil
 				 (mapcar (lambda (x) (and x (file-exists-p x) x))
 						 `("~/org/agendas/calendar.org"
+						   "~/org/agendas/habits.org"
 						   "~/org/agendas/inbox.org"
 						   "~/org/agendas/organizer.org"
-						   "~/org/agendas/retro.org"
-						   "~/org/agendas/review.org"
 						   "~/org/agendas/tickler.org"
 						   "~/org/agendas/waiting.org"))))
    #+end_src
@@ -786,12 +786,13 @@
 
    #+begin_src emacs-lisp
 	 (setq org-clock-continuously t
-		   ;org-clock-in-resume t
+		   org-clock-in-resume t
 		   org-clock-into-drawer 1
 		   org-clock-out-remove-zero-time-clocks t
 		   org-clock-out-when-done t
-		   ;org-clock-persist t
+		   org-clock-persist t
 		   org-clock-report-include-clocking-task t
+		   org-treat-insert-todo-heading-as-state-change t
 		   org-expiry-inactive-timestamps t
 		   org-log-done 'time
 		   org-log-into-drawer "LOGBOOK"
@@ -801,7 +802,7 @@
 	 (setq org-src-window-setup 'current-window)
 	 (setq org-html-postamble nil)
 
-	 ;(org-clock-persistence-insinuate); Resume clocking task when emacs is restarted
+	 (org-clock-persistence-insinuate); Resume clocking task when emacs is restarted
    #+end_src
 
 
@@ -870,6 +871,12 @@
 		  (expand-file-name
 		   (format "%s_%s.org" (format-time-string "%Y%m%d") name)
 		   path)))
+
+	  (defun org-capture-inbox ()
+		"Capture to inbox."
+		(interactive)
+		(call-interactively 'org-store-link)
+		(org-capture nil "i"))
 	  ;;; END Capture Helpers
 	#+end_src
 
@@ -878,10 +885,10 @@
 	Here I define my first capture group for Sprint Work. All templates within capture some work associated directly with
 	the current sprint I'm working in.
 
-	I no longer use this as an engineering manager, however keep it around for historical purposes. It is not exported
-	from my org config.
+	I do not presently use this as an engineering manager, however I keep it around to look back on. It doesn't export
+	into the final elisp configuration.
 
-	#+begin_src emacs-lisp :tangle no
+	#+begin_src emacs-lisp :tanlg no
 	  ;; Capture group for Sprint Work
 	  (add-to-list 'org-capture-templates
 				   '("s" "Sprint Capture Group"))
@@ -996,16 +1003,49 @@
 	#+end_src
 
 
+*** Test Group
+	Wanted to test nested groups, and this worked. Not exporting, but will keep around for learning for now. Am starting
+	to get a little tired of reapeating myself with =add-to-list= pattern though. TODO?
+
+	#+begin_src emacs-lisp :tangle no
+	  ;; Test capture group - testing nested sub-groups
+	  (add-to-list 'org-capture-templates
+				   '("q" "Test Capture Group"))
+	  (add-to-list 'org-capture-templates
+				   '("qa" "Test Capture Sub-Group A"))
+	  (add-to-list 'org-capture-templates
+				   `("qaa" "AA Template" entry (file+olp TT/org-inbox "Test" "A" "AA")
+					 "* TODO [#A] %? :TASK:\n" :empty-lines 1))
+	  (add-to-list 'org-capture-templates
+				   `("qaa" "AB Template" entry (file+olp TT/org-inbox "Test" "A" "AB")
+					 "* TODO [#B] %? :TASK:\n" :empty-lines 1))
+	  (add-to-list 'org-capture-templates
+				   '())
+	  (add-to-list 'org-capture-templates
+				   '("qb" "Test Capture Sub-Group B"))
+	  (add-to-list 'org-capture-templates
+				   `("qba" "BA Template" entry (file+olp TT/org-inbox "Test" "B" "BA")
+					 "* TODO [#A] %? :TASK:\n" :empty-lines 1))
+	  (add-to-list 'org-capture-templates
+				   `("qbb" "BB Template" entry (file+olp TT/org-inbox "Test" "B" "BB")
+					 "* TODO [#B] %? :TASK:\n" :empty-lines 1))
+	#+end_src
+	
+
 *** Miscellaneous
 	The remaining capture templates are things that don't fit neatly into any one group.
 
 	#+begin_src emacs-lisp
 	  ;; Other Capture Templates (un-grouped)
 	  (add-to-list 'org-capture-templates
+				   `("i" "Inbox" entry  (file+olp TT/org-inbox "Capture" "Todos")
+					 ,(concat "* TODO %?\n"
+							  "/Entered on/ %U") :empty-lines 1))
+	  (add-to-list 'org-capture-templates
 				   `("j" "Journal" entry (function org-journal-find-location)
 					 "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?"))
 	  (add-to-list 'org-capture-templates
-				   `("n" "Note" entry (file+headline "~/org/agendas/inbox.org" "Notes Capture")
+				   `("n" "Note" entry (file+olp TT/org-inbox "Capture" "Notes")
 					 "* %?\n:PROPERTIES:\n:CREATED:%U:END:\n\n%i\n\nFrom: %a" :empty-lines 1))
 	  (add-to-list 'org-capture-templates
 				   `("m" "Manager Notes" item (file+olp TT/org-manager "1:1 Prep" "Capture")
@@ -1449,6 +1489,11 @@
 	  "Find any non-ascii characters in the current buffer."
 	  (interactive)
 	  (occur "[[:nonascii:]]"))
+
+	(defun open-config-file ()
+	  "Open this file."
+	  (interactive)
+	  (find-file "~/.emacs.d/configuration.org"))
   #+end_src
 
 
@@ -1460,6 +1505,7 @@
 
   #+begin_src emacs-lisp
 	;; Buffer Key Bindings
+	(global-set-key (kbd "S-w") 'kill-this-buffer)
 	(global-set-key (kbd "C-S-<left>") 'shrink-window-horizontally)
 	(global-set-key (kbd "C-S-<right>") 'enlarge-window-horizontally)
 	(global-set-key (kbd "C-S-<down>") 'shrink-window)
@@ -1468,17 +1514,19 @@
 	(global-set-key (kbd "C-c o") 'switch-to-minibuffer)
 	(global-set-key (kbd "<f8>") 'flyspell-buffer)
 	(global-set-key (kbd "<f6>") 'speedbar)
-	(global-set-key (kbd "M-+") 'comment-line)
 
 	;; Org-Mode Keybindings
 	(global-set-key (kbd "C-c a") 'org-agenda)
 	(global-set-key (kbd "C-c c") 'org-capture)
 	(global-set-key (kbd "C-c l") 'org-store-link)
+	(global-set-key (kbd "C-c i") 'org-capture-inbox)
+
 
 	;; Elfeed Keybindings
 	(global-set-key (kbd "C-x w") 'elfeed)
 
 	;; Misc Keybindings
+	(global-set-key (kbd "C-c 1") 'open-config-file)
 	(global-set-key (kbd "C-x #") 'comment-or-uncomment-region)
 	(global-set-key (kbd "C-c d") 'duplicate-current-line-or-region)
 	;;(global-set-key (kbd "M-.") 'find-tag-other-window)
@@ -1521,6 +1569,9 @@
   #+begin_src emacs-lisp
 	;; Make it so I can recover old sessions after close or reboot
 	(desktop-save-mode 1)
+
+	;; Load configuration files local to employer
+	;;(org-babel-load-file "~/.emacs.d/employer.org")
 
 	;; Start the Emacs server
 	(require 'server)
