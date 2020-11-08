@@ -555,9 +555,9 @@
 
 	#+begin_src emacs-lisp
 	  (setq org-todo-keywords
-			'((sequence "TODO(t)" "NEXT(n)" "STARTED(s)" "WAITING(w@)" "|" "DONE(d)" "DROP(x@)")
-			  (sequence "REVIEW(r)"                                    "|" "REVIEWED(v)")
-			  (sequence "OPEN(o)"                                      "|" "CLOSED(c)")))
+			'((sequence "TODO(t)" "NEXT(n)" "DELEGATED(g@)" "STARTED(s)" "WAITING(w@)" "|" "DONE(d)" "DROP(x@)")
+			  (sequence "REVIEW(r)" "|" "REVIEWED(v)")
+			  (sequence "OPEN(o)"   "|" "CLOSED(c@)")))
 
 	  (setq org-todo-keyword-faces
 			'(("STARTED" . "cyan")
@@ -601,13 +601,11 @@
 			  ("@sprint"         . ?s) ; sprint work (primarily development)
 			  ("@travel"         . ?t) ; trip planning, packing, and similar
 			  ("@workstation"    . ?w) ; home and office hardware, configs, etc...
-			  ("INTERRUPT"       . ?I) ; an unexpected item that forces a context switch from focus work
-			  ("PROJECT"         . ?P) ; something that takes significant effort or time, and can be decomposed into individual tasks
-			  ("RESEARCH"        . ?R) ; exploratory information gathering that doesn't require standing something up
-			  ("REVIEW"          . ?V) ; was originally for tracking code-review tasks (in sprint work; deprecate?)
-			  ("SPIKE"           . ?S) ; exploratory work that could result in a deliverable (proof-of-concepts, etc...)
-			  ("TASK"            . ?T) ; an atomic actionable thing
+			  ("IMPORTANT"       . ?I) ; something of significance or of great value
 			  ("NEXT"            . ?N) ; the very next thing to be doing within a project
+			  ("PROJECT"         . ?P) ; something that takes significant effort or time, and can be decomposed into individual tasks
+			  ("TASK"            . ?T) ; an atomic actionable thing
+			  ("URGENT"          . ?U) ; something that demands attention in a short timespan
 			  ("administrative"  . ?a) ; administrative tasks, paperwork, check-boxes, overhead, etc...
 			  ("hiring"          . ?i) ; talent acquisition: outreach, correspondence, and interviewing
 			  ("journal"         . ?j)))
@@ -707,6 +705,10 @@
 								(org-agenda-skip-if nil '(scheduled deadline))))
 						  (org-agenda-overriding-header "All Normal Priority Tasks:"))))
 			   ((org-agenda-compact-blocks t)))
+			  ("1" "Q1" tags-todo "+IMPORTANT+URGENT")
+			  ("2" "Q2" tags-todo "+IMPORTANT-URGENT")
+			  ("3" "Q3" tags-todo "-IMPORTANT+URGENT")
+			  ("4" "Q4" tags-todo "-IMPORTANT-URGENT")
 			  ("D" "Daily Action List"
 			   ((agenda ""
 						((org-agenda-span 1)
