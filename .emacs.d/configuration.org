@@ -556,13 +556,15 @@
 	#+begin_src emacs-lisp
 	  (setq org-todo-keywords
 			'((sequence "TODO(t)" "NEXT(n)" "DELEGATED(g@)" "STARTED(s)" "WAITING(w@)" "|" "DONE(d)" "DROP(x@)")
-			  (sequence "REVIEW(r)" "|" "REVIEWED(v)")
-			  (sequence "OPEN(o)"   "|" "CLOSED(c@)")))
+			  (sequence "MEETING(m)" "APPOINTMENT(a)" "|" "COMPLETED(p)" "CANCELLED(l)")
+			  (sequence "REVIEW(r)" "REWORK(k@)"      "|" "REVIEWED(v)")
+			  (sequence "OPEN(o)"                     "|" "CLOSED(c@)")))
 
 	  (setq org-todo-keyword-faces
 			'(("STARTED" . "cyan")
 			  ("MAYBE"   . "purple")
 			  ("WAITING" . (:foreground "yellow" :weight bold))
+			  ("CANCELLED" . "DimGray")
 			  ("DROP"    . "DimGray")))
 	#+end_src
 
@@ -613,6 +615,51 @@
 	  (setq org-tags-exclude-from-inheritance '("PROJECT")
 			org-stuck-projects '("+PROJECT/-WAITING-DONE"
 								 ("TODO" "STARTED") ()))
+	#+end_src
+
+
+*** TODO Archiving
+	I typically only look back a sprint, about two weeks, for recent time tracking.
+
+	Thankfully, John Wiegley shared [[https://orgmode.org/list/m21wc7dz4r.fsf@newartisans.com/][a solution]] for this that I now use. Although, it
+	doesn't quite work yet. Do I have the right hooks set?
+	
+	#+begin_src emacs-lisp
+	  (defvar org-my-archive-expiry-days 15
+		"The number of days after which a completed task should be auto-archived.
+	  This can be 0 for immediate, or a floating point value.")
+
+	  (defun org-my-archive-done-tasks ()
+		"Archive completed org tasks."
+		(interactive)
+		(save-excursion
+		  (goto-char (point-min))
+		  (let ((done-regexp
+				 (concat "\\* \\(" (regexp-opt org-done-keywords) "\\) "))
+				(state-regexp
+				 (concat "- State \"\\(" (regexp-opt org-done-keywords)
+						 "\\)\"\\s-*\\[\\([^]\n]+\\)\\]")))
+			(while (re-search-forward done-regexp nil t)
+			  (let ((end (save-excursion
+						   (outline-next-heading)
+						   (point)))
+					begin)
+				(goto-char (line-beginning-position))
+				(setq begin (point))
+				(if (re-search-forward state-regexp end t)
+					(let* ((time-string (match-string 2))
+						   (when-closed (org-parse-time-string time-string)))
+					  (if (>= (time-to-number-of-days
+							   (time-subtract (current-time)
+											  (apply #'encode-time when-closed)))
+							  org-my-archive-expiry-days)
+						  (org-archive-subtree)))
+				  (goto-char end)))))
+		  (save-buffer)))
+
+	  (setq safe-local-variable-values (quote ((after-save-hook archive-done-tasks))))
+
+	  (defalias 'archive-done-tasks 'org-my-archive-done-tasks)
 	#+end_src
 
 
