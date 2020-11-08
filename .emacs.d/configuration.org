@@ -115,7 +115,7 @@
 
 	Let's get some more screen real estate by using a small, code friendly font.
 	#+begin_src emacs-lisp
-	  (set-frame-font "monospace-11")
+	  (set-frame-font "monospace-10")
     #+end_src
 
 	Let's keep track of time in the mode-line.
@@ -555,9 +555,9 @@
 
 	#+begin_src emacs-lisp
 	  (setq org-todo-keywords
-			'((sequence "TODO(t)" "STARTED(s)" "WAITING(w@)" "|" "DONE(d)" "DROP(x@)")
-			  (sequence "REVIEW(r)"                          "|" "REVIEWED(v)")
-			  (sequence "OPEN(o)"                            "|" "CLOSED(c)")))
+			'((sequence "TODO(t)" "NEXT(n)" "STARTED(s)" "WAITING(w@)" "|" "DONE(d)" "DROP(x@)")
+			  (sequence "REVIEW(r)"                                    "|" "REVIEWED(v)")
+			  (sequence "OPEN(o)"                                      "|" "CLOSED(c)")))
 
 	  (setq org-todo-keyword-faces
 			'(("STARTED" . "cyan")
@@ -592,7 +592,6 @@
 			  ("@health"         . ?h) ; exercise, diet, point-of-care, etc...
 			  ("@home"           . ?H) ; apartment related things
 			  ("@learn"          . ?l) ; courses, intentional learning, study (different than career?)
-			  ("@live"           . ?i) ; life event planning and maintenance work
 			  ("@mentorship"     . ?M) ; peer professional development (non-work; volunteering)
 			  ("@networking"     . ?n) ; professional relationship building and entrepreneurship
 			  ("@office"         . ?o) ; general office tasks (un-bucketed)
@@ -849,7 +848,13 @@
 
    #+begin_src emacs-lisp
 	 ;; Org Capture Configuration
-	 (defvar org-capture-templates (list))
+	 (defvar org-capture-templates (list) '())
+
+	 ;; The list needs to be initialized for setcdr to work later
+	 (setq org-capture-templates
+		   '(("i" "Inbox" entry  (file+olp TT/org-inbox "Capture" "Todos")
+			 ,(concat "* TODO %?\n"
+					  "/Entered on/ %U") :empty-lines 1)))
    #+end_src
 
 *** Helper Functions
@@ -885,30 +890,21 @@
 	Here I define my first capture group for Sprint Work. All templates within capture some work associated directly with
 	the current sprint I'm working in.
 
-	I do not presently use this as an engineering manager, however I keep it around to look back on. It doesn't export
-	into the final elisp configuration.
-
-	#+begin_src emacs-lisp :tanlg no
+	#+begin_src emacs-lisp :tangle no
 	  ;; Capture group for Sprint Work
-	  (add-to-list 'org-capture-templates
-				   '("s" "Sprint Capture Group"))
-	  (add-to-list 'org-capture-templates
-				   '("sd" "Development Task" entry (file+olp TT/org-organizer "Current Sprint" "Development")
-					 "* TODO [#A] %? :TASK:\n"))
-	  (add-to-list 'org-capture-templates
-				   '("sv" "Review Task" entry (file+olp TT/org-organizer "Current Sprint" "Review")
-					 "* TODO [#A] %? :TASK:\n"))
-	  (add-to-list 'org-capture-templates
-				   '("sr" "Research Task" entry (file+olp TT/org-organizer "Current Sprint" "Research")
-					 "* TODO [#A] RESEARCH: %? :TASK:\n"))
-	  (add-to-list 'org-capture-templates
-				   '("ss" "Spike Task" entry (file+olp TT/org-organizer "Current Sprint" "Research")
-					 "* TODO [#A] SPIKE: %? :TASK:\n"))
-	  (add-to-list 'org-capture-templates
-				   '("si" "Interrupt" entry (file+olp TT/org-organizer "Current Sprint" "Other")))
-	  (add-to-list 'org-capture-templates
-				   '("so" "Other Task" entry (file+olp TT/org-organizer "Current Sprint" "Other")
-					 "* TODO [#A] %? :TASK:\n"))
+	  (setcdr (last org-capture-templates)
+			  '(("s" "Sprint Capture Group")
+				("sd" "Development Task" entry (file+olp TT/org-organizer "Current Sprint" "Development")
+				 "* TODO [#A] %? :TASK:\n")
+				("sv" "Review Task" entry (file+olp TT/org-organizer "Current Sprint" "Review")
+				 "* TODO [#A] %? :TASK:\n")
+				("sr" "Research Task" entry (file+olp TT/org-organizer "Current Sprint" "Research")
+				 "* TODO [#A] RESEARCH: %? :TASK:\n")
+				("ss" "Spike Task" entry (file+olp TT/org-organizer "Current Sprint" "Research")
+				 "* TODO [#A] SPIKE: %? :TASK:\n")
+				("si" "Interrupt" entry (file+olp TT/org-organizer "Current Sprint" "Other"))
+				("so" "Other Task" entry (file+olp TT/org-organizer "Current Sprint" "Other")
+				 "* TODO [#A] %? :TASK:\n")))
 	#+end_src
 
 
@@ -919,20 +915,16 @@
 
 	#+begin_src emacs-lisp
 	  ;; Capture Group for Retrospective Items
-	  (add-to-list 'org-capture-templates
-				   '("r" "Retrospective Capture Group"))
-	  (add-to-list 'org-capture-templates
-				   '("rk" "Kudos" item (file+olp TT/org-retrospective "Capture" "Kudos")
-					 "- %?" :empty-lines 1))
-	  (add-to-list 'org-capture-templates
-				   '("rg" "Goodness" item (file+olp TT/org-retrospective "Capture" "Goodness")
-					 "- %?" :empty-lines 1))
-	  (add-to-list 'org-capture-templates
-				   '("rb" "Badness" item (file+olp TT/org-retrospective "Capture" "Badness")
-					 "- %?" :empty-lines 1))
-	  (add-to-list 'org-capture-templates
-				   '("rz" "Kaizen" item (file+olp TT/org-retrospective "Capture" "Kaizen")
-					 "- %?" :empty-lines 1))
+	  (setcdr (last org-capture-templates)
+			  '(("r" "Retrospective Capture Group")
+				("rk" "Kudos" item (file+olp TT/org-retrospective "Capture" "Kudos")
+				 "- %?" :empty-lines 1)
+				("rg" "Goodness" item (file+olp TT/org-retrospective "Capture" "Goodness")
+				 "- %?" :empty-lines 1)
+				("rb" "Badness" item (file+olp TT/org-retrospective "Capture" "Badness")
+				 "- %?" :empty-lines 1)
+				("rz" "Kaizen" item (file+olp TT/org-retrospective "Capture" "Kaizen")
+				 "- %?" :empty-lines 1)))
 	#+end_src
 
 
@@ -943,26 +935,20 @@
 
 	#+begin_src emacs-lisp
 	  ;; Capture Group for Office Work
-	  (add-to-list 'org-capture-templates
-				   '("o" "Office Capture Group"))
-	  (add-to-list 'org-capture-templates
-				   '("oa" "Administrative" entry (file+olp TT/org-organizer "Office" "Administrative")
-					 "* TODO [#B] %? :TASK:\n"))
-	  (add-to-list 'org-capture-templates
-				   '("oc" "Communications" entry (file+olp TT/org-organizer "Office" "Communications")
-					 "* TODO [#B] %? :TASK:\n"))
-	  (add-to-list 'org-capture-templates
-				   '("of" "Firefighting" entry (file+olp TT/org-organizer "Office" "Firefighting")
-					 "* TODO [#A] %? :TASK:\n"))
-	  (add-to-list 'org-capture-templates
-				   '("oh" "Hiring" entry (file+olp TT/org-organizer "Office" "Hiring")
-					 "* TODO [#B] %? :TASK:\n"))
-	  (add-to-list 'org-capture-templates
-				   '("os" "Scheduling" entry (file+olp TT/org-organizer "Office" "Scheduling")
-					 "* TODO [#B] %? :TASK:\n"))
-	  (add-to-list 'org-capture-templates
-				   '("ot" "Task" entry (file+olp TT/org-organizer "Office" "General")
-					 "* TODO [#B] %? :TASK:\n"))
+	  (setcdr (last org-capture-templates)
+			  '(("o" "Office Capture Group")
+				("oa" "Administrative" entry (file+olp TT/org-organizer "Office" "Administrative")
+				 "* TODO [#B] %? :TASK:\n")
+				("oc" "Communications" entry (file+olp TT/org-organizer "Office" "Communications")
+				 "* TODO [#B] %? :TASK:\n")
+				("of" "Firefighting" entry (file+olp TT/org-organizer "Office" "Firefighting")
+				 "* TODO [#A] %? :TASK:\n")
+				("oh" "Hiring" entry (file+olp TT/org-organizer "Office" "Hiring")
+				 "* TODO [#B] %? :TASK:\n")
+				("os" "Scheduling" entry (file+olp TT/org-organizer "Office" "Scheduling")
+				 "* TODO [#B] %? :TASK:\n")
+				("ot" "Task" entry (file+olp TT/org-organizer "Office" "General")
+				 "* TODO [#B] %? :TASK:\n")))
 	#+end_src
 
 
@@ -973,20 +959,16 @@
 
 	#+begin_src emacs-lisp
 	  ;; Non-Sprint Todo Capture Group
-	  (add-to-list 'org-capture-templates
-				   '("t" "General Todo Capture Group"))
-	  (add-to-list 'org-capture-templates
-				   '("tc" "Career Task" entry (file+headline TT/org-organizer "Career")
-					 "* TODO [#B] %? :TASK:\n"))
-	  (add-to-list 'org-capture-templates
-				   '("tg" "Guild Task" entry (file+headline TT/org-organizer "Guild")
-					 "* TODO [#C] %? :TASK:\n"))
-	  (add-to-list 'org-capture-templates
-				   '("tw" "Workstation Task" entry (file+headline TT/org-organizer "Workstation")
-					 "* TODO [#C] %? :TASK:\n"))
-	  (add-to-list 'org-capture-templates
-				   '("tt" "General Task" entry (file+headline TT/org-organizer "Tasks")
-					 "\n* TODO [#C] %? :TASK:\n %i\n %a\n\n"))
+	  (setcdr (last org-capture-templates)
+			  '(("t" "General Todo Capture Group")
+				("tc" "Career Task" entry (file+headline TT/org-organizer "Career")
+				 "* TODO [#B] %? :TASK:\n")
+				("tg" "Guild Task" entry (file+headline TT/org-organizer "Guild")
+				 "* TODO [#C] %? :TASK:\n")
+				("tw" "Workstation Task" entry (file+headline TT/org-organizer "Workstation")
+				 "* TODO [#C] %? :TASK:\n")
+				("tt" "General Task" entry (file+headline TT/org-organizer "Tasks")
+				 "\n* TODO [#C] %? :TASK:\n %i\n %a\n\n")))
 	#+end_src
 
 
@@ -995,72 +977,51 @@
 
 	#+begin_src emacs-lisp
 	  ;; Capture Group for Meetings
-	  (add-to-list 'org-capture-templates
-				   '("m" "Meeting Capture Group"))
-	  (add-to-list 'org-capture-templates
-				   '("mm" "Pop Up Meetings and One-Offs" entry (file+olp TT/org-calendar "Meetings" "One Offs")
-					 "* TODO %?\n"))
+	  (setcdr (last org-capture-templates)
+			  '(("m" "Meeting Capture Group")
+				("mm" "Pop Up Meetings and One-Offs" entry (file+olp TT/org-calendar "Meetings" "One Offs")
+				 "* TODO %?\n")))
 	#+end_src
 
 
 *** Test Group
-	Wanted to test nested groups, and this worked. Not exporting, but will keep around for learning for now. Am starting
-	to get a little tired of reapeating myself with =add-to-list= pattern though. TODO?
-
-	#+begin_src emacs-lisp :tangle no
+	#+begin_src emacs-lisp
 	  ;; Test capture group - testing nested sub-groups
-	  (add-to-list 'org-capture-templates
-				   '("q" "Test Capture Group"))
-	  (add-to-list 'org-capture-templates
-				   '("qa" "Test Capture Sub-Group A"))
-	  (add-to-list 'org-capture-templates
-				   `("qaa" "AA Template" entry (file+olp TT/org-inbox "Test" "A" "AA")
-					 "* TODO [#A] %? :TASK:\n" :empty-lines 1))
-	  (add-to-list 'org-capture-templates
-				   `("qaa" "AB Template" entry (file+olp TT/org-inbox "Test" "A" "AB")
-					 "* TODO [#B] %? :TASK:\n" :empty-lines 1))
-	  (add-to-list 'org-capture-templates
-				   '())
-	  (add-to-list 'org-capture-templates
-				   '("qb" "Test Capture Sub-Group B"))
-	  (add-to-list 'org-capture-templates
-				   `("qba" "BA Template" entry (file+olp TT/org-inbox "Test" "B" "BA")
-					 "* TODO [#A] %? :TASK:\n" :empty-lines 1))
-	  (add-to-list 'org-capture-templates
-				   `("qbb" "BB Template" entry (file+olp TT/org-inbox "Test" "B" "BB")
-					 "* TODO [#B] %? :TASK:\n" :empty-lines 1))
+	  (setcdr (last org-capture-templates)
+			  '(("q" "Test Capture Group")
+				("qa" "Test Capture Sub-Group A")
+				("qaa" "AA Template" entry (file+olp TT/org-inbox "Test" "A" "AA")
+				 "* TODO [#A] %? :TASK:\n" :empty-lines 1)
+				("qaa" "AB Template" entry (file+olp TT/org-inbox "Test" "A" "AB")
+				 "* TODO [#B] %? :TASK:\n" :empty-lines 1)
+				("qb" "Test Capture Sub-Group B")
+				("qba" "BA Template" entry (file+olp TT/org-inbox "Test" "B" "BA")
+				 "* TODO [#A] %? :TASK:\n" :empty-lines 1)
+				("qbb" "BB Template" entry (file+olp TT/org-inbox "Test" "B" "BB")
+				 "* TODO [#B] %? :TASK:\n" :empty-lines 1)))
 	#+end_src
-	
+
 
 *** Miscellaneous
 	The remaining capture templates are things that don't fit neatly into any one group.
 
 	#+begin_src emacs-lisp
 	  ;; Other Capture Templates (un-grouped)
-	  (add-to-list 'org-capture-templates
-				   `("i" "Inbox" entry  (file+olp TT/org-inbox "Capture" "Todos")
-					 ,(concat "* TODO %?\n"
-							  "/Entered on/ %U") :empty-lines 1))
-	  (add-to-list 'org-capture-templates
-				   `("j" "Journal" entry (function org-journal-find-location)
-					 "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?"))
-	  (add-to-list 'org-capture-templates
-				   `("n" "Note" entry (file+olp TT/org-inbox "Capture" "Notes")
-					 "* %?\n:PROPERTIES:\n:CREATED:%U:END:\n\n%i\n\nFrom: %a" :empty-lines 1))
-	  (add-to-list 'org-capture-templates
-				   `("m" "Manager Notes" item (file+olp TT/org-manager "1:1 Prep" "Capture")
-					 "- %?" :empty-lines 1))
-	  (add-to-list 'org-capture-templates
-				   '("x" "Incident Notes" entry (file (capture-incident-response-file "~/org/incidents"))
-					 "* Incident Trigger\n%?\n\n* Five Whys\n\n* Action Items\n\n" :clock-in t))
-	  (add-to-list 'org-capture-templates
-				   `("X" "Item to Current Clock" item
-					 (clock)
-					 "%i%?" :empty-lines 1))
-	  (add-to-list 'org-capture-templates
-				   `("C" "Region to Current Clock" plain
-					 (clock)
-					 "%i" :immediate-finish t :empty-lines 1))
+	  (setcdr (last org-capture-templates)
+			  '(("j" "Journal" entry (function org-journal-find-location)
+				 "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?")
+				("n" "Note" entry (file+olp TT/org-inbox "Capture" "Notes")
+				 "* %?\n:PROPERTIES:\n:CREATED:%U:END:\n\n%i\n\nFrom: %a" :empty-lines 1)
+				("m" "Manager Notes" item (file+olp TT/org-manager "1:1 Prep" "Capture")
+				 "- %?" :empty-lines 1)
+				("x" "Incident Notes" entry (file (capture-incident-response-file "~/org/incidents"))
+				 "* Incident Trigger\n%?\n\n* Five Whys\n\n* Action Items\n\n" :clock-in t)
+				("X" "Item to Current Clock" item
+				 (clock)
+				 "%i%?" :empty-lines 1)
+				("C" "Region to Current Clock" plain
+				 (clock)
+				 "%i" :immediate-finish t :empty-lines 1)))
 	#+end_src
 
 

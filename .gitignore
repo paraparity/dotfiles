@@ -4,3 +4,5 @@
 # Ignore org archive files (may be generated testing agendas)
 *org_archive
 
+# Ignore magit generated files
+*.rej
