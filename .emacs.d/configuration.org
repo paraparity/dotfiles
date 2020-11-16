@@ -470,13 +470,20 @@
 
 	(setq org-modules
 		  '((org-bbdb org-bibtex org-docview org-eww org-gnus org-habit org-info org-irc org-mhe org-rmail org-tempo org-w3m)))
+  #+end_src
 
+  Let's also update a few general settings and behavior.
+
+  #+begin_src emacs-lisp
 	(add-hook 'org-mode-hook 'turn-on-auto-fill)
 	(add-hook 'org-mode-hook
 			  '(lambda () (origami-mode nil)))
 
 	(setq org-src-fontify-natively t
-		  org-src-tab-acts-natively t)
+		  org-src-tab-acts-natively t
+		  org-ellipsis " [+]")
+
+	(custom-set-faces '(org-ellipsis ((t (:foreground "gray40" :underline nil)))))
   #+end_src
 
 ** Org Structure
@@ -687,7 +694,8 @@
 
    #+begin_src emacs-lisp
 	 (setq org-agenda-skip-deadline-if-done t
-		   org-agenda-skip-scheduled-if-done t)
+		   org-agenda-skip-scheduled-if-done t
+		   org-agenda-skip-deadline-prewarning-if-scheduled 'pre-scheduled)
    #+end_src
 
 *** Agenda Helpers
@@ -1161,7 +1169,8 @@
 		 (plantuml   . t)
 		 (python     . t)
 		 (shell      . t)
-		 (sql        . t)))
+		 (sql        . t)
+		 (sqlite     . t)))
 	#+end_src
 
 
