@@ -18,55 +18,92 @@
 	=TT/=. This represents a so-called =pair of T's= playing off of the =parity= portion of my handle.
 
 
+*** Add Some Output Commentary
+	When tangled, all of these source blocks become an =.el= file. I'd still like that to be more friendly than just a
+	bunch of configuration code, so let's keep my old =init.el= header around.
+
+	#+begin_src emacs-lisp
+	  ;;; configuration.el --- paraparity's Emacs configuration file
+	  ;;
+	  ;;; Commentary:
+	  ;; Customized startup for Emacs
+	  ;;
+	  ;;; Code:
+
+	  ;; Eternally grateful to have gleaned lessons from:
+	  ;;   http://pages.sachachua.com/.emacs.d/Sacha.html
+	  ;;   https://github.com/purcell/emacs.d
+	  ;;   https://github.com/howardabrams/dot-files
+	  ;;   https://github.com/skeeto/.emacs.d
+	#+end_src
+
+	
 * General Settings
 
-** Add Some Output Commentary
-   When tangled, all of these source blocks become an =.el= file. I'd still like that to be more friendly than just a
-   bunch of configuration code, so let's keep my old =init.el= header around.
+** Where Files Live
+   Let's set up where to load configurations from, where to store saves, and give files homes.
+  
+*** Setup Load Paths
+	Emacs only includes packages under the =user-emacs-directory= (default =~/.emacs.d/elpa/=), so if we want to load anything
+	else up we'll need to tell Emacs where to look.
 
-   #+begin_src emacs-lisp
-	 ;;; configuration.el --- paraparity's Emacs configuration file
-	 ;;
-	 ;;; Commentary:
-	 ;; Customized startup for Emacs
-	 ;;
-	 ;;; Code:
+	#+begin_src emacs-lisp
+	  (add-to-list 'load-path "~/.emacs.d/elisp/")
+	#+end_src
 
-	 ;; Eternally grateful to have gleaned lessons from:
-	 ;;   http://pages.sachachua.com/.emacs.d/Sacha.html
-	 ;;   https://github.com/purcell/emacs.d
-	 ;;   https://github.com/howardabrams/dot-files
-	 ;;   https://github.com/skeeto/.emacs.d
-   #+end_src
+	Load my machine local custom libraries directly, if they exist. My elfeed configuration is machine local for now, as
+	my work and personal machines all represent different contexts where I pay attention to different things.
 
-
-** Setup Load Paths
-   Emacs only includes packages under the =user-emacs-directory= (default =~/.emacs.d/elpa/=), so if we want to load anything
-   else up we'll need to tell Emacs where to look. I've adopted something I've seen out and about, here and there,
-   floating around the internet.
-
-   #+begin_src emacs-lisp
-	 (add-to-list 'load-path "~/.emacs.d/elisp/")
-   #+end_src
-
-   Load my machine local custom libraries directly, if they exist. Elfeed is only machine local because I've been lazy
-   in sharing it, and also I only pay attention to work related feeds on my work machine.
-   #+begin_src emacs-lisp
-	 (if (file-readable-p "~/.emacs.d/elisp/elfeed-conf.el")
-		 (load-library "elfeed-conf"))
-   #+end_src
+	#+begin_src emacs-lisp
+	  (if (file-readable-p "~/.emacs.d/elisp/elfeed-conf.el")
+		  (load-library "elfeed-conf"))
+	#+end_src
 
 
-** Kill Dir-Locals
-   Since I don't use directory local variables for Emacs very much if at all, and considering they could load arbitrary
-   emacs-lisp, potentially without my knowing, lets prevent that from happening.
+*** Offload Custom File
+	I manage my custom literate configuration, but sometimes use Emacs easy configuration to tweak settings. Until I
+	know I want to keep these tweaks, I'll give them their own home.
 
-   #+begin_src emacs-lisp
-	 (setq enable-local-eval nil
-		   enable-local-variables nil)
-   #+end_src
+	#+begin_src emacs-lisp
+	  (setq custom-file "~/.emacs.d/custom.el")
+	  (when (file-exists-p custom-file)
+		(load custom-file 'noerror))
+	#+end_src
+   
+
+*** Separate File Backups and Auto Save
+	Emacs can get a bit aggressive with file backups and auto-saves. I dislike how it can pollute my directories and
+	especially collaborative projects with tilde files (e.g: =myfile.txt~=). Usually things like =.gitignore= are
+	sufficient to insulate others from these, but I'd prefer not to see them myself.
+
+	#+begin_src emacs-lisp
+	  ;; File Backup Management
+	  (setq backup-by-copying t
+			backup-directory-alist `(("." . "~/saves"))
+			delete-old-versions t
+			kept-new-versions 6
+			kept-old-versions 2
+			version-control t)
+
+	  ;; Autosave File Management
+	  (setq auto-save-file-name-transforms
+			`((".*" ,temporary-file-directory t)))
+	#+end_src
 
 
+*** Easy Config Editing
+	Let's make it a only take a key-chord to pull up my literate configuration.
+
+	#+begin_src emacs-lisp
+	  (defun TT/locate-literate-config ()
+		"Locate and load my literate configuration file."
+		(interactive)
+		(find-file "~/.emacs.d/configuration.org"))
+
+	  (global-set-key (kbd "C-c I") 'TT/locate-literate-config)
+	#+end_src
+
+	
 ** Encoding Systems
    Pretty much just set the coding system to UTF-8. Also enable the Japanese language environment to support study.
 
@@ -80,15 +117,13 @@
 	 (set-language-environment "japanese")
    #+end_src
 
-
-*** TODO Identify Need and Refactor
-	I wonder if I need to set all of these individually, or if I could just get by with default or something else?
-
-
+   
 ** Emacs Appearance
+   Who doesn't love customizing the look and feel of their workspace?
+
 *** Kill Unnecessary Default Clutter
 	Give me back my screen real estate. I don't need your newfangled and fancy GUI features, they just get in the way of
-	more lines of sweet, sweet text.
+	more lines of sweet, sweet text. I also find the visual bell annoying, so let's take that out.
 
 	#+begin_src emacs-lisp
 	  (setq inhibit-startup-screen t
@@ -98,65 +133,43 @@
 	  (tool-bar-mode -1)
 	  (menu-bar-mode -1)
 	  (scroll-bar-mode -1)
+
+	  (setq ring-bell-function 'ignore)
 	#+end_src
 
 
 *** Style Our Frame
 	Let's give Emacs a name, I think Emacs sounds nice.
+
 	#+begin_src emacs-lisp
 	  (setq frame-title-format "Emacs")
 	#+end_src
 
 	Let's make sure our buffers have unique names. If we were to open a file of the same name, but a different location
 	we only need them to be a little unique, not full file path or even relative file path unique.
+
 	#+begin_src emacs-lisp
 	  (require 'uniquify)
 	#+end_src
 
 	Let's get some more screen real estate by using a small, code friendly font.
+
 	#+begin_src emacs-lisp
 	  (set-frame-font "monospace-10")
     #+end_src
 
 	Let's keep track of time in the mode-line.
+
 	#+begin_src emacs-lisp
 	  (display-time-mode 1)
 	#+end_src
 
-	Let's add some transparency to make things look really slick.
+	Let's add some transparency. Despite how powerful it is, I don't use Emacs for everything and this lets me read
+	whatever I have Emacs opened over. This can also let me see my desktop background which can be really cozy.
+
 	#+begin_src emacs-lisp
 	  (set-frame-parameter (selected-frame) 'alpha '(92 . 90))
 	  (add-to-list 'default-frame-alist '(alpha . (92 . 90)))
-	#+end_src
-
-	Display which-function-mode, and do so in the header line instead of mode line.
-
-	#+begin_src emacs-lisp
-	  (which-function-mode)
-	  (defvar which-func-header-line-format)
-
-	  (setq mode-line-misc-info (delete (assoc 'which-func-mode
-						   mode-line-misc-info) mode-line-misc-info)
-			which-func-header-line-format '(which-func-mode ("" which-func-format)))
-
-	  (defadvice which-func-ff-hook (after header-line activate)
-		"Hook for which-func formatting."
-		(when which-func-mode
-		  (setq mode-line-misc-info (delete (assoc 'which-func-mode
-							   mode-line-misc-info) mode-line-misc-info)
-			header-line-format which-func-header-line-format)))
-	#+end_src
-
-
-*** Improve Navigation Experience
-	Let's keep track of the currently focused line, always, everywhere.
-	#+begin_src emacs-lisp
-	  (global-hl-line-mode t)
-	#+end_src
-
-	Let's make it easy to see current block parentheses, given they're both on screen.
-	#+begin_src emacs-lisp
-	  (show-paren-mode 1)
 	#+end_src
 
 
@@ -176,79 +189,43 @@
 	  (global-set-key (kbd "<f5>") 'delete-trailing-whitespace)
 	#+end_src
 
-
-** Various Emacs Settings
-   Enable quick Y/N prompts.
-   #+begin_src emacs-lisp
-	 (fset 'yes-or-no-p 'y-or-n-p)
-   #+end_src
-
-   Get rid of that annoying bell.
-   #+begin_src emacs-lisp
-	 (setq ring-bell-function 'ignore)
-   #+end_src
-
    Enable final newline in all files. It's pretty common in software projects, and it's just a habit by now, I'll
    include it everywhere until I find somewhere that bites me because of it.
+
    #+begin_src emacs-lisp
 	 (setq require-final-newline t)
    #+end_src
 
+
+** Various Emacs Settings
+   Since I don't use directory local variables for Emacs very much if at all, and considering they could load arbitrary
+   emacs-lisp, potentially without my knowing, lets prevent that from happening.
+
+   #+begin_src emacs-lisp
+	 (setq enable-local-eval nil
+		   enable-local-variables nil)
+   #+end_src
+
+   Enable quick Y/N prompts.
+
+   #+begin_src emacs-lisp
+	 (fset 'yes-or-no-p 'y-or-n-p)
+   #+end_src
+
    At one point I had some slowness with cursor movement and scrolling. I forget why at this point, but I stumbled upon
    some answer that said disable this, and I've never looked back since.
+
    #+begin_src emacs-lisp
 	 (setq auto-window-vscroll nil)
    #+end_src
 
    This probably deserves it's own section and some more configuration, but for now here's a minimal GPG setup.
+
    #+begin_src emacs-lisp
 	 (defvar epg-gpg-program "gpg2")
 
 	 ;; Auth
 	 (defvar auth-sources '((:source "~/.emacs.d/secrets/.authinfo.gpg")) "Auth info source location.")
-   #+end_src
-
-*** Manage File Backups and Auto Save
-	Emacs can get a bit aggressive with file backups and auto-saves. I particularly dislike how it can pollute my
-	directories and especially collaborative projects with tilde files (e.g: =myfile.txt~=). Usually things like
-	=.gitignore= are sufficient to insulate others from these, but I'd prefer not to see them myself.
-
-	#+begin_src emacs-lisp
-	  ;; File Backup Management
-	  (setq backup-by-copying t
-			backup-directory-alist `(("." . "~/saves"))
-			delete-old-versions t
-			kept-new-versions 6
-			kept-old-versions 2
-			version-control t)
-
-	  ;; Autosave File Management
-	  (setq auto-save-file-name-transforms
-			`((".*" ,temporary-file-directory t)))
-	#+end_src
-
-
-*** Offload Custom File
-	I don't want Emacs customize managed settings ending up in my init files, so lets give them their own nice little
-	home. Every now and again I should go through and convert much of whatever is there into my literate configuration.
-
-	#+begin_src emacs-lisp
-	  (setq custom-file "~/.emacs.d/custom.el")
-	  (when (file-exists-p custom-file)
-		(load custom-file 'noerror))
-	#+end_src
-
-
-** Easy Config Editing
-   Let's make it a only take a key-chord to pull up my literate configuration.
-
-   #+begin_src emacs-lisp
-	 (defun TT/locate-literate-config ()
-	   "Locate and load my literate configuration file."
-	   (interactive)
-	   (find-file "~/.emacs.d/configuration.org"))
-
-	 (global-set-key (kbd "C-c I") 'TT/locate-literate-config)
    #+end_src
 
 
@@ -266,10 +243,43 @@
 * Emacs Interactions
   This section contains customizations which focus on Emacs navigation and interaction.
 
+** Improve Buffer Interactions
+   Let's keep track of the currently focused line, always, everywhere.
+
+   #+begin_src emacs-lisp
+	 (global-hl-line-mode t)
+   #+end_src
+
+   Let's make it easy to see current block parentheses, given they're both on screen.
+
+   #+begin_src emacs-lisp
+	 (show-paren-mode 1)
+   #+end_src
+
+   Let's display which-function-mode, and do so in the header line instead of mode line. This echoes the current org
+   heading or function to the topmost part of a buffer which helps me keep track of what context my cursor is in.
+
+   #+begin_src emacs-lisp
+	 (which-function-mode)
+	 (defvar which-func-header-line-format)
+
+	 (setq mode-line-misc-info (delete (assoc 'which-func-mode
+						  mode-line-misc-info) mode-line-misc-info)
+		   which-func-header-line-format '(which-func-mode ("" which-func-format)))
+
+	 (defadvice which-func-ff-hook (after header-line activate)
+	   "Hook for which-func formatting."
+	   (when which-func-mode
+		 (setq mode-line-misc-info (delete (assoc 'which-func-mode
+							  mode-line-misc-info) mode-line-misc-info)
+		   header-line-format which-func-header-line-format)))
+   #+end_src
+
+  
 ** Auto Revert Buffers
    In the event something has changed on the system, I want to pull in the updated files. =Magit= has been good about
-   doing this for version controlled files, however I've often noticed some buffer diffs for other files. Time to change
-   that.
+   doing this for version controlled files, however I've often noticed some buffer diffs for other files. =autorevert=
+   should help keep things in sync.
 
    #+begin_src emacs-lisp
 	 (use-package autorevert
@@ -280,8 +290,8 @@
 
 
 ** Multiple Cursors
-   This package lets me spin up multiple cursors across lines or matching patterns which can lead to some pretty
-   impressive editing and refactoring feats.
+   Sometimes one cursor isn't enough. This package lets me spin up multiple cursors across lines or matching patterns
+   which can lead to some pretty impressive editing and refactoring feats.
 
    #+begin_src emacs-lisp
 	 (use-package multiple-cursors
@@ -299,10 +309,8 @@
    #+end_src
 
 
-
 ** =Helm=
-   =Helm= gives us incremental completions and narrowing capabilities that really help find what you're looking for within
-   Emacs.
+   =Helm= gives us incremental completions and narrowing capabilities that really help find what you're looking for.
 
    #+begin_src emacs-lisp
 	 (use-package helm
@@ -344,6 +352,9 @@
    buggy. With =origami-reset= you can always unfold everything and reset the file, which has always been enough to
    ignore some of the hiccups.
 
+   I find this very helpful in collapsing functions in source code and narrowing my focus to the important parts of a
+   file.
+
    #+begin_src emacs-lisp
 	 (use-package origami
 	   :bind (("C-<tab>" . origami-recursively-toggle-node)
@@ -359,7 +370,7 @@
 
 ** Text Expansion with =Abbrev=
    =Abbrev= triggers expansion on pressing the space bar after your word, which is incredibly useful for stream of
-   conscious text expansion. I use this mainly to expand acronyms and abbreviations, so I can be lazy typing but still
+   conscious text expansion. I use this mainly to expand acronyms and abbreviations, so I can lazily type and still
    create readable text for those not yet familiar with those short-strings. However, this is also extremely useful for
    creating shortcuts for words I type often.
 
@@ -405,22 +416,6 @@
 	   :config
 	   (setq yas-verbosity 1)
 	   (yas-global-mode 1))
-   #+end_src
-
-
-** Internet Relay Chat with =ERC=
-   Emacs comes with it's own Internet Relay Chat client, =ERC=. I use this to chat over IRC from right within Emacs.
-
-   #+begin_src emacs-lisp
-	 (use-package erc
-	   :defer t
-	   :config
-	   (setq erc-nick "paraparity"
-			 erc-hide-list '("PART" "QUIT" "JOIN" "NICK")
-			 erc-server "irc.freenode.net"
-			 erc-kill-buffer-on-part t
-			 erc-scrolltobottom-mode t
-			 erc-autojoin-channels-alist '(("freenode.net" "##programming" "#org-mode"))))
    #+end_src
 
 
@@ -1448,6 +1443,7 @@
 
 
 * More Emacs Modes
+
 ** Ledger - Command Line Accounting
    Ledger, the command line double booking entry system. A geeky way to track your finances, with support in Emacs via
    =ledger-mode=!
@@ -1473,7 +1469,23 @@
    #+end_src
 
 
-* More Emacs Tools
+** Internet Relay Chat with =ERC=
+   Emacs comes with it's own Internet Relay Chat client, =ERC=. I use this to chat over IRC from right within Emacs.
+
+   #+begin_src emacs-lisp
+	 (use-package erc
+	   :defer t
+	   :config
+	   (setq erc-nick "paraparity"
+			 erc-hide-list '("PART" "QUIT" "JOIN" "NICK")
+			 erc-server "irc.freenode.net"
+			 erc-kill-buffer-on-part t
+			 erc-scrolltobottom-mode t
+			 erc-autojoin-channels-alist '(("freenode.net" "##programming" "#org-mode"))))
+   #+end_src
+
+
+
 ** TODO PDF-Tools
    PDF-Tools enable PDF viewing within Emacs, so I don't have to have a second application open to read and take notes
    on PDF files. Just one more reason to never leave Emacs.
@@ -1490,7 +1502,7 @@
 	   (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward))
    #+end_src
 
-
+   
 * TODO Helper Functions
   This section contains custom functions I'll sometimes invoke. These should probably live elsewhere, but for now, this
   is their home.
@@ -1516,11 +1528,9 @@
   #+end_src
 
 
-* TODO Keybinding Overrides
-  - Refactor to their relevant mode configurations. Only defaults or net new bindings should remain here.
-
-  This section contains my keybinding overrides. After all the work we've done to get things set up or customized to my
-  liking, I still need to sing to my own tune and play my own chords.
+* Global Keybinding Overrides
+  This section contains my global keybinding overrides. There are key-bindings defined elsewhere in my configuration,
+  typically within the context they'll be used in. This isn't a hard rule, but is what I lean towards.
 
   #+begin_src emacs-lisp
 	;; Buffer Key Bindings
@@ -1533,13 +1543,6 @@
 	(global-set-key (kbd "C-c o") 'switch-to-minibuffer)
 	(global-set-key (kbd "<f8>") 'flyspell-buffer)
 	(global-set-key (kbd "<f6>") 'speedbar)
-
-	;; Org-Mode Keybindings
-	(global-set-key (kbd "C-c a") 'org-agenda)
-	(global-set-key (kbd "C-c c") 'org-capture)
-	(global-set-key (kbd "C-c l") 'org-store-link)
-	(global-set-key (kbd "C-c i") 'org-capture-inbox)
-
 
 	;; Elfeed Keybindings
 	(global-set-key (kbd "C-x w") 'elfeed)
@@ -1554,11 +1557,31 @@
 	(add-hook 'cperl-mode-hook
 			  (lambda ()
 				(local-set-key (kbd "C-h f") 'cperl-perldoc)))
-
-	;; Kill the bane of my fat-fingers
-	(global-unset-key (kbd "C-z"))
-	(global-unset-key (kbd "C-x C-z"))
   #+end_src
+
+** Disable Problematic Bindings
+   Some keybindings are just the bane of my existence. While many are undoable, some cause more trouble that outweighs
+   the value of having the binding.
+
+   #+begin_src emacs-lisp
+	 ;; Kill the bane of my fat-fingers
+	 (global-unset-key (kbd "C-z"))
+	 (global-unset-key (kbd "C-x C-z"))
+   #+end_src
+  
+
+** Setup Org Global Interactions
+   I want to be able to start interacting with org-mode regardless of what buffer I'm presently in.
+
+   #+begin_src emacs-lisp
+	 ;; Org-Mode Keybindings
+	 (global-set-key (kbd "C-c a") 'org-agenda)
+	 (global-set-key (kbd "C-c c") 'org-capture)
+	 (global-set-key (kbd "C-c l") 'org-store-link)
+	 (global-set-key (kbd "C-c i") 'org-capture-inbox)
+
+   #+end_src
+
 
 ** Enable Full Keyboard Number Pad
    Unfortunately I've found Emacs doesn't natively support full size keyboards, however this allows us to get our num-pad
@@ -1581,7 +1604,7 @@
    #+end_src
 
 
-* Final Countdown
+* Completing Configuration
   This section contains the last moment configurations that wrap up my personal customization and Emacs load. Here we'll
   kill mode-line clutter and start up the Emacs server.
 
@@ -1607,7 +1630,7 @@
 
 * Configuration Reading
   That's mostly it folks. Configuration is done, the rest are future works. This section collects other articles or
-  configurations I've stumbled across and bookmarked for "eventual" reading.
+  configurations I've stumbled across and bookmarked for eventual reading.
 
 ** TODO List [0/39]
    - [ ] https://github.com/hungptit/tools and integration w/ Emacs
