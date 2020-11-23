@@ -492,177 +492,27 @@
 	 (defvar TT/org-habits           (concat TT/org-agenda-dir "/habits.org")        "Habits for periodic todos.")
 	 (defvar TT/org-inbox            (concat TT/org-agenda-dir "/inbox.org")         "The collection bin for everything to be refiled.")
 	 (defvar TT/org-incubate-dir     (concat TT/org-agenda-dir "/incubate")          "Categories of inactionable things to incubate.")
+	 (defvar TT/org-emacs-maybe      (concat TT/org-incubate-dir "/emacs-maybe.org") "Someday agenda for Emacs related things.")
 	 (defvar TT/org-ideas            (concat TT/org-incubate-dir "/ideas.org")       "Someday agenda to capture general or 'idea?' ideas.")
 	 (defvar TT/org-projects         (concat TT/org-incubate-dir "/projects.org")    "Someday agenda for project ideas.")
-	 (defvar TT/org-travel           (concat TT/org-incubate-dir "/travel.org")      "Someday agenda for travel related things.")
 	 (defvar TT/org-someday          (concat TT/org-incubate-dir "/someday.org")     "Someday agenda for things I may want to revisit.")
-	 (defvar TT/org-emacs-maybe      (concat TT/org-incubate-dir "/emacs-maybe.org") "Someday agenda for Emacs related things.")
-	 (defvar TT/org-learning-dir     (concat TT/org-agenda-dir "/learning")          "Agendas for structured learning.")
-	 (defvar TT/org-management       (concat TT/org-learning-dir "management.org")   "Learning for engineering management.")
-	 (defvar TT/org-development      (concat TT/org-learning-dir "development.org")  "Learning for software development.")
+	 (defvar TT/org-travel           (concat TT/org-incubate-dir "/travel.org")      "Someday agenda for travel related things.")
+	 (defvar TT/org-learning         (concat TT/org-agenda-dir "/learning.org")      "Agenda for structured learning.")
 	 (defvar TT/org-manager          (concat TT/org-agenda-dir "/manager.org")       "Actionables and captures for 1:1s with my manager.")
 	 (defvar TT/org-organizer        (concat TT/org-agenda-dir "/organizer.org")     "Core organizer tracking prioritized actionable work.")
 	 (defvar TT/org-retrospective    (concat TT/org-agenda-dir "/retro.org")         "Capture target for retro related info or actionables.")
 	 (defvar TT/org-review           (concat TT/org-agenda-dir "/review.org")        "Reference on and journal for reflection.")
 	 (defvar TT/org-tickler          (concat TT/org-agenda-dir "/tickler.org")       "Time relevant reminders for 'decide to do later' items.")
-	 (defvar TT/org-team-dir         (concat TT/org-agenda-dir "/teams")             "Directory for team specific organizers.")
 	 (defvar TT/org-waiting          (concat TT/org-agenda-dir "/waiting.org")       "Delegated or blocked items awaiting external action.")
 	 (defvar TT/org-blog             (concat org-directory "/blog")                  "Top level org directory for blog posts.")
 	 (defvar TT/org-brain-dir        (concat org-directory "/brain")                 "Top level org directory for 'org-brain' reference material.")
 	 (defvar TT/org-checklist-dir    (concat org-directory "/checklists")            "Top level org directory for action oriented reference; do/certify.")
 	 (defvar TT/org-commonplace-dir  (concat org-directory "/commonplace")           "Top level org directory for 'commonplace book' material.")
-	 (defvar TT/org-eng-notebook-dir (concat org-directory "/engineering-notebook")  "Top level org directory for engineering notebook entries.")
 	 (defvar TT/org-journal-dir      (concat org-directory "/journal")               "Top level org directory for journal entries.")
 	 (defvar TT/org-ledger-dir       (concat org-directory "/ledger")                "Top level org directory for accounting/budgeting ledgers.")
-	 (defvar TT/org-glacier-dir      (concat org-directory "/glacier")               "Top level org directory for long term archival outside organizer.")
 
 	 (defvar org-default-notes-file TT/org-inbox)
    #+end_src
-
-
-** Org Linking
-   Org-mode supports creating links to various resources across org-mode files and materials online.
-
-   Let's create some short links for things I might reference often.
-
-   #+begin_src emacs-lisp
-	 ;; Links - use like: cpan:HTML or rfc-txt:7522
-	 (setq org-link-abbrev-alist
-		   '(("rfc-html" . "https://tools.ietf.org/html/rfc%s")
-			 ("rfc-txt"  . "https://tools.ietf.org/rfc/rfc%s.txt")
-			 ("rfc-pdf"  . "https://tools.ietf.org/pdf/rfc%s.pdf")
-			 ("fhir-r4"  . "https://www.hl7.org/fhir/R4/%s")
-			 ("us-core"  . "https://www.hl7.org/fhir/us/core/%s")
-			 ("cpan"     . "https://metacpan.org/search?q=%s")
-			 ("so"       . "https://stackoverflow.com/search?q=%s")
-			 ("soq"      . "https://stackoverflow.com/questions/%s")
-			 ("ese"      . "https://emacs.stackexchange.com/search?q=%s")
-			 ("eseq"     . "https://emacs.stackexchange.com/questions/%s")))
-   #+end_src
-
-
-** Org To-Do
-
-*** Keywords
-	Org-mode has a set of configurable keywords, both sequenced and typed, which can be added to headlines and cycled
-	through to track an arbitrary workflow you define. This is where I define my keywords.
-
-	The default org-mode sequence is as follows:
-	#+begin_example
-	  ,-> (unmarked) -> TODO -> DONE --.
-	  '--------------------------------'
-	#+end_example
-
-	However, that's pretty simple and I have something else in mind.
-
-	#+begin_src emacs-lisp
-	  (setq org-todo-keywords
-			'((sequence "TODO(t)" "NEXT(n)" "DELEGATED(g@)" "STARTED(s)" "WAITING(w@)" "|" "DONE(d)" "DROP(x@)")
-			  (sequence "MEETING(m)" "APPOINTMENT(a)" "|" "COMPLETED(p)" "CANCELLED(l)")
-			  (sequence "REVIEW(r)" "REWORK(k@)"      "|" "REVIEWED(v)")
-			  (sequence "OPEN(o)"                     "|" "CLOSED(c@)")))
-
-	  (setq org-todo-keyword-faces
-			'(("STARTED" . "cyan")
-			  ("MAYBE"   . "purple")
-			  ("WAITING" . (:foreground "yellow" :weight bold))
-			  ("CANCELLED" . "DimGray")
-			  ("DROP"    . "DimGray")))
-	#+end_src
-
-
-*** Tags
-	Org-mode files and headlines can be tagged to enable searching and correlating information across files and
-	directories.
-
-	To support my Emacs implementation of Getting Things Done (GTD), I have a set of tags I use to denote tasks,
-	projects, and contexts. For now this is enough, though I think there's still more improvement to make here,
-	especially when it comes to searching behavior.
-
-	My tags come in three flavors:
-	1. '@context' - indicates location, headspace, or tool these tasks are associated with, or some other context in
-       which to act on them in
-	2. 'TYPE' - indicates whether the item is a project or task, if it's next up, or if it has some other classification
-	3. 'info' - represents informational tags for categorization and search
-
-	#+begin_src emacs-lisp
-	  (setq org-tag-alist
-			'(("@career"         . ?c) ; personal professional development (different than learn?)
-			  ("@coaching"       . ?C) ; peer professional development (work, 1:1s, feedback, stretch-opps)
-			  ("@communication"  . ?m) ; messaging, email, outreach, inquiry, and publication work
-			  ("@finances"       . ?f) ; banking, budgeting, investing, and most things money related
-			  ("@firefights"     . ?F) ; incident response, unexpected/chaotic work, high-urgency (war-room, incident team, etc...)
-			  ("@guild"          . ?g) ; involvement in communities of practice
-			  ("@health"         . ?h) ; exercise, diet, point-of-care, etc...
-			  ("@home"           . ?H) ; apartment related things
-			  ("@learn"          . ?l) ; courses, intentional learning, study (different than career?)
-			  ("@mentorship"     . ?M) ; peer professional development (non-work; volunteering)
-			  ("@networking"     . ?n) ; professional relationship building and entrepreneurship
-			  ("@office"         . ?o) ; general office tasks (un-bucketed)
-			  ("@read"           . ?r) ; books and reading nook items
-			  ("@review"         . ?R) ; periodic review - timed reminders (tickler)
-			  ("@scheduling"     . ?d) ; calendar work, planning, conflict resolution
-			  ("@sprint"         . ?s) ; sprint work (primarily development)
-			  ("@travel"         . ?t) ; trip planning, packing, and similar
-			  ("@workstation"    . ?w) ; home and office hardware, configs, etc...
-			  ("IMPORTANT"       . ?I) ; something of significance or of great value
-			  ("NEXT"            . ?N) ; the very next thing to be doing within a project
-			  ("PROJECT"         . ?P) ; something that takes significant effort or time, and can be decomposed into individual tasks
-			  ("TASK"            . ?T) ; an atomic actionable thing
-			  ("URGENT"          . ?U) ; something that demands attention in a short timespan
-			  ("administrative"  . ?a) ; administrative tasks, paperwork, check-boxes, overhead, etc...
-			  ("hiring"          . ?i) ; talent acquisition: outreach, correspondence, and interviewing
-			  ("journal"         . ?j)))
-
-	  (setq org-tags-exclude-from-inheritance '("PROJECT")
-			org-stuck-projects '("+PROJECT/-WAITING-DONE"
-								 ("TODO" "STARTED") ()))
-	#+end_src
-
-
-*** TODO Archiving
-	I typically only look back a sprint, about two weeks, for recent time tracking.
-
-	Thankfully, John Wiegley shared [[https://orgmode.org/list/m21wc7dz4r.fsf@newartisans.com/][a solution]] for this that I now use. Although, it
-	doesn't quite work yet. Do I have the right hooks set?
-	
-	#+begin_src emacs-lisp
-	  (defvar org-my-archive-expiry-days 15
-		"The number of days after which a completed task should be auto-archived.
-	  This can be 0 for immediate, or a floating point value.")
-
-	  (defun org-my-archive-done-tasks ()
-		"Archive completed org tasks."
-		(interactive)
-		(save-excursion
-		  (goto-char (point-min))
-		  (let ((done-regexp
-				 (concat "\\* \\(" (regexp-opt org-done-keywords) "\\) "))
-				(state-regexp
-				 (concat "- State \"\\(" (regexp-opt org-done-keywords)
-						 "\\)\"\\s-*\\[\\([^]\n]+\\)\\]")))
-			(while (re-search-forward done-regexp nil t)
-			  (let ((end (save-excursion
-						   (outline-next-heading)
-						   (point)))
-					begin)
-				(goto-char (line-beginning-position))
-				(setq begin (point))
-				(if (re-search-forward state-regexp end t)
-					(let* ((time-string (match-string 2))
-						   (when-closed (org-parse-time-string time-string)))
-					  (if (>= (time-to-number-of-days
-							   (time-subtract (current-time)
-											  (apply #'encode-time when-closed)))
-							  org-my-archive-expiry-days)
-						  (org-archive-subtree)))
-				  (goto-char end)))))
-		  (save-buffer)))
-
-	  (setq safe-local-variable-values (quote ((after-save-hook archive-done-tasks))))
-
-	  (defalias 'archive-done-tasks 'org-my-archive-done-tasks)
-	#+end_src
 
 
 ** Org Agenda
@@ -831,6 +681,131 @@
 **** TODO Incrementally Compose Commands for Better Literate Docs
 
 
+** Org To-Do
+
+*** Keywords
+	Org-mode has a set of configurable keywords, both sequenced and typed, which can be added to headlines and cycled
+	through to track an arbitrary workflow you define. This is where I define my keywords.
+
+	The default org-mode sequence is as follows:
+	#+begin_example
+	  ,-> (unmarked) -> TODO -> DONE --.
+	  '--------------------------------'
+	#+end_example
+
+	However, that's pretty simple and I have something else in mind.
+
+	#+begin_src emacs-lisp
+	  (setq org-todo-keywords
+			'((sequence "TODO(t)" "NEXT(n)" "DELEGATED(g@)" "STARTED(s)" "WAITING(w@)" "|" "DONE(d)" "DROP(x@)")
+			  (sequence "MEETING(m)" "APPOINTMENT(a)" "|" "COMPLETED(p)" "CANCELLED(l)")
+			  (sequence "REVIEW(r)" "REWORK(k@)"      "|" "REVIEWED(v)")
+			  (sequence "OPEN(o)"                     "|" "CLOSED(c@)")))
+
+	  (setq org-todo-keyword-faces
+			'(("STARTED" . "cyan")
+			  ("MAYBE"   . "purple")
+			  ("WAITING" . (:foreground "yellow" :weight bold))
+			  ("CANCELLED" . "DimGray")
+			  ("DROP"    . "DimGray")))
+	#+end_src
+
+
+*** Tags
+	Org-mode files and headlines can be tagged to enable searching and correlating information across files and
+	directories.
+
+	To support my Emacs implementation of Getting Things Done (GTD), I have a set of tags I use to denote tasks,
+	projects, and contexts. For now this is enough, though I think there's still more improvement to make here,
+	especially when it comes to searching behavior.
+
+	My tags come in three flavors:
+	1. '@context' - indicates physical location, headspace, or tool these tasks are associated with, or some other
+       context in which to act on them in
+	2. 'TYPE' - indicates whether the item is a project or task, if it's next up, or if it has some other classification
+	3. 'info' - represents informational tags for categorization and search
+
+	I try to give each tag a mnemonic hotkey and resolve collisions with capitalization or by choosing another key
+	within the word, but it's an imperfect system.
+
+	#+begin_src emacs-lisp
+	  (setq org-tag-alist
+			'(("@administrative" . ?a) ; administrative tasks, paperwork, check-boxes, overhead, etc...
+			  ("@career"         . ?c) ; personal professional development (different than learn?)
+			  ("@communication"  . ?m) ; messaging, email, outreach, inquiry, and publication work
+			  ("@finances"       . ?f) ; banking, budgeting, investing, and most things money related
+			  ("@firefights"     . ?F) ; incident response, unexpected/chaotic work, high-urgency (war-room, incident team, etc...)
+			  ("@guild"          . ?g) ; involvement in communities of practice
+			  ("@health"         . ?h) ; exercise, diet, point-of-care, etc...
+			  ("@hiring"         . ?i) ; talent acquisition: outreach, correspondence, and interviewing
+			  ("@home"           . ?H) ; apartment related things
+			  ("@learn"          . ?l) ; courses, intentional learning, study (different than career?)
+			  ("@office"         . ?o) ; general office tasks (un-bucketed)
+			  ("@read"           . ?r) ; books and reading nook items
+			  ("@review"         . ?R) ; periodic review - timed reminders (tickler)
+			  ("@scheduling"     . ?d) ; calendar work, planning, conflict resolution
+			  ("@self"           . ?S) ; personal reflection and planning
+			  ("@sprint"         . ?s) ; sprint work (primarily development)
+			  ("@travel"         . ?t) ; trip planning, packing, and similar
+			  ("@workstation"    . ?w) ; home and office hardware, configs, etc...
+			  ("IMPORTANT"       . ?I) ; something of significance or of great value
+			  ("NEXT"            . ?N) ; the very next thing to be doing within a project
+			  ("PROJECT"         . ?P) ; something that takes significant effort or time, and can be decomposed into individual tasks
+			  ("TASK"            . ?T) ; an atomic actionable thing
+			  ("URGENT"          . ?U) ; something that demands attention in a short timespan
+			  ("journal"         . ?j)))
+
+	  (setq org-tags-exclude-from-inheritance '("PROJECT" "NEXT")
+			org-stuck-projects '("+PROJECT/-WAITING-DONE"
+								 ("TODO" "STARTED") ()))
+	#+end_src
+
+
+*** TODO Archiving
+	I typically only look back a sprint, about two weeks, for recent time tracking.
+
+	Thankfully, John Wiegley shared [[https://orgmode.org/list/m21wc7dz4r.fsf@newartisans.com/][a solution]] for this that I now use. Although, it
+	doesn't quite work yet. Do I have the right hooks set?
+	
+	#+begin_src emacs-lisp
+	  (defvar org-my-archive-expiry-days 15
+		"The number of days after which a completed task should be auto-archived.
+	  This can be 0 for immediate, or a floating point value.")
+
+	  (defun org-my-archive-done-tasks ()
+		"Archive completed org tasks."
+		(interactive)
+		(save-excursion
+		  (goto-char (point-min))
+		  (let ((done-regexp
+				 (concat "\\* \\(" (regexp-opt org-done-keywords) "\\) "))
+				(state-regexp
+				 (concat "- State \"\\(" (regexp-opt org-done-keywords)
+						 "\\)\"\\s-*\\[\\([^]\n]+\\)\\]")))
+			(while (re-search-forward done-regexp nil t)
+			  (let ((end (save-excursion
+						   (outline-next-heading)
+						   (point)))
+					begin)
+				(goto-char (line-beginning-position))
+				(setq begin (point))
+				(if (re-search-forward state-regexp end t)
+					(let* ((time-string (match-string 2))
+						   (when-closed (org-parse-time-string time-string)))
+					  (if (>= (time-to-number-of-days
+							   (time-subtract (current-time)
+											  (apply #'encode-time when-closed)))
+							  org-my-archive-expiry-days)
+						  (org-archive-subtree)))
+				  (goto-char end)))))
+		  (save-buffer)))
+
+	  (setq safe-local-variable-values (quote ((after-save-hook archive-done-tasks))))
+
+	  (defalias 'archive-done-tasks 'org-my-archive-done-tasks)
+	#+end_src
+
+
 ** Org Clocking
    Org-mode gives us the ability to track time by clocking in and out of headlines. Combined with to-do items and
    agendas, we can really get some value out of this functionality.
@@ -855,40 +830,6 @@
 
 	 (org-clock-persistence-insinuate); Resume clocking task when emacs is restarted
    #+end_src
-
-
-** Org Journal
-   Let's set up where my journal files are stored, and the format of the entries.
-
-   #+begin_src emacs-lisp
-	 (use-package org-journal
-	   :init (setq org-journal-dir TT/org-journal-dir
-				   org-journal-file-format "%Y%m%d"
-				   org-journal-date-format "%e %b %Y (%A)")
-	   :config (setq org-journal-date-prefix "#+TITLE: Daily Note for "))
-   #+end_src
-
-*** Journal Helpers
-	These are functions that will later enable us to interact with org-journal via capture templates, etc...
-
-	#+begin_src emacs-lisp
-	  (defun get-journal-file-yesterday ()
-		"Gets filename for yesterday's journal entry."
-		(let* ((yesterday (time-subtract (current-time) (days-to-time 1)))
-			   (daily-name (format-time-string "%Y%m%d" yesterday)))
-		  (expand-file-name (concat org-journal-dir daily-name))))
-
-	  (defun journal-file-yesterday ()
-		"Create and load a file based on yesterday's date."
-		(interactive)
-		(find-file (get-journal-file-yesterday)))
-
-	  (defun org-journal-find-location ()
-		"Open today's journal.
-		  Specify a non-nil prefix to inhibit inserting the heading"
-		(org-journal-new-entry t)
-		(goto-char (point-min)))
-	#+end_src
 
 
 ** Capture Templates
@@ -942,6 +883,9 @@
 	Here I define my first capture group for Sprint Work. All templates within capture some work associated directly with
 	the current sprint I'm working in.
 
+	As a manger I don't presently do the sprint work that my teams execute, so this configuration is not
+	exported. Instead, I keep it around for reference.
+
 	#+begin_src emacs-lisp :tangle no
 	  ;; Capture group for Sprint Work
 	  (setcdr (last org-capture-templates)
@@ -991,7 +935,7 @@
 			  '(("o" "Office Capture Group")
 				("oa" "Administrative" entry (file+olp TT/org-organizer "Office" "Administrative")
 				 "* TODO [#B] %? :TASK:\n")
-				("oc" "Communications" entry (file+olp TT/org-organizer "Office" "Communications")
+				("oc" "Communication" entry (file+olp TT/org-organizer "Office" "Communication")
 				 "* TODO [#B] %? :TASK:\n")
 				("of" "Firefighting" entry (file+olp TT/org-organizer "Office" "Firefighting")
 				 "* TODO [#A] %? :TASK:\n")
@@ -1024,6 +968,11 @@
 	#+end_src
 
 
+*** TODO Incubator
+	Sometimes I want to capture an idea that I know I cannot take immediate action on. Instead of adding noise to my
+	agenda reports, let's file these as someday-maybe under =TT/org-incubate-dir=.
+	
+	
 *** Meetings
 	This capture group is for meetings, habits, and other entries that should be tied to the calendar.
 
@@ -1033,24 +982,6 @@
 			  '(("m" "Meeting Capture Group")
 				("mm" "Pop Up Meetings and One-Offs" entry (file+olp TT/org-calendar "Meetings" "One Offs")
 				 "* TODO %?\n")))
-	#+end_src
-
-
-*** Test Group
-	#+begin_src emacs-lisp
-	  ;; Test capture group - testing nested sub-groups
-	  (setcdr (last org-capture-templates)
-			  '(("q" "Test Capture Group")
-				("qa" "Test Capture Sub-Group A")
-				("qaa" "AA Template" entry (file+olp TT/org-inbox "Test" "A" "AA")
-				 "* TODO [#A] %? :TASK:\n" :empty-lines 1)
-				("qaa" "AB Template" entry (file+olp TT/org-inbox "Test" "A" "AB")
-				 "* TODO [#B] %? :TASK:\n" :empty-lines 1)
-				("qb" "Test Capture Sub-Group B")
-				("qba" "BA Template" entry (file+olp TT/org-inbox "Test" "B" "BA")
-				 "* TODO [#A] %? :TASK:\n" :empty-lines 1)
-				("qbb" "BB Template" entry (file+olp TT/org-inbox "Test" "B" "BB")
-				 "* TODO [#B] %? :TASK:\n" :empty-lines 1)))
 	#+end_src
 
 
@@ -1076,12 +1007,98 @@
 				 "%i" :immediate-finish t :empty-lines 1)))
 	#+end_src
 
+**** TODO Needs Work [0/1]
+	 - [ ] The =C-c c x= 'Incident Notes' capture template isn't working
+	   #+begin_example
+	   Invalid file location: nil
+	   #+end_example
 
-*** TODO Needs Work [0/1]
-	- [ ] The =C-c c x= 'Incident Notes' capture template isn't working
-	  #+begin_example
-	  Invalid file location: nil
-	  #+end_example
+
+*** Nested Groups Test
+	I had a hypothesis that I might be able to progressively define nested capture groups. This is the experiment that
+	showed it was possible. I keep it around for reference, but no longer export it into my configuration.
+	
+	#+begin_src emacs-lisp :tangle no
+	  ;; Test capture group - testing nested sub-groups
+	  (setcdr (last org-capture-templates)
+			  '(("q" "Test Capture Group")
+				("qa" "Test Capture Sub-Group A")
+				("qaa" "AA Template" entry (file+olp TT/org-inbox "Test" "A" "AA")
+				 "* TODO [#A] %? :TASK:\n" :empty-lines 1)
+				("qaa" "AB Template" entry (file+olp TT/org-inbox "Test" "A" "AB")
+				 "* TODO [#B] %? :TASK:\n" :empty-lines 1)
+				("qb" "Test Capture Sub-Group B")
+				("qba" "BA Template" entry (file+olp TT/org-inbox "Test" "B" "BA")
+				 "* TODO [#A] %? :TASK:\n" :empty-lines 1)
+				("qbb" "BB Template" entry (file+olp TT/org-inbox "Test" "B" "BB")
+				 "* TODO [#B] %? :TASK:\n" :empty-lines 1)))
+	#+end_src
+
+
+** Org Journal
+   Let's set up where my journal files are stored, and the format of the entries.
+
+   #+begin_src emacs-lisp
+	 (use-package org-journal
+	   :init (setq org-journal-dir TT/org-journal-dir
+				   org-journal-file-format "%Y%m%d"
+				   org-journal-date-format "%e %b %Y (%A)")
+	   :config (setq org-journal-date-prefix "#+TITLE: Daily Note for "))
+   #+end_src
+
+*** Journal Helpers
+	These are functions that will later enable us to interact with org-journal via capture templates, etc...
+
+	#+begin_src emacs-lisp
+	  (defun get-journal-file-yesterday ()
+		"Gets filename for yesterday's journal entry."
+		(let* ((yesterday (time-subtract (current-time) (days-to-time 1)))
+			   (daily-name (format-time-string "%Y%m%d" yesterday)))
+		  (expand-file-name (concat org-journal-dir daily-name))))
+
+	  (defun journal-file-yesterday ()
+		"Create and load a file based on yesterday's date."
+		(interactive)
+		(find-file (get-journal-file-yesterday)))
+
+	  (defun org-journal-find-location ()
+		"Open today's journal.
+		  Specify a non-nil prefix to inhibit inserting the heading"
+		(org-journal-new-entry t)
+		(goto-char (point-min)))
+	#+end_src
+
+
+** Org Refile
+   Despite having some nice capture templates, sometimes things still don't end up in the right place. That, or
+   sometimes I just want to move something.
+
+   #+begin_src emacs-lisp
+	 (setq org-refile-targets '((org-agenda-files :maxlevel . 6)))
+	 ;;(setq org-outline-path-complete-in-steps nil)
+	 (setq org-refile-allow-creating-parent-nodes 'confirm)
+   #+end_src
+
+
+** Org Linking
+   Org-mode supports creating links to various resources across org-mode files and materials online.
+
+   Let's create some short links for things I might reference often.
+
+   #+begin_src emacs-lisp
+	 ;; Links - use like: cpan:HTML or rfc-txt:7522
+	 (setq org-link-abbrev-alist
+		   '(("rfc-html" . "https://tools.ietf.org/html/rfc%s")
+			 ("rfc-txt"  . "https://tools.ietf.org/rfc/rfc%s.txt")
+			 ("rfc-pdf"  . "https://tools.ietf.org/pdf/rfc%s.pdf")
+			 ("fhir-r4"  . "https://www.hl7.org/fhir/R4/%s")
+			 ("us-core"  . "https://www.hl7.org/fhir/us/core/%s")
+			 ("cpan"     . "https://metacpan.org/search?q=%s")
+			 ("so"       . "https://stackoverflow.com/search?q=%s")
+			 ("soq"      . "https://stackoverflow.com/questions/%s")
+			 ("ese"      . "https://emacs.stackexchange.com/search?q=%s")
+			 ("eseq"     . "https://emacs.stackexchange.com/questions/%s")))
+   #+end_src
 
 
 ** Org Publish
@@ -1106,17 +1123,6 @@
 			 ("notes" :components ("notes-content" "notes-static"))))
 
 	 ;; TODO: https://github.com/fniessen/org-html-themes or other
-   #+end_src
-
-
-** Org Refile
-   Despite having some nice capture templates, sometimes things still don't end up in the right place. That, or
-   sometimes I just want to move something.
-
-   #+begin_src emacs-lisp
-	 (setq org-refile-targets '((org-agenda-files :maxlevel . 6)))
-	 ;;(setq org-outline-path-complete-in-steps nil)
-	 (setq org-refile-allow-creating-parent-nodes 'confirm)
    #+end_src
 
 
@@ -1177,7 +1183,9 @@
 	#+end_src
 
 
-** Org References
+** TODO Org References
+   I want to refile these closer to where their contents are more applicable.
+   
    - https://orgmode.org/manual/Template-elements.html
    - https://orgmode.org/manual/Template-expansion.html
    - https://orgmode.org/manual/Refile-and-Copy.html

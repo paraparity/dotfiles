@@ -3,18 +3,24 @@
 ** Research
 ** Review
 ** Other
-* Career                                                            :@career:
-* Finances                                                        :@finances:
-* Guild                                                              :@guild:
+* Last Sprint                                                       :@sprint:
+** Development
+** Research
+** Review
+** Other
 * Health & Wellness                                                 :@health:
 * Home                                                                :@home:
+* Learn                                                              :@learn:
+* Career                                                            :@career:
 * Office                                                            :@office:
 ** Administrative                                            :administrative:
-** Communication                                              :@communication:
-** Firefighting                                                :@firefights:
-** General
+** Communication                                             :@communication:
+** Firefighting                                                 :@firefights:
 ** Hiring                                                            :hiring:
 ** Scheduling                                                   :@scheduling:
+** General
+* Finances                                                        :@finances:
+* Guild                                                              :@guild:
 * Read                                                                :@read:
 * Travel                                                            :@travel:
 * Workstation                                                  :@workstation:
