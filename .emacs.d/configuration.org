@@ -322,7 +322,7 @@
    #+end_src
 
 
-** =Helm=
+** =helm=
    =Helm= gives us incremental completions and narrowing capabilities that really help find what you're looking for.
 
    #+begin_src emacs-lisp
@@ -360,7 +360,7 @@
    #+end_src
 
 
-** Buffer Folding with =Origami=
+** Buffer Folding with =origami=
    =Origami= minor-mode enables text folding across Emacs. It's pretty useful, though sometimes slow and sometimes
    buggy. With =origami-reset= you can always unfold everything and reset the file, which has always been enough to
    ignore some of the hiccups.
@@ -381,7 +381,7 @@
    #+end_src
 
 
-** Text Expansion with =Abbrev=
+** Text Expansion with =abbrev=
    =Abbrev= triggers expansion on pressing the space bar after your word, which is incredibly useful for stream of
    conscious text expansion. I use this mainly to expand acronyms and abbreviations, so I can lazily type and still
    create readable text for those not yet familiar with those short-strings. However, this is also extremely useful for
@@ -408,7 +408,7 @@
    #+end_src
 
 
-** Templating with =Yasnippet=
+** Templating with =yasnippet=
    Both for programming and regular editing I have a bunch of snippets for text expansion. It doesn't always seem
    suitable for me to use =abbrev=, especially for large templates, but that's more of a personal choice than a "can it
    be done" thing.
@@ -432,7 +432,7 @@
    #+end_src
 
 
-** TODO Remote Interactions with =Tramp=
+** TODO Remote Interactions with =tramp=
    Emacs comes packaged with a really cool utility I'm desperately under-utilizing. More work to be done here still.
 
    Let's change where Tramp saves things, and use SSH as our default method.
@@ -447,7 +447,7 @@
    #+end_src
 
 
-* =Org-Mode= Configuration
+* =org-mode= Configuration
   =org-mode= is probably my biggest anchor to Emacs. I've tried org-like plugins for other editors and IDEs, but nothing
   compares to the real thing.
 
@@ -715,7 +715,7 @@
     #+end_src
 
 
-*** Misc Commands
+*** TODO Misc Commands
     A few of these commands that I'm workshopping didn't quite make sense elsewhere. Still not sure what I want to do
     with them yet.
 
@@ -1488,7 +1488,7 @@
    #+end_src
 
 
-** TODO =Magit= and Version Control
+** TODO =magit= and Version Control
    Magical Git interactions in Emacs.
 
    #+begin_src emacs-lisp
@@ -1501,7 +1501,7 @@
    #+end_src
 
 
-** TODO =Treemacs=
+** TODO =treemacs=
 
 
 ** Language Configurations
@@ -1615,7 +1615,7 @@
    #+end_src
 
 
-** Internet Relay Chat with =ERC=
+** Internet Relay Chat with =erc=
    Emacs comes with it's own Internet Relay Chat client, =ERC=. I use this to chat over IRC from right within Emacs.
 
    #+begin_src emacs-lisp
@@ -1780,6 +1780,7 @@
    - [ ] Org file rendering in Github is still too indented; left align code blocks?
      - See [[https://github.com/howardabrams/dot-files/blob/master/emacs.org][Howard Abrams files]] to see what I'm aiming for.
      - Hmm... comparing my raw file with that one, it seems my org configuration is inserting tabs...
+	 - Ran =untabify= on buffer - still need to update settings to prevent issues
 
 
 ** Configuration Reading
@@ -1802,7 +1803,7 @@
     - [ ] bookmarks
     - [ ] =epg=
     - [ ] semantic
-    - [ ] tramp, docker-tramp
+    - [ ] tramp
     - [ ] docker-tramp
     - [ ] =fzf= - fuzzy file finding
     - [ ] MacOS X / Linux config
@@ -1810,7 +1811,6 @@
     - [ ] REST client
     - [ ] org-mode blogging
     - [ ] markdown mode
-    - [ ] straight.el (some kind of package management?)
     - [ ] https://gitlab.com/jaor/geiser
     - [ ] https://katherine.cox-buday.com/blog/2015/03/14/writing-specs-with-org-mode/
     - [ ] http://kitchingroup.cheme.cmu.edu/blog/category/org-mode/
