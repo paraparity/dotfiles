@@ -23,21 +23,21 @@
 	bunch of configuration code, so let's keep my old =init.el= header around.
 
 	#+begin_src emacs-lisp
-	  ;;; configuration.el --- paraparity's Emacs configuration file
-	  ;;
-	  ;;; Commentary:
-	  ;; Customized startup for Emacs
-	  ;;
-	  ;;; Code:
+	;;; configuration.el --- paraparity's Emacs configuration file
+	;;
+	;;; Commentary:
+	;; Customized startup for Emacs
+	;;
+	;;; Code:
 
-	  ;; Eternally grateful to have gleaned lessons from:
-	  ;;   http://doc.norang.ca/org-mode.html
-	  ;;   http://members.optusnet.com.au/~charles57/GTD/orgmode.html
-	  ;;   http://pages.sachachua.com/.emacs.d/Sacha.html
-	  ;;   https://www.labri.fr/perso/nrougier/GTD/index.html
-	  ;;   https://github.com/purcell/emacs.d
-	  ;;   https://github.com/howardabrams/dot-files
-	  ;;   https://github.com/skeeto/.emacs.d
+	;; Eternally grateful to have gleaned lessons from:
+	;;   http://doc.norang.ca/org-mode.html
+	;;   http://members.optusnet.com.au/~charles57/GTD/orgmode.html
+	;;   http://pages.sachachua.com/.emacs.d/Sacha.html
+	;;   https://www.labri.fr/perso/nrougier/GTD/index.html
+	;;   https://github.com/purcell/emacs.d
+	;;   https://github.com/howardabrams/dot-files
+	;;   https://github.com/skeeto/.emacs.d
 	#+end_src
 
 
@@ -51,15 +51,15 @@
 	else up we'll need to tell Emacs where to look.
 
 	#+begin_src emacs-lisp
-	  (add-to-list 'load-path "~/.emacs.d/elisp/")
+	(add-to-list 'load-path "~/.emacs.d/elisp/")
 	#+end_src
 
 	Load my machine local custom libraries directly, if they exist. My elfeed configuration is machine local for now, as
 	my work and personal machines all represent different contexts where I pay attention to different things.
 
 	#+begin_src emacs-lisp
-	  (if (file-readable-p "~/.emacs.d/elisp/elfeed-conf.el")
-		  (load-library "elfeed-conf"))
+	(if (file-readable-p "~/.emacs.d/elisp/elfeed-conf.el")
+		(load-library "elfeed-conf"))
 	#+end_src
 
 
@@ -68,9 +68,9 @@
 	know I want to keep these tweaks, I'll give them their own home.
 
 	#+begin_src emacs-lisp
-	  (setq custom-file "~/.emacs.d/custom.el")
-	  (when (file-exists-p custom-file)
-		(load custom-file 'noerror))
+	(setq custom-file "~/.emacs.d/custom.el")
+	(when (file-exists-p custom-file)
+	  (load custom-file 'noerror))
 	#+end_src
 
 
@@ -80,17 +80,17 @@
 	sufficient to insulate others from these, but I'd prefer not to see them myself.
 
 	#+begin_src emacs-lisp
-	  ;; File Backup Management
-	  (setq backup-by-copying t
-			backup-directory-alist `(("." . "~/saves"))
-			delete-old-versions t
-			kept-new-versions 6
-			kept-old-versions 2
-			version-control t)
+	;; File Backup Management
+	(setq backup-by-copying t
+		  backup-directory-alist `(("." . "~/saves"))
+		  delete-old-versions t
+		  kept-new-versions 6
+		  kept-old-versions 2
+		  version-control t)
 
-	  ;; Autosave File Management
-	  (setq auto-save-file-name-transforms
-			`((".*" ,temporary-file-directory t)))
+	;; Autosave File Management
+	(setq auto-save-file-name-transforms
+		  `((".*" ,temporary-file-directory t)))
 	#+end_src
 
 
@@ -98,12 +98,12 @@
 	Let's make it a only take a key-chord to pull up my literate configuration.
 
 	#+begin_src emacs-lisp
-	  (defun TT/locate-literate-config ()
-		"Locate and load my literate configuration file."
-		(interactive)
-		(find-file "~/.emacs.d/configuration.org"))
+	(defun TT/locate-literate-config ()
+	  "Locate and load my literate configuration file."
+	  (interactive)
+	  (find-file "~/.emacs.d/configuration.org"))
 
-	  (global-set-key (kbd "C-c I") 'TT/locate-literate-config)
+	(global-set-key (kbd "C-c I") 'TT/locate-literate-config)
 	#+end_src
 
 
@@ -111,13 +111,13 @@
    Pretty much just set the coding system to UTF-8. Also enable the Japanese language environment to support study.
 
    #+begin_src emacs-lisp
-	 (prefer-coding-system 'utf-8)
-	 (set-keyboard-coding-system 'utf-8)
-	 (set-terminal-coding-system 'utf-8)
-	 (set-selection-coding-system 'utf-8)
-	 (set-default-coding-systems 'utf-8)
+   (prefer-coding-system 'utf-8)
+   (set-keyboard-coding-system 'utf-8)
+   (set-terminal-coding-system 'utf-8)
+   (set-selection-coding-system 'utf-8)
+   (set-default-coding-systems 'utf-8)
 
-	 (set-language-environment "japanese")
+   (set-language-environment "japanese")
    #+end_src
 
 
@@ -129,15 +129,15 @@
 	more lines of sweet, sweet text. I also find the visual bell annoying, so let's take that out.
 
 	#+begin_src emacs-lisp
-	  (setq inhibit-startup-screen t
-			inhibit-startup-message t
-			initial-scratch-message nil)
+	(setq inhibit-startup-screen t
+		  inhibit-startup-message t
+		  initial-scratch-message nil)
 
-	  (tool-bar-mode -1)
-	  (menu-bar-mode -1)
-	  (scroll-bar-mode -1)
+	(tool-bar-mode -1)
+	(menu-bar-mode -1)
+	(scroll-bar-mode -1)
 
-	  (setq ring-bell-function 'ignore)
+	(setq ring-bell-function 'ignore)
 	#+end_src
 
 
@@ -145,34 +145,34 @@
 	Let's give Emacs a name, I think Emacs sounds nice.
 
 	#+begin_src emacs-lisp
-	  (setq frame-title-format "Emacs")
+	(setq frame-title-format "Emacs")
 	#+end_src
 
 	Let's make sure our buffers have unique names. If we were to open a file of the same name, but a different location
 	we only need them to be a little unique, not full file path or even relative file path unique.
 
 	#+begin_src emacs-lisp
-	  (require 'uniquify)
+	(require 'uniquify)
 	#+end_src
 
 	Let's get some more screen real estate by using a small, code friendly font.
 
 	#+begin_src emacs-lisp
-	  (set-frame-font "monospace-10")
+	(set-frame-font "monospace-10")
     #+end_src
 
 	Let's keep track of time in the mode-line.
 
 	#+begin_src emacs-lisp
-	  (display-time-mode 1)
+	(display-time-mode 1)
 	#+end_src
 
 	Let's add some transparency. Despite how powerful it is, I don't use Emacs for everything and this lets me read
 	whatever I have Emacs opened over. This can also let me see my desktop background which can be really cozy.
 
 	#+begin_src emacs-lisp
-	  (set-frame-parameter (selected-frame) 'alpha '(92 . 90))
-	  (add-to-list 'default-frame-alist '(alpha . (92 . 90)))
+	(set-frame-parameter (selected-frame) 'alpha '(92 . 90))
+	(add-to-list 'default-frame-alist '(alpha . (92 . 90)))
 	#+end_src
 
 
@@ -182,14 +182,14 @@
 	lets give ourselves a nuclear option for stripping trailing white-space.
 
 	#+begin_src emacs-lisp
-	  (defun TT/toggle-trailing-whitespace ()
-		"Toggle 'show-trailing-whitespace' between t and nil."
-		(interactive)
-		(setq show-trailing-whitespace (not show-trailing-whitespace)))
+	(defun TT/toggle-trailing-whitespace ()
+	  "Toggle 'show-trailing-whitespace' between t and nil."
+	  (interactive)
+	  (setq show-trailing-whitespace (not show-trailing-whitespace)))
 
-	  (global-set-key (kbd "C-c w m") 'whitespace-mode)
-	  (global-set-key (kbd "C-c w t") 'TT/toggle-trailing-whitespace)
-	  (global-set-key (kbd "<f5>") 'delete-trailing-whitespace)
+	(global-set-key (kbd "C-c w m") 'whitespace-mode)
+	(global-set-key (kbd "C-c w t") 'TT/toggle-trailing-whitespace)
+	(global-set-key (kbd "<f5>") 'delete-trailing-whitespace)
 	#+end_src
 
    Enable final newline in all files. It's pretty common in software projects, and it's just a habit by now, I'll
@@ -205,30 +205,30 @@
    emacs-lisp, potentially without my knowing, lets prevent that from happening.
 
    #+begin_src emacs-lisp
-	 (setq enable-local-eval nil
-		   enable-local-variables nil)
+   (setq enable-local-eval nil
+		 enable-local-variables nil)
    #+end_src
 
    Enable quick Y/N prompts.
 
    #+begin_src emacs-lisp
-	 (fset 'yes-or-no-p 'y-or-n-p)
+   (fset 'yes-or-no-p 'y-or-n-p)
    #+end_src
 
    At one point I had some slowness with cursor movement and scrolling. I forget why at this point, but I stumbled upon
    some answer that said disable this, and I've never looked back since.
 
    #+begin_src emacs-lisp
-	 (setq auto-window-vscroll nil)
+   (setq auto-window-vscroll nil)
    #+end_src
 
    This probably deserves it's own section and some more configuration, but for now here's a minimal GPG setup.
 
    #+begin_src emacs-lisp
-	 (defvar epg-gpg-program "gpg2")
+   (defvar epg-gpg-program "gpg2")
 
-	 ;; Auth
-	 (defvar auth-sources '((:source "~/.emacs.d/secrets/.authinfo.gpg")) "Auth info source location.")
+   ;; Auth
+   (defvar auth-sources '((:source "~/.emacs.d/secrets/.authinfo.gpg")) "Auth info source location.")
    #+end_src
 
 
@@ -236,10 +236,10 @@
    This helps identify frequently used commands which could be bound for faster use.
 
    #+begin_src emacs-lisp
-	 (use-package keyfreq
-	   :config
-	   (keyfreq-mode 1)
-	   (keyfreq-autosave-mode 1))
+   (use-package keyfreq
+	 :config
+	 (keyfreq-mode 1)
+	 (keyfreq-autosave-mode 1))
    #+end_src
 
 
@@ -250,32 +250,36 @@
    Let's keep track of the currently focused line, always, everywhere.
 
    #+begin_src emacs-lisp
-	 (global-hl-line-mode t)
+   (global-hl-line-mode t)
    #+end_src
 
    Let's make it easy to see current block parentheses, given they're both on screen.
 
    #+begin_src emacs-lisp
-	 (show-paren-mode 1)
+   (show-paren-mode 1)
    #+end_src
 
    Let's display which-function-mode, and do so in the header line instead of mode line. This echoes the current org
    heading or function to the topmost part of a buffer which helps me keep track of what context my cursor is in.
 
    #+begin_src emacs-lisp
-	 (which-function-mode)
-	 (defvar which-func-header-line-format)
+   (which-function-mode)
+   (defvar which-func-header-line-format)
 
-	 (setq mode-line-misc-info (delete (assoc 'which-func-mode
-						  mode-line-misc-info) mode-line-misc-info)
-		   which-func-header-line-format '(which-func-mode ("" which-func-format)))
+   (setq mode-line-misc-info
+		 (delete
+		  (assoc 'which-func-mode
+				 mode-line-misc-info) mode-line-misc-info)
+		 which-func-header-line-format '(which-func-mode ("" which-func-format)))
 
-	 (defadvice which-func-ff-hook (after header-line activate)
-	   "Hook for which-func formatting."
-	   (when which-func-mode
-		 (setq mode-line-misc-info (delete (assoc 'which-func-mode
-							  mode-line-misc-info) mode-line-misc-info)
-		   header-line-format which-func-header-line-format)))
+   (defadvice which-func-ff-hook (after header-line activate)
+	 "Hook for which-func formatting."
+	 (when which-func-mode
+	   (setq mode-line-misc-info
+			 (delete
+			  (assoc 'which-func-mode
+					 mode-line-misc-info) mode-line-misc-info)
+			 header-line-format which-func-header-line-format)))
    #+end_src
 
 
@@ -285,10 +289,10 @@
    should help keep things in sync.
 
    #+begin_src emacs-lisp
-	 (use-package autorevert
-	   :ensure nil
-	   :diminish
-	   :init (global-auto-revert-mode))
+   (use-package autorevert
+	 :ensure nil
+	 :diminish
+	 :init (global-auto-revert-mode))
    #+end_src
 
 
@@ -297,18 +301,18 @@
    which can lead to some pretty impressive editing and refactoring feats.
 
    #+begin_src emacs-lisp
-	 (use-package multiple-cursors
-	   :ensure t
-	   :bind (;; Note that recomended 'C->' and 'C-<' are not characters in the shell.
-			  ;; Thus I use their lowercase alternatives
-			  ("C-c ."   . mc/mark-next-like-this)
-			  ("C-c ,"   . mc/mark-previous-like-this)
-			  ("C-c /"   . mc/mark-all-like-this)
-			  ("C-c m m" . mc/mark-all-like-this-dwim)
-			  ("C-c m a" . mc/edit-beginnings-of-lines)
-			  ("C-c m e" . mc/edit-ends-of-lines)
-			  ("C-c m s" . mc/mark-sgml-tag-pair)
-			  ("C-c m l" . mc/edit-lines)))
+   (use-package multiple-cursors
+	 :ensure t
+	 :bind (;; Note that recomended 'C->' and 'C-<' are not characters in the shell.
+			;; Thus I use their lowercase alternatives
+			("C-c ."   . mc/mark-next-like-this)
+			("C-c ,"   . mc/mark-previous-like-this)
+			("C-c /"   . mc/mark-all-like-this)
+			("C-c m m" . mc/mark-all-like-this-dwim)
+			("C-c m a" . mc/edit-beginnings-of-lines)
+			("C-c m e" . mc/edit-ends-of-lines)
+			("C-c m s" . mc/mark-sgml-tag-pair)
+			("C-c m l" . mc/edit-lines)))
    #+end_src
 
 
@@ -316,37 +320,37 @@
    =Helm= gives us incremental completions and narrowing capabilities that really help find what you're looking for.
 
    #+begin_src emacs-lisp
-	 (use-package helm
-	   :diminish helm-mode
-	   :init (progn
-			   (require 'helm-config)
-			   (helm-mode))
-	   :bind (("C-c h"   . helm-command-prefix)
-			  ("M-x"     . helm-M-x)
-			  ("M-y"     . helm-show-kill-ring)
-			  ("C-x b"   . helm-mini)
-			  ("C-c h a" . helm-apropos)
-			  ("C-c h f" . helm-find-files)
-			  ("C-c h o" . helm-occur)
-			  ("C-c h m" . helm-man-woman))
-	   :config
-	   (require 'helm-command)
-	   (require 'helm-for-files)
-	   (require 'helm-imenu)
-	   (require 'helm-semantic)
-	   (require 'helm-misc)
-	   (setq helm-split-window-inside-p      t
-			 helm-M-x-fuzzy-match            t
-			 helm-buffers-fuzzy-matching     t
-			 helm-recentf-fuzzy-match        t
-			 helm-semantic-fuzzy-match       t
-			 helm-imenu-fuzzy-match          t
-			 helm-apropos-fuzzy-match        t
-			 helm-candidate-number-limit   100
-			 helm-autoresize-max-height     20
-			 helm-autoresize-min-height      0)
-	   (add-to-list 'helm-sources-using-default-as-input 'heml-source-man-pages)
-	   (helm-autoresize-mode t))
+   (use-package helm
+	 :diminish helm-mode
+	 :init (progn
+			 (require 'helm-config)
+			 (helm-mode))
+	 :bind (("C-c h"   . helm-command-prefix)
+			("M-x"     . helm-M-x)
+			("M-y"     . helm-show-kill-ring)
+			("C-x b"   . helm-mini)
+			("C-c h a" . helm-apropos)
+			("C-c h f" . helm-find-files)
+			("C-c h o" . helm-occur)
+			("C-c h m" . helm-man-woman))
+	 :config
+	 (require 'helm-command)
+	 (require 'helm-for-files)
+	 (require 'helm-imenu)
+	 (require 'helm-semantic)
+	 (require 'helm-misc)
+	 (setq helm-split-window-inside-p      t
+		   helm-M-x-fuzzy-match            t
+		   helm-buffers-fuzzy-matching     t
+		   helm-recentf-fuzzy-match        t
+		   helm-semantic-fuzzy-match       t
+		   helm-imenu-fuzzy-match          t
+		   helm-apropos-fuzzy-match        t
+		   helm-candidate-number-limit   100
+		   helm-autoresize-max-height     20
+		   helm-autoresize-min-height      0)
+	 (add-to-list 'helm-sources-using-default-as-input 'heml-source-man-pages)
+	 (helm-autoresize-mode t))
    #+end_src
 
 
@@ -359,14 +363,14 @@
    file.
 
    #+begin_src emacs-lisp
-	 (use-package origami
-	   :bind (("C-<tab>" . origami-recursively-toggle-node)
-			  ("C-c u"   . origami-open-all-nodes)
-			  ("C-c f"   . origami-close-all-nodes)
-			  ("C-c n"   . origami-show-only-node)
-			  ("C-c r"   . origami-reset))
-	   :config
-	   (global-origami-mode t))
+   (use-package origami
+	 :bind (("C-<tab>" . origami-recursively-toggle-node)
+			("C-c u"   . origami-open-all-nodes)
+			("C-c f"   . origami-close-all-nodes)
+			("C-c n"   . origami-show-only-node)
+			("C-c r"   . origami-reset))
+	 :config
+	 (global-origami-mode t))
 
    #+end_src
 
@@ -378,23 +382,23 @@
    creating shortcuts for words I type often.
 
    #+begin_src emacs-lisp
-	 (use-package abbrev
-	   :ensure nil
-	   :diminish abbrev-mode
-	   :config
-	   (setq abbrev-file-name
-			 "~/.emacs.d/abbrev_defs")
-	   (setq save-abbrevs t)
-	   (if (file-exists-p abbrev-file-name)
-		   (quietly-read-abbrev-file)))
+   (use-package abbrev
+	 :ensure nil
+	 :diminish abbrev-mode
+	 :config
+	 (setq abbrev-file-name
+		   "~/.emacs.d/abbrev_defs")
+	 (setq save-abbrevs t)
+	 (if (file-exists-p abbrev-file-name)
+		 (quietly-read-abbrev-file)))
 
-	 ;; Add Abbrev-Mode Hooks
-	 (dolist (hook '(erc-mode-hook
-			 emacs-lisp-mode-hook
-			 text-mode-hook
-			 org-mode-hook))
-	   (add-hook hook (lambda () (abbrev-mode 1))))
-	 ;; (setq default-abbrev-mode t) ;; Or, default on everywhere
+   ;; Add Abbrev-Mode Hooks
+   (dolist (hook '(erc-mode-hook
+		   emacs-lisp-mode-hook
+		   text-mode-hook
+		   org-mode-hook))
+	 (add-hook hook (lambda () (abbrev-mode 1))))
+   ;; (setq default-abbrev-mode t) ;; Or, default on everywhere
    #+end_src
 
 
@@ -407,18 +411,18 @@
    interactively fill out templates.
 
    #+begin_src emacs-lisp
-	 (use-package yasnippet
-	   :diminish yas-minor-mode
-	   :diminish yas-global-mode
-	   :bind (("C-c y r" . yas-reload-all)
-			  ("C-c y n" . yas-new-snippet)
-			  ("C-c y x" . yas-exit-snippet)
-			  ("C-c y d" . yas-describe-tables)
-			  ("C-c y v" . yas-visit-snippet-file)
-			  ("C-c y l" . yas-load-snippet-buffer-and-close))
-	   :config
-	   (setq yas-verbosity 1)
-	   (yas-global-mode 1))
+   (use-package yasnippet
+	 :diminish yas-minor-mode
+	 :diminish yas-global-mode
+	 :bind (("C-c y r" . yas-reload-all)
+			("C-c y n" . yas-new-snippet)
+			("C-c y x" . yas-exit-snippet)
+			("C-c y d" . yas-describe-tables)
+			("C-c y v" . yas-visit-snippet-file)
+			("C-c y l" . yas-load-snippet-buffer-and-close))
+	 :config
+	 (setq yas-verbosity 1)
+	 (yas-global-mode 1))
    #+end_src
 
 
@@ -428,12 +432,12 @@
    Let's change where Tramp saves things, and use SSH as our default method.
 
    #+begin_src emacs-lisp
-	 (use-package tramp)
+   (use-package tramp)
 
-	 (set-default 'tramp-auto-save-directory "~/.saves/tramp/")
-	 (setq tramp-default-method "ssh")
+   (set-default 'tramp-auto-save-directory "~/.saves/tramp/")
+   (setq tramp-default-method "ssh")
 
-	 ; TODO: if windows: use PuTTy Plink; if *nix: use ssh
+   ; TODO: if windows: use PuTTy Plink; if *nix: use ssh
    #+end_src
 
 
@@ -444,46 +448,46 @@
   Let's load all the things! Well, all the things I use anyway.
 
   #+begin_src emacs-lisp
-	(use-package org)
-	(use-package ob-C :ensure nil)
-	(use-package ob-ditaa :ensure nil)
-	(use-package ob-dot :ensure nil)
-	(use-package ob-js :ensure nil)
-	(use-package ob-perl :ensure nil)
-	(use-package ob-plantuml :ensure nil)
-	(use-package ob-sql-mode)
-	(use-package org-agenda :ensure nil)
-	(use-package org-capture :ensure nil)
-	(use-package org-clock :ensure nil)
-	(use-package ox :ensure nil)
-	(use-package ox-ascii :ensure nil)
-	(use-package ox-asciidoc)
-	(use-package ox-html :ensure nil)
-	(use-package ox-latex :ensure nil)
-	(use-package ox-pandoc)
-	(use-package ox-slimhtml)
+  (use-package org)
+  (use-package ob-C :ensure nil)
+  (use-package ob-ditaa :ensure nil)
+  (use-package ob-dot :ensure nil)
+  (use-package ob-js :ensure nil)
+  (use-package ob-perl :ensure nil)
+  (use-package ob-plantuml :ensure nil)
+  (use-package ob-sql-mode)
+  (use-package org-agenda :ensure nil)
+  (use-package org-capture :ensure nil)
+  (use-package org-clock :ensure nil)
+  (use-package ox :ensure nil)
+  (use-package ox-ascii :ensure nil)
+  (use-package ox-asciidoc)
+  (use-package ox-html :ensure nil)
+  (use-package ox-latex :ensure nil)
+  (use-package ox-pandoc)
+  (use-package ox-slimhtml)
 
-	;; This wasn't loading well via use-package...
-	(require 'org-tempo)
+  ;; This wasn't loading well via use-package...
+  (require 'org-tempo)
 
-	(setq org-modules
-		  '((org-bbdb org-bibtex org-docview org-eww org-gnus org-habit org-info org-irc org-mhe org-rmail org-tempo org-w3m)))
+  (setq org-modules
+		'((org-bbdb org-bibtex org-docview org-eww org-gnus org-habit org-info org-irc org-mhe org-rmail org-tempo org-w3m)))
   #+end_src
 
   Let's also update a few general settings and behavior.
 
   #+begin_src emacs-lisp
-	(add-hook 'org-mode-hook 'turn-on-auto-fill)
-	(add-hook 'org-mode-hook
-			  '(lambda () (origami-mode nil)))
+  (add-hook 'org-mode-hook 'turn-on-auto-fill)
+  (add-hook 'org-mode-hook
+			'(lambda () (origami-mode nil)))
 
-	(setq org-src-fontify-natively t
-		  org-src-tab-acts-natively t
-		  org-src-preserve-indentation nil
-		  org-edit-src-content-indentation 0
-		  org-ellipsis " [+]")
+  (setq org-src-fontify-natively t
+		org-src-tab-acts-natively t
+		org-src-preserve-indentation nil
+		org-edit-src-content-indentation 0
+		org-ellipsis " [+]")
 
-	(custom-set-faces '(org-ellipsis ((t (:foreground "gray40" :underline nil)))))
+  (custom-set-faces '(org-ellipsis ((t (:foreground "gray40" :underline nil)))))
   #+end_src
 
 ** Org Structure
@@ -491,32 +495,32 @@
    agenda files, and the like.
 
    #+begin_src emacs-lisp
-	 (defvar org-directory           "~/org"                                         "Root 'org-mode' directory.")
-	 (defvar TT/org-agenda-dir       (concat org-directory "/agendas")               "Top level org directory for Getting Things Done (GTD) organizer files.")
-	 (defvar TT/org-calendar         (concat TT/org-agenda-dir "/calendar.org")      "Calendar for scheduled actionables.")
-	 (defvar TT/org-habits           (concat TT/org-agenda-dir "/habits.org")        "Habits for periodic todos.")
-	 (defvar TT/org-inbox            (concat TT/org-agenda-dir "/inbox.org")         "The collection bin for everything to be refiled.")
-	 (defvar TT/org-incubate-dir     (concat TT/org-agenda-dir "/incubate")          "Categories of inactionable things to incubate.")
-	 (defvar TT/org-emacs-maybe      (concat TT/org-incubate-dir "/emacs-maybe.org") "Someday agenda for Emacs related things.")
-	 (defvar TT/org-ideas            (concat TT/org-incubate-dir "/ideas.org")       "Someday agenda to capture general or 'idea?' ideas.")
-	 (defvar TT/org-projects         (concat TT/org-incubate-dir "/projects.org")    "Someday agenda for project ideas.")
-	 (defvar TT/org-someday          (concat TT/org-incubate-dir "/someday.org")     "Someday agenda for things I may want to revisit.")
-	 (defvar TT/org-travel           (concat TT/org-incubate-dir "/travel.org")      "Someday agenda for travel related things.")
-	 (defvar TT/org-learning         (concat TT/org-agenda-dir "/learning.org")      "Agenda for structured learning.")
-	 (defvar TT/org-manager          (concat TT/org-agenda-dir "/manager.org")       "Actionables and captures for 1:1s with my manager.")
-	 (defvar TT/org-organizer        (concat TT/org-agenda-dir "/organizer.org")     "Core organizer tracking prioritized actionable work.")
-	 (defvar TT/org-retrospective    (concat TT/org-agenda-dir "/retro.org")         "Capture target for retro related info or actionables.")
-	 (defvar TT/org-review           (concat TT/org-agenda-dir "/review.org")        "Reference on and journal for reflection.")
-	 (defvar TT/org-tickler          (concat TT/org-agenda-dir "/tickler.org")       "Time relevant reminders for 'decide to do later' items.")
-	 (defvar TT/org-waiting          (concat TT/org-agenda-dir "/waiting.org")       "Delegated or blocked items awaiting external action.")
-	 (defvar TT/org-blog             (concat org-directory "/blog")                  "Top level org directory for blog posts.")
-	 (defvar TT/org-brain-dir        (concat org-directory "/brain")                 "Top level org directory for 'org-brain' reference material.")
-	 (defvar TT/org-checklist-dir    (concat org-directory "/checklists")            "Top level org directory for action oriented reference; do/certify.")
-	 (defvar TT/org-commonplace-dir  (concat org-directory "/commonplace")           "Top level org directory for 'commonplace book' material.")
-	 (defvar TT/org-journal-dir      (concat org-directory "/journal")               "Top level org directory for journal entries.")
-	 (defvar TT/org-ledger-dir       (concat org-directory "/ledger")                "Top level org directory for accounting/budgeting ledgers.")
+   (defvar org-directory           "~/org"                                         "Root 'org-mode' directory.")
+   (defvar TT/org-agenda-dir       (concat org-directory "/agendas")               "Top level org directory for Getting Things Done (GTD) organizer files.")
+   (defvar TT/org-calendar         (concat TT/org-agenda-dir "/calendar.org")      "Calendar for scheduled actionables.")
+   (defvar TT/org-habits           (concat TT/org-agenda-dir "/habits.org")        "Habits for periodic todos.")
+   (defvar TT/org-inbox            (concat TT/org-agenda-dir "/inbox.org")         "The collection bin for everything to be refiled.")
+   (defvar TT/org-incubate-dir     (concat TT/org-agenda-dir "/incubate")          "Categories of inactionable things to incubate.")
+   (defvar TT/org-emacs-maybe      (concat TT/org-incubate-dir "/emacs-maybe.org") "Someday agenda for Emacs related things.")
+   (defvar TT/org-ideas            (concat TT/org-incubate-dir "/ideas.org")       "Someday agenda to capture general or 'idea?' ideas.")
+   (defvar TT/org-projects         (concat TT/org-incubate-dir "/projects.org")    "Someday agenda for project ideas.")
+   (defvar TT/org-someday          (concat TT/org-incubate-dir "/someday.org")     "Someday agenda for things I may want to revisit.")
+   (defvar TT/org-travel           (concat TT/org-incubate-dir "/travel.org")      "Someday agenda for travel related things.")
+   (defvar TT/org-learning         (concat TT/org-agenda-dir "/learning.org")      "Agenda for structured learning.")
+   (defvar TT/org-manager          (concat TT/org-agenda-dir "/manager.org")       "Actionables and captures for 1:1s with my manager.")
+   (defvar TT/org-organizer        (concat TT/org-agenda-dir "/organizer.org")     "Core organizer tracking prioritized actionable work.")
+   (defvar TT/org-retrospective    (concat TT/org-agenda-dir "/retro.org")         "Capture target for retro related info or actionables.")
+   (defvar TT/org-review           (concat TT/org-agenda-dir "/review.org")        "Reference on and journal for reflection.")
+   (defvar TT/org-tickler          (concat TT/org-agenda-dir "/tickler.org")       "Time relevant reminders for 'decide to do later' items.")
+   (defvar TT/org-waiting          (concat TT/org-agenda-dir "/waiting.org")       "Delegated or blocked items awaiting external action.")
+   (defvar TT/org-blog             (concat org-directory "/blog")                  "Top level org directory for blog posts.")
+   (defvar TT/org-brain-dir        (concat org-directory "/brain")                 "Top level org directory for 'org-brain' reference material.")
+   (defvar TT/org-checklist-dir    (concat org-directory "/checklists")            "Top level org directory for action oriented reference; do/certify.")
+   (defvar TT/org-commonplace-dir  (concat org-directory "/commonplace")           "Top level org directory for 'commonplace book' material.")
+   (defvar TT/org-journal-dir      (concat org-directory "/journal")               "Top level org directory for journal entries.")
+   (defvar TT/org-ledger-dir       (concat org-directory "/ledger")                "Top level org directory for accounting/budgeting ledgers.")
 
-	 (defvar org-default-notes-file TT/org-inbox)
+   (defvar org-default-notes-file TT/org-inbox)
    #+end_src
 
 
@@ -528,29 +532,29 @@
    my =org-directory=. The structure of these files is mostly informed by the Getting Things Done framework.
 
    #+begin_src emacs-lisp
-	 ;; Agenda Files:
-	 (setq org-agenda-files
-		   (delq nil
-				 (mapcar (lambda (x) (and x (file-exists-p x) x))
-						 `("~/org/agendas/calendar.org"
-						   "~/org/agendas/habits.org"
-						   "~/org/agendas/inbox.org"
-						   "~/org/agendas/organizer.org"
-						   "~/org/agendas/tickler.org"
-						   "~/org/agendas/waiting.org"))))
+   ;; Agenda Files:
+   (setq org-agenda-files
+		 (delq nil
+			   (mapcar (lambda (x) (and x (file-exists-p x) x))
+					   `("~/org/agendas/calendar.org"
+						 "~/org/agendas/habits.org"
+						 "~/org/agendas/inbox.org"
+						 "~/org/agendas/organizer.org"
+						 "~/org/agendas/tickler.org"
+						 "~/org/agendas/waiting.org"))))
    #+end_src
 
    Let's also modify some other agenda settings.
 
    #+begin_src emacs-lisp
-	 (setq org-agenda-skip-deadline-if-done t
-		   org-agenda-skip-scheduled-if-done t
-		   org-agenda-skip-timestamp-if-deadline-is-shown t
-		   org-agenda-show-future-repeats t
-		   org-agenda-dim-blocked-tasks nil ; dimming can slow the agenda  down - a filter could show blocked tasks better
-		   org-agenda-inhibit-startup t ; speedup agenda loading by ignoring startup options
-		   org-tags-column -128
-		   org-agenda-skip-deadline-prewarning-if-scheduled 'pre-scheduled)
+   (setq org-agenda-skip-deadline-if-done t
+		 org-agenda-skip-scheduled-if-done t
+		 org-agenda-skip-timestamp-if-deadline-is-shown t
+		 org-agenda-show-future-repeats t
+		 org-agenda-dim-blocked-tasks nil ; dimming can slow the agenda  down - a filter could show blocked tasks better
+		 org-agenda-inhibit-startup t ; speedup agenda loading by ignoring startup options
+		 org-tags-column -128
+		 org-agenda-skip-deadline-prewarning-if-scheduled 'pre-scheduled)
    #+end_src
 
 *** Agenda Helpers
@@ -587,15 +591,15 @@
 
    Agenda commands have the following form:
    #+begin_example
-	 (setq org-agenda-custom-commands
-		   '(
-			 ;; (1 key) (2 description (optional)) (3 type of search) (4 search term)
-			 ("c" "Desk Work" tags-todo "computer"
-			  ((org-agenda-files '("~/org/widgets.org" "~/org/clients.org")) ;; (5 settings (optional))
-			   (org-agenda-sorting-strategy '(priority-up effort-down)))
-			  ("~/computer.html"))                                           ;; (6 export files (optional))
-			 ;; ... other commands
-			 ))
+   (setq org-agenda-custom-commands
+		 '(
+		   ;; (1 key) (2 description (optional)) (3 type of search) (4 search term)
+		   ("c" "Desk Work" tags-todo "computer"
+			((org-agenda-files '("~/org/widgets.org" "~/org/clients.org")) ;; (5 settings (optional))
+			 (org-agenda-sorting-strategy '(priority-up effort-down)))
+			("~/computer.html"))                                           ;; (6 export files (optional))
+		   ;; ... other commands
+		   ))
    #+end_example
 
    For further reference see the [[https://orgmode.org/worg/org-tutorials/advanced-searching.html][Worg Advanced Searching Tutorial]] or the [[https://orgmode.org/manual/Custom-Agenda-Views.html#Custom-agenda-views][Custom Agenda Views Manual]].
@@ -606,15 +610,15 @@
    something to happen.
 
    #+begin_src emacs-lisp
-	 (defvar TT/org-agenda-custom-commands (list) '())
+   (defvar TT/org-agenda-custom-commands (list) '())
 
-	 (setq TT/org-agenda-custom-commands
-		   '(("w" "Weekly Review"
-			  ((agenda ""
-					   ((org-agenda-span 7)))
-			   (stuck "")
-			   (tags "PROJECT")
-			   (todo "WAITING")))))
+   (setq TT/org-agenda-custom-commands
+		 '(("w" "Weekly Review"
+			((agenda ""
+					 ((org-agenda-span 7)))
+			 (stuck "")
+			 (tags "PROJECT")
+			 (todo "WAITING")))))
    #+end_src
 
    Now we can append new search filters to this initialized list which we'll use to initialize the
@@ -622,86 +626,86 @@
 
 *** Calendar View
 	#+begin_src emacs-lisp
-	  (setcdr (last TT/org-agenda-custom-commands)
-					'(("c" "Calendar"
-					   ((agenda ""
-								((org-agenda-span 7)
-								 (org-agenda-start-on-weekday 0)
-								 (org-agenda-time-grid-nil)
-								 (org-agenda-repeating-timestamp-show-all t)
-								 (org-agenda-entry-types '(:timestamp :sexp))))))))
+	(setcdr (last TT/org-agenda-custom-commands)
+			'(("c" "Calendar"
+			   ((agenda ""
+						((org-agenda-span 7)
+						 (org-agenda-start-on-weekday 0)
+						 (org-agenda-time-grid-nil)
+						 (org-agenda-repeating-timestamp-show-all t)
+						 (org-agenda-entry-types '(:timestamp :sexp))))))))
 	#+end_src
 
 
 *** Daily Agenda
 	#+begin_src emacs-lisp
-	  (setcdr (last TT/org-agenda-custom-commands)
-					'(("d" "Daily agenda and all TODOs"
-					   ((tags "PRIORITY=\"A\""
-							  ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-							   (org-agenda-overriding-header "High-Priority Unfinished Tasks:")))
-						(agenda ""
-								((org-agenda-span 1)))
-						(alltodo ""
-								 ((org-agenda-skip-function
-								   '(or (air/org-skip-subtree-if-habit)
-										(air/org-skip-subtree-if-priority ?A)
-										(org-agenda-skip-if nil '(scheduled deadline))))
-								  (org-agenda-overriding-header "All Normal Priority Tasks:"))))
-					   ((org-agenda-compact-blocks t)))))
+	(setcdr (last TT/org-agenda-custom-commands)
+			'(("d" "Daily agenda and all TODOs"
+			   ((tags "PRIORITY=\"A\""
+					  ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+					   (org-agenda-overriding-header "High-Priority Unfinished Tasks:")))
+				(agenda ""
+						((org-agenda-span 1)))
+				(alltodo ""
+						 ((org-agenda-skip-function
+						   '(or (air/org-skip-subtree-if-habit)
+								(air/org-skip-subtree-if-priority ?A)
+								(org-agenda-skip-if nil '(scheduled deadline))))
+						  (org-agenda-overriding-header "All Normal Priority Tasks:"))))
+			   ((org-agenda-compact-blocks t)))))
 	#+end_src
 
 
 *** Daily Actions
 	#+begin_src emacs-lisp
-	  (setcdr (last TT/org-agenda-custom-commands)
-					'(("D" "Daily Action List"
-					   ((agenda ""
-								((org-agenda-span 1)
-								 (org-agenda-sorting-strategy
-								  '((agenda time-up priority-down tag-up)))
-								 (org-deadline-warning-ndays 0)))))))
+	(setcdr (last TT/org-agenda-custom-commands)
+			'(("D" "Daily Action List"
+			   ((agenda ""
+						((org-agenda-span 1)
+						 (org-agenda-sorting-strategy
+						  '((agenda time-up priority-down tag-up)))
+						 (org-deadline-warning-ndays 0)))))))
 	#+end_src
 
 
 *** Priority Matrix Commands
 	#+begin_src emacs-lisp
-	  (setcdr (last TT/org-agenda-custom-commands)
-					'(("1" "Q1" tags-todo "+IMPORTANT+URGENT")
-					  ("2" "Q2" tags-todo "+IMPORTANT-URGENT")
-					  ("3" "Q3" tags-todo "-IMPORTANT+URGENT")
-					  ("4" "Q4" tags-todo "-IMPORTANT-URGENT")))
+	(setcdr (last TT/org-agenda-custom-commands)
+			'(("1" "Q1" tags-todo "+IMPORTANT+URGENT")
+			  ("2" "Q2" tags-todo "+IMPORTANT-URGENT")
+			  ("3" "Q3" tags-todo "-IMPORTANT+URGENT")
+			  ("4" "Q4" tags-todo "-IMPORTANT-URGENT")))
 	#+end_src
 
 
 *** Deadline Review
 	#+begin_src emacs-lisp
-	  (setcdr (last TT/org-agenda-custom-commands)
-					'(("x" "With deadline columns"
-					   ((alltodo ""
-								 ((org-agenda-overriding-columns-format "%20ITEM %DEADLINE")
-								  (org-agenda-view-columns-initially t)))))
-					  ("X" "Upcoming Deadlines"
-					   ((agenda ""
-								((org-agenda-entry-types '(:deadline))
-								 (org-agenda-span 1)
-								 (org-deadline-warning-days 60)
-								 (org-agenda-time-grid nil)))))))
+	(setcdr (last TT/org-agenda-custom-commands)
+			'(("x" "With deadline columns"
+			   ((alltodo ""
+						 ((org-agenda-overriding-columns-format "%20ITEM %DEADLINE")
+						  (org-agenda-view-columns-initially t)))))
+			  ("X" "Upcoming Deadlines"
+			   ((agenda ""
+						((org-agenda-entry-types '(:deadline))
+						 (org-agenda-span 1)
+						 (org-deadline-warning-days 60)
+						 (org-agenda-time-grid nil)))))))
 	#+end_src
 
 
 *** Archive Queries
 	#+begin_src emacs-lisp
-	  (setcdr (last TT/org-agenda-custom-commands)
-					'(("Q" . "Custom Queries")
-					  ("Qa" "Archive Search"
-					   ((search ""
-								((org-agenda-files
-								  (file-expand-wildcards "~/org/archive/*.org"))))))
-					  ("QA" "Archive Tags Search"
-					   ((org-tags-view ""
-									   ((org-agenda-files
-										 (file-expand-wildcards "~/org/archive/*.org"))))))))
+	(setcdr (last TT/org-agenda-custom-commands)
+			'(("Q" . "Custom Queries")
+			  ("Qa" "Archive Search"
+			   ((search ""
+						((org-agenda-files
+						  (file-expand-wildcards "~/org/archive/*.org"))))))
+			  ("QA" "Archive Tags Search"
+			   ((org-tags-view ""
+							   ((org-agenda-files
+								 (file-expand-wildcards "~/org/archive/*.org"))))))))
 	#+end_src
 
 
@@ -710,13 +714,13 @@
 	with them yet.
 
 	#+begin_src emacs-lisp
-	  (setcdr (last TT/org-agenda-custom-commands)
-					'(("y" "Someday Maybe"
-					   ((todo "MAYBE"
-							  ((org-agenda-files '("~/org/maybe.org"))))))
-					  ("r" "Review"
-					   ((todo "REVIEW"
-							  ((org-agenda-files '("~/org/review.org"))))))))
+	(setcdr (last TT/org-agenda-custom-commands)
+			'(("y" "Someday Maybe"
+			   ((todo "MAYBE"
+					  ((org-agenda-files '("~/org/maybe.org"))))))
+			  ("r" "Review"
+			   ((todo "REVIEW"
+					  ((org-agenda-files '("~/org/review.org"))))))))
 	#+end_src
 
 
@@ -733,7 +737,7 @@
    things set up here.
 
    #+begin_src emacs-lisp
-	 (setq org-treat-insert-todo-heading-as-state-change t)
+   (setq org-treat-insert-todo-heading-as-state-change t)
    #+end_src
 
 
@@ -743,27 +747,26 @@
 
 	The default org-mode sequence is as follows:
 	#+begin_example
-	  ,-> (unmarked) -> TODO -> DONE --.
-	  '--------------------------------'
+	,-> (unmarked) -> TODO -> DONE --.
+	'--------------------------------'
 	#+end_example
 
 	However, that's pretty simple and I have something else in mind.
 
 	#+begin_src emacs-lisp
-	  (setq org-todo-keywords
-			'((sequence "TODO(t)" "NEXT(n)" "DELEGATED(g@)" "STARTED(s)" "WAITING(w@)" "|" "DONE(d)" "DROP(x@)")
-			  (sequence "MEETING(m)" "APPOINTMENT(a)" "|" "COMPLETED(p)" "CANCELLED(l)")
-			  (sequence "REVIEW(r)" "REWORK(k@)"      "|" "REVIEWED(v)")
-			  (sequence "OPEN(o)"                     "|" "CLOSED(c@)")))
+	(setq org-todo-keywords
+		  '((sequence "TODO(t)" "NEXT(n)" "DELEGATED(g@)" "STARTED(s)" "WAITING(w@)" "|" "DONE(d)" "DROP(x@)")
+			(sequence "MEETING(m)" "APPOINTMENT(a)" "|" "COMPLETED(p)" "CANCELLED(l)")
+			(sequence "REVIEW(r)" "REWORK(k@)"      "|" "REVIEWED(v)")
+			(sequence "OPEN(o)"                     "|" "CLOSED(c@)")))
 
-	  (setq org-todo-keyword-faces
-			'(("STARTED" . "cyan")
-			  ("MAYBE"   . "purple")
-			  ("WAITING" . (:foreground "yellow" :weight bold))
-			  ("CANCELLED" . "DimGray")
-			  ("DROP"    . "DimGray")))
+	(setq org-todo-keyword-faces
+		  '(("STARTED" . "cyan")
+			("MAYBE"   . "purple")
+			("WAITING" . (:foreground "yellow" :weight bold))
+			("CANCELLED" . "DimGray")
+			("DROP"    . "DimGray")))
 	#+end_src
-
 
 
 *** Tags
@@ -784,40 +787,40 @@
 	within the word, but it's an imperfect system.
 
 	#+begin_src emacs-lisp
-	  (setq org-tag-alist
-			'(("@administrative" . ?a) ; administrative tasks, paperwork, check-boxes, overhead, etc...
-			  ("@career"         . ?c) ; personal professional development (different than learn?)
-			  ("@communication"  . ?m) ; messaging, email, outreach, inquiry, and publication work
-			  ("@finances"       . ?f) ; banking, budgeting, investing, and most things money related
-			  ("@firefights"     . ?F) ; incident response, unexpected/chaotic work, high-urgency (war-room, incident team, etc...)
-			  ("@guild"          . ?g) ; involvement in communities of practice
-			  ("@health"         . ?h) ; exercise, diet, point-of-care, etc...
-			  ("@hiring"         . ?i) ; talent acquisition: outreach, correspondence, and interviewing
-			  ("@home"           . ?H) ; apartment related things
-			  ("@learn"          . ?l) ; courses, intentional learning, study (different than career?)
-			  ("@office"         . ?o) ; general office tasks (un-bucketed)
-			  ("@read"           . ?r) ; books and reading nook items
-			  ("@review"         . ?R) ; periodic review - timed reminders (tickler)
-			  ("@scheduling"     . ?d) ; calendar work, planning, conflict resolution
-			  ("@self"           . ?S) ; personal reflection and planning
-			  ("@sprint"         . ?s) ; sprint work (primarily development)
-			  ("@travel"         . ?t) ; trip planning, packing, and similar
-			  ("@workstation"    . ?w) ; home and office hardware, configs, etc...
-			  ("IMPORTANT"       . ?I) ; something of significance or of great value
-			  ("NEXT"            . ?N) ; the very next thing to be doing within a project
-			  ("PROJECT"         . ?P) ; something that takes significant effort or time, and can be decomposed into individual tasks
-			  ("TASK"            . ?T) ; an atomic actionable thing
-			  ("URGENT"          . ?U) ; something that demands attention in a short timespan
-			  ("journal"         . ?j)))
+	(setq org-tag-alist
+		  '(("@administrative" . ?a) ; administrative tasks, paperwork, check-boxes, overhead, etc...
+			("@career"         . ?c) ; personal professional development (different than learn?)
+			("@communication"  . ?m) ; messaging, email, outreach, inquiry, and publication work
+			("@finances"       . ?f) ; banking, budgeting, investing, and most things money related
+			("@firefights"     . ?F) ; incident response, unexpected/chaotic work, high-urgency (war-room, incident team, etc...)
+			("@guild"          . ?g) ; involvement in communities of practice
+			("@health"         . ?h) ; exercise, diet, point-of-care, etc...
+			("@hiring"         . ?i) ; talent acquisition: outreach, correspondence, and interviewing
+			("@home"           . ?H) ; apartment related things
+			("@learn"          . ?l) ; courses, intentional learning, study (different than career?)
+			("@office"         . ?o) ; general office tasks (un-bucketed)
+			("@read"           . ?r) ; books and reading nook items
+			("@review"         . ?R) ; periodic review - timed reminders (tickler)
+			("@scheduling"     . ?d) ; calendar work, planning, conflict resolution
+			("@self"           . ?S) ; personal reflection and planning
+			("@sprint"         . ?s) ; sprint work (primarily development)
+			("@travel"         . ?t) ; trip planning, packing, and similar
+			("@workstation"    . ?w) ; home and office hardware, configs, etc...
+			("IMPORTANT"       . ?I) ; something of significance or of great value
+			("NEXT"            . ?N) ; the very next thing to be doing within a project
+			("PROJECT"         . ?P) ; something that takes significant effort or time, and can be decomposed into individual tasks
+			("TASK"            . ?T) ; an atomic actionable thing
+			("URGENT"          . ?U) ; something that demands attention in a short timespan
+			("journal"         . ?j)))
 
-	  (setq org-stuck-projects '("+PROJECT/-WAITING-DONE"
-								 ("TODO" "STARTED") ()))
+	(setq org-stuck-projects '("+PROJECT/-WAITING-DONE"
+							   ("TODO" "STARTED") ()))
 	#+end_src
 
 	For speedup purposes, I could define tags on every file instead of using inheritance.
 	#+begin_src emacs-lisp
-	  (setq org-agenda-use-tag-inheritance nil)
-	  ;;(setq org-tags-exclude-from-inheritance '("PROJECT" "NEXT"))
+	(setq org-agenda-use-tag-inheritance nil)
+	;;(setq org-tags-exclude-from-inheritance '("PROJECT" "NEXT"))
 	#+end_src
 
 
@@ -828,41 +831,41 @@
 	doesn't quite work yet. Do I have the right hooks set?
 
 	#+begin_src emacs-lisp
-	  (defvar org-my-archive-expiry-days 15
-		"The number of days after which a completed task should be auto-archived.
-	  This can be 0 for immediate, or a floating point value.")
+	(defvar org-my-archive-expiry-days 15
+	  "The number of days after which a completed task should be auto-archived.
+	This can be 0 for immediate, or a floating point value.")
 
-	  (defun org-my-archive-done-tasks ()
-		"Archive completed org tasks."
-		(interactive)
-		(save-excursion
-		  (goto-char (point-min))
-		  (let ((done-regexp
-				 (concat "\\* \\(" (regexp-opt org-done-keywords) "\\) "))
-				(state-regexp
-				 (concat "- State \"\\(" (regexp-opt org-done-keywords)
-						 "\\)\"\\s-*\\[\\([^]\n]+\\)\\]")))
-			(while (re-search-forward done-regexp nil t)
-			  (let ((end (save-excursion
-						   (outline-next-heading)
-						   (point)))
-					begin)
-				(goto-char (line-beginning-position))
-				(setq begin (point))
-				(if (re-search-forward state-regexp end t)
-					(let* ((time-string (match-string 2))
-						   (when-closed (org-parse-time-string time-string)))
-					  (if (>= (time-to-number-of-days
-							   (time-subtract (current-time)
-											  (apply #'encode-time when-closed)))
-							  org-my-archive-expiry-days)
-						  (org-archive-subtree)))
-				  (goto-char end)))))
-		  (save-buffer)))
+	(defun org-my-archive-done-tasks ()
+	  "Archive completed org tasks."
+	  (interactive)
+	  (save-excursion
+		(goto-char (point-min))
+		(let ((done-regexp
+			   (concat "\\* \\(" (regexp-opt org-done-keywords) "\\) "))
+			  (state-regexp
+			   (concat "- State \"\\(" (regexp-opt org-done-keywords)
+					   "\\)\"\\s-*\\[\\([^]\n]+\\)\\]")))
+		  (while (re-search-forward done-regexp nil t)
+			(let ((end (save-excursion
+						 (outline-next-heading)
+						 (point)))
+				  begin)
+			  (goto-char (line-beginning-position))
+			  (setq begin (point))
+			  (if (re-search-forward state-regexp end t)
+				  (let* ((time-string (match-string 2))
+						 (when-closed (org-parse-time-string time-string)))
+					(if (>= (time-to-number-of-days
+							 (time-subtract (current-time)
+											(apply #'encode-time when-closed)))
+							org-my-archive-expiry-days)
+						(org-archive-subtree)))
+				(goto-char end)))))
+		(save-buffer)))
 
-	  (setq safe-local-variable-values (quote ((after-save-hook archive-done-tasks))))
+	(setq safe-local-variable-values (quote ((after-save-hook archive-done-tasks))))
 
-	  (defalias 'archive-done-tasks 'org-my-archive-done-tasks)
+	(defalias 'archive-done-tasks 'org-my-archive-done-tasks)
 	#+end_src
 
 
@@ -871,24 +874,24 @@
    agendas, we can really get some value out of this functionality.
 
    #+begin_src emacs-lisp
-	 (setq org-clock-continuously t
-		   org-clock-in-resume t
-		   org-clock-into-drawer 1
-		   org-clock-out-remove-zero-time-clocks t
-		   org-clock-out-when-done t
-		   org-clock-persist t
-		   org-clock-report-include-clocking-task t
-		   org-treat-insert-todo-heading-as-state-change t
-		   org-expiry-inactive-timestamps t
-		   org-log-done 'time
-		   org-log-into-drawer "LOGBOOK"
-		   org-clock-in-switch-to-state "STARTED")
+   (setq org-clock-continuously t
+		 org-clock-in-resume t
+		 org-clock-into-drawer 1
+		 org-clock-out-remove-zero-time-clocks t
+		 org-clock-out-when-done t
+		 org-clock-persist t
+		 org-clock-report-include-clocking-task t
+		 org-treat-insert-todo-heading-as-state-change t
+		 org-expiry-inactive-timestamps t
+		 org-log-done 'time
+		 org-log-into-drawer "LOGBOOK"
+		 org-clock-in-switch-to-state "STARTED")
 
-	 ;; TODO: Move these somewhere more appropriate
-	 (setq org-src-window-setup 'current-window)
-	 (setq org-html-postamble nil)
+   ;; TODO: Move these somewhere more appropriate
+   (setq org-src-window-setup 'current-window)
+   (setq org-html-postamble nil)
 
-	 (org-clock-persistence-insinuate); Resume clocking task when emacs is restarted
+   (org-clock-persistence-insinuate); Resume clocking task when emacs is restarted
    #+end_src
 
 
@@ -900,13 +903,13 @@
    this so I can split the configuration up and describe them better in my literate configuration.
 
    #+begin_src emacs-lisp
-	 ;; Org Capture Configuration
-	 (defvar TT/org-capture-templates (list) '())
+   ;; Org Capture Configuration
+   (defvar TT/org-capture-templates (list) '())
 
-	 ;; The list needs to be initialized for setcdr to work later
-	 (setq TT/org-capture-templates
-		   '(("i" "Inbox" entry  (file+olp TT/org-inbox "Capture" "Todos")
-			  "* TODO %? :TASK:\n /Entered on/ %U" :empty-lines 1)))
+   ;; The list needs to be initialized for setcdr to work later
+   (setq TT/org-capture-templates
+		 '(("i" "Inbox" entry  (file+olp TT/org-inbox "Capture" "Todos")
+			"* TODO %? :TASK:\n /Entered on/ %U" :empty-lines 1)))
    #+end_src
 
 *** Helper Functions
@@ -914,27 +917,27 @@
 	themselves. These help make decisions, generate names, and do anything else I could need.
 
 	#+begin_src emacs-lisp
-	  ;;; BEGIN Capture Helpers
-	  (defun region-to-clocked-task (start end)
-		"Copies the selected text, from START to END, to the currently clocked in `org-mode` task."
-		(interactive "r")
-		(org-capture-string (buffer-substring-no-properties-start end) "C"))
-	  (global-set-key (kbd "C-<F1>") 'region-to-clocked-task)
+	;;; BEGIN Capture Helpers
+	(defun region-to-clocked-task (start end)
+	  "Copies the selected text, from START to END, to the currently clocked in `org-mode` task."
+	  (interactive "r")
+	  (org-capture-string (buffer-substring-no-properties-start end) "C"))
+	(global-set-key (kbd "C-<F1>") 'region-to-clocked-task)
 
-	  (defun capture-incident-response-file (path)
-		"Generate dated file at capture PATH using interactively provided description."
-		(interactive)
-		(let ((name (read-string "Alert Name: ")))
-		  (expand-file-name
-		   (format "%s_%s.org" (format-time-string "%Y%m%d") name)
-		   path)))
+	(defun capture-incident-response-file (path)
+	  "Generate dated file at capture PATH using interactively provided description."
+	  (interactive)
+	  (let ((name (read-string "Alert Name: ")))
+		(expand-file-name
+		 (format "%s_%s.org" (format-time-string "%Y%m%d") name)
+		 path)))
 
-	  (defun org-capture-inbox ()
-		"Capture to inbox."
-		(interactive)
-		(call-interactively 'org-store-link)
-		(org-capture nil "i"))
-	  ;;; END Capture Helpers
+	(defun org-capture-inbox ()
+	  "Capture to inbox."
+	  (interactive)
+	  (call-interactively 'org-store-link)
+	  (org-capture nil "i"))
+	;;; END Capture Helpers
 	#+end_src
 
 
@@ -946,21 +949,21 @@
 	exported. Instead, I keep it around for reference.
 
 	#+begin_src emacs-lisp :tangle no
-	  ;; Capture group for Sprint Work
-	  (setcdr (last TT/org-capture-templates)
-			  '(("s" "Sprint Capture Group")
-				("sd" "Development Task" entry (file+olp TT/org-organizer "Current Sprint" "Development")
-				 "* TODO [#B] %? :@sprint:TASK:\n")
-				("sv" "Review Task" entry (file+olp TT/org-organizer "Current Sprint" "Review")
-				 "* TODO [#B] %? :@sprint:TASK:\n")
-				("sr" "Research Task" entry (file+olp TT/org-organizer "Current Sprint" "Research")
-				 "* TODO [#B] RESEARCH: %? :@sprint:TASK:\n")
-				("ss" "Spike Task" entry (file+olp TT/org-organizer "Current Sprint" "Research")
-				 "* TODO [#B] SPIKE: %? :@sprint:TASK:\n")
-				("si" "Interrupt" entry (file+olp TT/org-organizer "Current Sprint" "Other")
-				 "* TODO [#A] %? :@sprint:TASK:URGENT:\n")
-				("st" "Other Task" entry (file+olp TT/org-organizer "Current Sprint" "Other")
-				 "* TODO [#B] %? :@sprint:TASK:\n")))
+	;; Capture group for Sprint Work
+	(setcdr (last TT/org-capture-templates)
+			'(("s" "Sprint Capture Group")
+			  ("sd" "Development Task" entry (file+olp TT/org-organizer "Current Sprint" "Development")
+			   "* TODO [#B] %? :@sprint:TASK:\n")
+			  ("sv" "Review Task" entry (file+olp TT/org-organizer "Current Sprint" "Review")
+			   "* TODO [#B] %? :@sprint:TASK:\n")
+			  ("sr" "Research Task" entry (file+olp TT/org-organizer "Current Sprint" "Research")
+			   "* TODO [#B] RESEARCH: %? :@sprint:TASK:\n")
+			  ("ss" "Spike Task" entry (file+olp TT/org-organizer "Current Sprint" "Research")
+			   "* TODO [#B] SPIKE: %? :@sprint:TASK:\n")
+			  ("si" "Interrupt" entry (file+olp TT/org-organizer "Current Sprint" "Other")
+			   "* TODO [#A] %? :@sprint:TASK:URGENT:\n")
+			  ("st" "Other Task" entry (file+olp TT/org-organizer "Current Sprint" "Other")
+			   "* TODO [#B] %? :@sprint:TASK:\n")))
 	#+end_src
 
 
@@ -970,17 +973,17 @@
 	team. That's the general idea.
 
 	#+begin_src emacs-lisp
-	  ;; Capture Group for Retrospective Items
-	  (setcdr (last TT/org-capture-templates)
-			  '(("r" "Retrospective Capture Group")
-				("rk" "Kudos" item (file+olp TT/org-retrospective "Capture" "Kudos")
-				 "- %?")
-				("rg" "Goodness" item (file+olp TT/org-retrospective "Capture" "Goodness")
-				 "- %?")
-				("rb" "Badness" item (file+olp TT/org-retrospective "Capture" "Badness")
-				 "- %?")
-				("rz" "Kaizen" item (file+olp TT/org-retrospective "Capture" "Kaizen")
-				 "- %?")))
+	;; Capture Group for Retrospective Items
+	(setcdr (last TT/org-capture-templates)
+			'(("r" "Retrospective Capture Group")
+			  ("rk" "Kudos" item (file+olp TT/org-retrospective "Capture" "Kudos")
+			   "- %?")
+			  ("rg" "Goodness" item (file+olp TT/org-retrospective "Capture" "Goodness")
+			   "- %?")
+			  ("rb" "Badness" item (file+olp TT/org-retrospective "Capture" "Badness")
+			   "- %?")
+			  ("rz" "Kaizen" item (file+olp TT/org-retrospective "Capture" "Kaizen")
+			   "- %?")))
 	#+end_src
 
 
@@ -990,21 +993,21 @@
 	regularly doing as a manager, and better categorizes things within sub-groups of the "office" context.
 
 	#+begin_src emacs-lisp
-	  ;; Capture Group for Office Work
-	  (setcdr (last TT/org-capture-templates)
-			  '(("o" "Office Capture Group")
-				("oa" "Administrative" entry (file+olp TT/org-organizer "Office" "Administrative")
-				 "* TODO [#B] %? :@office:@administrative:TASK:\n")
-				("oc" "Communication" entry (file+olp TT/org-organizer "Office" "Communication")
-				 "* TODO [#B] %? :@office:@communication:TASK:\n")
-				("of" "Firefighting" entry (file+olp TT/org-organizer "Office" "Firefighting")
-				 "* TODO [#A] %? :@office:@firefights:TASK:URGENT:\n")
-				("oh" "Hiring" entry (file+olp TT/org-organizer "Office" "Hiring")
-				 "* TODO [#B] %? :@office:@hiring:TASK:\n")
-				("os" "Scheduling" entry (file+olp TT/org-organizer "Office" "Scheduling")
-				 "* TODO [#B] %? :@office:@scheduling:TASK:\n")
-				("ot" "Task" entry (file+olp TT/org-organizer "Office" "General")
-				 "* TODO [#B] %? :@office:TASK:\n")))
+	;; Capture Group for Office Work
+	(setcdr (last TT/org-capture-templates)
+			'(("o" "Office Capture Group")
+			  ("oa" "Administrative" entry (file+olp TT/org-organizer "Office" "Administrative")
+			   "* TODO [#B] %? :@office:@administrative:TASK:\n")
+			  ("oc" "Communication" entry (file+olp TT/org-organizer "Office" "Communication")
+			   "* TODO [#B] %? :@office:@communication:TASK:\n")
+			  ("of" "Firefighting" entry (file+olp TT/org-organizer "Office" "Firefighting")
+			   "* TODO [#A] %? :@office:@firefights:TASK:URGENT:\n")
+			  ("oh" "Hiring" entry (file+olp TT/org-organizer "Office" "Hiring")
+			   "* TODO [#B] %? :@office:@hiring:TASK:\n")
+			  ("os" "Scheduling" entry (file+olp TT/org-organizer "Office" "Scheduling")
+			   "* TODO [#B] %? :@office:@scheduling:TASK:\n")
+			  ("ot" "Task" entry (file+olp TT/org-organizer "Office" "General")
+			   "* TODO [#B] %? :@office:TASK:\n")))
 	#+end_src
 
 
@@ -1017,27 +1020,27 @@
 	sub-headings ideally will have it's own capture group
 
 	#+begin_src emacs-lisp
-	  ;; Non-Sprint Todo Capture Group
-	  (setcdr (last TT/org-capture-templates)
-			  '(("t" "General Todo Capture Group")
-				("tc" "Career Task" entry (file+headline TT/org-organizer "Career")
-				 "* TODO [#B] %? :@career:TASK:\n")
-				("th" "Health Task" entry (file+headline TT/org-organizer "Health & Wellness")
-				 "* TODO [#B] %? :@health:TASK:\n")
-				("to" "Home Task" entry (file+headline TT/org-organizer "Home")
-				 "* TODO [#B] %? :@home:TASK:\n")
-				("tf" "Financial Task" entry (file+headline TT/org-organizer "Finances")
-				 "* TODO [#B] %? :@finances:TASK:\n")
-				("tg" "Guild Task" entry (file+headline TT/org-organizer "Guild")
-				 "* TODO [#C] %? :@guild:TASK:\n")
-				("tr" "Reading Task" entry (file+headline TT/org-organizer "Reading")
-				 "* TODO [#B] %? :@read:TASK:\n")
-				("tv" "Travel Task" entry (file+headline TT/org-organizer "Travel")
-				 "* TODO [#B] %? :@travel:TASK:\n")
-				("tw" "Workstation Task" entry (file+headline TT/org-organizer "Workstation")
-				 "* TODO [#C] %? :@workstation:TASK:\n")
-				("tt" "General Task" entry (file+headline TT/org-organizer "Tasks")
-				 "\n* TODO [#C] %? :TASK:\n %i\n %a\n\n")))
+	;; Non-Sprint Todo Capture Group
+	(setcdr (last TT/org-capture-templates)
+			'(("t" "General Todo Capture Group")
+			  ("tc" "Career Task" entry (file+headline TT/org-organizer "Career")
+			   "* TODO [#B] %? :@career:TASK:\n")
+			  ("th" "Health Task" entry (file+headline TT/org-organizer "Health & Wellness")
+			   "* TODO [#B] %? :@health:TASK:\n")
+			  ("to" "Home Task" entry (file+headline TT/org-organizer "Home")
+			   "* TODO [#B] %? :@home:TASK:\n")
+			  ("tf" "Financial Task" entry (file+headline TT/org-organizer "Finances")
+			   "* TODO [#B] %? :@finances:TASK:\n")
+			  ("tg" "Guild Task" entry (file+headline TT/org-organizer "Guild")
+			   "* TODO [#C] %? :@guild:TASK:\n")
+			  ("tr" "Reading Task" entry (file+headline TT/org-organizer "Reading")
+			   "* TODO [#B] %? :@read:TASK:\n")
+			  ("tv" "Travel Task" entry (file+headline TT/org-organizer "Travel")
+			   "* TODO [#B] %? :@travel:TASK:\n")
+			  ("tw" "Workstation Task" entry (file+headline TT/org-organizer "Workstation")
+			   "* TODO [#C] %? :@workstation:TASK:\n")
+			  ("tt" "General Task" entry (file+headline TT/org-organizer "Tasks")
+			   "\n* TODO [#C] %? :TASK:\n %i\n %a\n\n")))
 	#+end_src
 
 
@@ -1053,19 +1056,19 @@
 	it yet. So for now, I schedule to an arbitrary date and update the date with =C-s= as I fill out the template.
 
 	#+begin_src emacs-lisp
-	  ;; Capture Group for Meetings
-	  (setcdr (last TT/org-capture-templates)
-			  '(("m" "Meeting Capture Group")
-				("mm" "Pop Up Meetings and One-Offs" entry (file+olp TT/org-calendar "Meetings" "One Offs")
-				 "* MEETING %?\n\tSCHEDULED: %^t")
-				("md" "Daily Meeting" entry (file+olp TT/org-calendar "Meetings" "Daily")
-				 "* MEETING %?\n\tSCHEDULED: <2020-01-01 Sat ++1d>")
-				("mw" "Weekly Meeting" entry (file+olp TT/org-calendar "Meetings" "Weekly")
-				 "* MEETING %?\n\tSCHEDULED: <2020-01-01 Sat ++1w>")
-				("m1" "1:1 Meeting" entry (file+olp TT/org-calendar "Meetings" "1:1s")
-				 "* MEETING %?\n\tSCHEDULED: <2000-01-01 Sat ++1w>")
-				("mb" "Bi-Weekly Meeting" entry (file+olp TT/org-calendar "Meetings" "Bi-Weekly")
-				 "* MEETING %?\n\tSCHEDULED: <2000-01-01 Sat ++2w>")))
+	;; Capture Group for Meetings
+	(setcdr (last TT/org-capture-templates)
+			'(("m" "Meeting Capture Group")
+			  ("mm" "Pop Up Meetings and One-Offs" entry (file+olp TT/org-calendar "Meetings" "One Offs")
+			   "* MEETING %?\n\tSCHEDULED: %^t")
+			  ("md" "Daily Meeting" entry (file+olp TT/org-calendar "Meetings" "Daily")
+			   "* MEETING %?\n\tSCHEDULED: <2020-01-01 Sat ++1d>")
+			  ("mw" "Weekly Meeting" entry (file+olp TT/org-calendar "Meetings" "Weekly")
+			   "* MEETING %?\n\tSCHEDULED: <2020-01-01 Sat ++1w>")
+			  ("m1" "1:1 Meeting" entry (file+olp TT/org-calendar "Meetings" "1:1s")
+			   "* MEETING %?\n\tSCHEDULED: <2000-01-01 Sat ++1w>")
+			  ("mb" "Bi-Weekly Meeting" entry (file+olp TT/org-calendar "Meetings" "Bi-Weekly")
+			   "* MEETING %?\n\tSCHEDULED: <2000-01-01 Sat ++2w>")))
 	#+end_src
 
 
@@ -1073,22 +1076,22 @@
 	The remaining capture templates are things that don't fit neatly into any one group.
 
 	#+begin_src emacs-lisp
-	  ;; Other Capture Templates (un-grouped)
-	  (setcdr (last TT/org-capture-templates)
-			  '(("j" "Journal" entry (function org-journal-find-location)
-				 "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?")
-				("n" "Note" entry (file+olp TT/org-inbox "Capture" "Notes")
-				 "* %?\n:PROPERTIES:\n:CREATED:%U:END:\n\n%i\n\nFrom: %a" :empty-lines 1)
-				("m" "Manager Notes" item (file+olp TT/org-manager "1:1 Prep" "Capture")
-				 "- %?" :empty-lines 1)
-				("x" "Incident Notes" entry (file (capture-incident-response-file "~/org/incidents"))
-				 "* Incident Trigger\n%?\n\n* Five Whys\n\n* Action Items\n\n" :clock-in t)
-				("X" "Item to Current Clock" item
-				 (clock)
-				 "%i%?" :empty-lines 1)
-				("C" "Region to Current Clock" plain
-				 (clock)
-				 "%i" :immediate-finish t :empty-lines 1)))
+	;; Other Capture Templates (un-grouped)
+	(setcdr (last TT/org-capture-templates)
+			'(("j" "Journal" entry (function org-journal-find-location)
+			   "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?")
+			  ("n" "Note" entry (file+olp TT/org-inbox "Capture" "Notes")
+			   "* %?\n:PROPERTIES:\n:CREATED:%U:END:\n\n%i\n\nFrom: %a" :empty-lines 1)
+			  ("m" "Manager Notes" item (file+olp TT/org-manager "1:1 Prep" "Capture")
+			   "- %?" :empty-lines 1)
+			  ("x" "Incident Notes" entry (file (capture-incident-response-file "~/org/incidents"))
+			   "* Incident Trigger\n%?\n\n* Five Whys\n\n* Action Items\n\n" :clock-in t)
+			  ("X" "Item to Current Clock" item
+			   (clock)
+			   "%i%?" :empty-lines 1)
+			  ("C" "Region to Current Clock" plain
+			   (clock)
+			   "%i" :immediate-finish t :empty-lines 1)))
 	#+end_src
 
 **** TODO Needs Work [0/1]
@@ -1103,19 +1106,19 @@
 	showed it was possible. I keep it around for reference, but no longer export it into my configuration.
 
 	#+begin_src emacs-lisp :tangle no
-	  ;; Test capture group - testing nested sub-groups
-	  (setcdr (last TT/org-capture-templates)
-			  '(("q" "Test Capture Group")
-				("qa" "Test Capture Sub-Group A")
-				("qaa" "AA Template" entry (file+olp TT/org-inbox "Test" "A" "AA")
-				 "* TODO [#A] %? :TASK:\n" :empty-lines 1)
-				("qaa" "AB Template" entry (file+olp TT/org-inbox "Test" "A" "AB")
-				 "* TODO [#B] %? :TASK:\n" :empty-lines 1)
-				("qb" "Test Capture Sub-Group B")
-				("qba" "BA Template" entry (file+olp TT/org-inbox "Test" "B" "BA")
-				 "* TODO [#A] %? :TASK:\n" :empty-lines 1)
-				("qbb" "BB Template" entry (file+olp TT/org-inbox "Test" "B" "BB")
-				 "* TODO [#B] %? :TASK:\n" :empty-lines 1)))
+	;; Test capture group - testing nested sub-groups
+	(setcdr (last TT/org-capture-templates)
+			'(("q" "Test Capture Group")
+			  ("qa" "Test Capture Sub-Group A")
+			  ("qaa" "AA Template" entry (file+olp TT/org-inbox "Test" "A" "AA")
+			   "* TODO [#A] %? :TASK:\n" :empty-lines 1)
+			  ("qaa" "AB Template" entry (file+olp TT/org-inbox "Test" "A" "AB")
+			   "* TODO [#B] %? :TASK:\n" :empty-lines 1)
+			  ("qb" "Test Capture Sub-Group B")
+			  ("qba" "BA Template" entry (file+olp TT/org-inbox "Test" "B" "BA")
+			   "* TODO [#A] %? :TASK:\n" :empty-lines 1)
+			  ("qbb" "BB Template" entry (file+olp TT/org-inbox "Test" "B" "BB")
+			   "* TODO [#B] %? :TASK:\n" :empty-lines 1)))
 	#+end_src
 
 
@@ -1123,7 +1126,7 @@
 	Because I've split the configuration up, it's time to update the actual =org-capture-templates= variable.
 
 	#+begin_src emacs-lisp
-	  (setq org-capture-templates TT/org-capture-templates)
+	(setq org-capture-templates TT/org-capture-templates)
 	#+end_src
 
 	If I want to further customize this variable in machine local configurations, like in my employer configuration,
@@ -1135,33 +1138,33 @@
    Let's set up where my journal files are stored, and the format of the entries.
 
    #+begin_src emacs-lisp
-	 (use-package org-journal
-	   :init (setq org-journal-dir TT/org-journal-dir
-				   org-journal-file-format "%Y%m%d"
-				   org-journal-date-format "%e %b %Y (%A)")
-	   :config (setq org-journal-date-prefix "#+TITLE: Daily Note for "))
+   (use-package org-journal
+	 :init (setq org-journal-dir TT/org-journal-dir
+				 org-journal-file-format "%Y%m%d"
+				 org-journal-date-format "%e %b %Y (%A)")
+	 :config (setq org-journal-date-prefix "#+TITLE: Daily Note for "))
    #+end_src
 
 *** Journal Helpers
 	These are functions that will later enable us to interact with org-journal via capture templates, etc...
 
 	#+begin_src emacs-lisp
-	  (defun get-journal-file-yesterday ()
-		"Gets filename for yesterday's journal entry."
-		(let* ((yesterday (time-subtract (current-time) (days-to-time 1)))
-			   (daily-name (format-time-string "%Y%m%d" yesterday)))
-		  (expand-file-name (concat org-journal-dir daily-name))))
+	(defun get-journal-file-yesterday ()
+	  "Gets filename for yesterday's journal entry."
+	  (let* ((yesterday (time-subtract (current-time) (days-to-time 1)))
+			 (daily-name (format-time-string "%Y%m%d" yesterday)))
+		(expand-file-name (concat org-journal-dir daily-name))))
 
-	  (defun journal-file-yesterday ()
-		"Create and load a file based on yesterday's date."
-		(interactive)
-		(find-file (get-journal-file-yesterday)))
+	(defun journal-file-yesterday ()
+	  "Create and load a file based on yesterday's date."
+	  (interactive)
+	  (find-file (get-journal-file-yesterday)))
 
-	  (defun org-journal-find-location ()
-		"Open today's journal.
-		  Specify a non-nil prefix to inhibit inserting the heading"
-		(org-journal-new-entry t)
-		(goto-char (point-min)))
+	(defun org-journal-find-location ()
+	  "Open today's journal.
+		Specify a non-nil prefix to inhibit inserting the heading"
+	  (org-journal-new-entry t)
+	  (goto-char (point-min)))
 	#+end_src
 
 
@@ -1170,9 +1173,9 @@
    sometimes I just want to move something.
 
    #+begin_src emacs-lisp
-	 (setq org-refile-targets '((org-agenda-files :maxlevel . 6)))
-	 ;;(setq org-outline-path-complete-in-steps nil)
-	 (setq org-refile-allow-creating-parent-nodes 'confirm)
+   (setq org-refile-targets '((org-agenda-files :maxlevel . 6)))
+   ;;(setq org-outline-path-complete-in-steps nil)
+   (setq org-refile-allow-creating-parent-nodes 'confirm)
    #+end_src
 
 
@@ -1182,18 +1185,18 @@
    Let's create some short links for things I might reference often.
 
    #+begin_src emacs-lisp
-	 ;; Links - use like: cpan:HTML or rfc-txt:7522
-	 (setq org-link-abbrev-alist
-		   '(("rfc-html" . "https://tools.ietf.org/html/rfc%s")
-			 ("rfc-txt"  . "https://tools.ietf.org/rfc/rfc%s.txt")
-			 ("rfc-pdf"  . "https://tools.ietf.org/pdf/rfc%s.pdf")
-			 ("fhir-r4"  . "https://www.hl7.org/fhir/R4/%s")
-			 ("us-core"  . "https://www.hl7.org/fhir/us/core/%s")
-			 ("cpan"     . "https://metacpan.org/search?q=%s")
-			 ("so"       . "https://stackoverflow.com/search?q=%s")
-			 ("soq"      . "https://stackoverflow.com/questions/%s")
-			 ("ese"      . "https://emacs.stackexchange.com/search?q=%s")
-			 ("eseq"     . "https://emacs.stackexchange.com/questions/%s")))
+   ;; Links - use like: cpan:HTML or rfc-txt:7522
+   (setq org-link-abbrev-alist
+		 '(("rfc-html" . "https://tools.ietf.org/html/rfc%s")
+		   ("rfc-txt"  . "https://tools.ietf.org/rfc/rfc%s.txt")
+		   ("rfc-pdf"  . "https://tools.ietf.org/pdf/rfc%s.pdf")
+		   ("fhir-r4"  . "https://www.hl7.org/fhir/R4/%s")
+		   ("us-core"  . "https://www.hl7.org/fhir/us/core/%s")
+		   ("cpan"     . "https://metacpan.org/search?q=%s")
+		   ("so"       . "https://stackoverflow.com/search?q=%s")
+		   ("soq"      . "https://stackoverflow.com/questions/%s")
+		   ("ese"      . "https://emacs.stackexchange.com/search?q=%s")
+		   ("eseq"     . "https://emacs.stackexchange.com/questions/%s")))
    #+end_src
 
 
@@ -1201,24 +1204,24 @@
    I can even use org-mode to publish static content!
 
    #+begin_src emacs-lisp
-	 (setq org-publish-project-alist
-		   '(("notes-content"
-			  :base-directory "~/org/testnotes"
-			  :base-extension "org"
-			  :publishing-directory "~/public_html/"
-			  :recursive t
-			  :publishing-function org-html-publish-to-html
-			  :headline-levels 4
-			  :auto-preamble t)
-			 ("notes-static"
-			  :base-directory "~/org/testnotes"
-			  :base-extensions "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
-			  :publishing-directory "~/public_html" ; could be TRAMP path
-			  :recursive t
-			  :publishing-function org-publish-attachment)
-			 ("notes" :components ("notes-content" "notes-static"))))
+   (setq org-publish-project-alist
+		 '(("notes-content"
+			:base-directory "~/org/testnotes"
+			:base-extension "org"
+			:publishing-directory "~/public_html/"
+			:recursive t
+			:publishing-function org-html-publish-to-html
+			:headline-levels 4
+			:auto-preamble t)
+		   ("notes-static"
+			:base-directory "~/org/testnotes"
+			:base-extensions "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
+			:publishing-directory "~/public_html" ; could be TRAMP path
+			:recursive t
+			:publishing-function org-publish-attachment)
+		   ("notes" :components ("notes-content" "notes-static"))))
 
-	 ;; TODO: https://github.com/fniessen/org-html-themes or other
+   ;; TODO: https://github.com/fniessen/org-html-themes or other
    #+end_src
 
 
@@ -1228,8 +1231,8 @@
 	Using org-babel, we can pull in some graphical helper tools to give it some rendering capabilities.
 
 	#+begin_src emacs-lisp
-	  (setq org-ditaa-jar-path "/usr/bin/ditaa.jar")
-	  (setq org-plantuml-jar-path "/usr/share/plantuml/plantuml.jar")
+	(setq org-ditaa-jar-path "/usr/bin/ditaa.jar")
+	(setq org-plantuml-jar-path "/usr/share/plantuml/plantuml.jar")
 	#+end_src
 
 
@@ -1237,13 +1240,13 @@
 	Let's make it so org-babel can display images in org files directly.
 
 	#+begin_src emacs-lisp
-	  (defun bh/display-inline-images ()
-		"Display inline images."
-		(condition-case nil
-			(org-display-inline-images)
-		  (error nil)))
+	(defun bh/display-inline-images ()
+	  "Display inline images."
+	  (condition-case nil
+		  (org-display-inline-images)
+		(error nil)))
 
-	  (add-hook 'org-babel-after-execute-hook 'bh/display-inline-images 'append)
+	(add-hook 'org-babel-after-execute-hook 'bh/display-inline-images 'append)
 	#+end_src
 
 
@@ -1251,23 +1254,23 @@
 	I'm only going to configure the subset of languages I use, but there are way more to choose from.
 
 	#+begin_src emacs-lisp
-	  (org-babel-do-load-languages
-	   'org-babel-load-languages
-	   '((C          . t)
-		 (ditaa      . t)
-		 (dot        . t)
-		 (emacs-lisp . t)
-		 (gnuplot    . t)
-		 (js         . t)
-		 (latex      . t)
-		 (ledger     . t)
-		 (org        . t)
-		 (perl       . t)
-		 (plantuml   . t)
-		 (python     . t)
-		 (shell      . t)
-		 (sql        . t)
-		 (sqlite     . t)))
+	(org-babel-do-load-languages
+	 'org-babel-load-languages
+	 '((C          . t)
+	   (ditaa      . t)
+	   (dot        . t)
+	   (emacs-lisp . t)
+	   (gnuplot    . t)
+	   (js         . t)
+	   (latex      . t)
+	   (ledger     . t)
+	   (org        . t)
+	   (perl       . t)
+	   (plantuml   . t)
+	   (python     . t)
+	   (shell      . t)
+	   (sql        . t)
+	   (sqlite     . t)))
 	#+end_src
 
 
@@ -1275,7 +1278,7 @@
 	With =org-bable= mostly configured, lets plug it into some other stuff.
 
 	#+begin_src emacs-lisp
-	  (add-to-list 'org-src-lang-modes (quote ("plantuml" . fundamental)))
+	(add-to-list 'org-src-lang-modes (quote ("plantuml" . fundamental)))
 	#+end_src
 
 
@@ -1301,8 +1304,8 @@
 	Set tabbing to spaces, keep things condensed with 2 spaces.
 
 	#+begin_src emacs-lisp
-	  (setq-default indent-tabs-mode nil)
-	  (setq tab-width 2)
+	(setq-default indent-tabs-mode nil)
+	(setq tab-width 2)
 	#+end_src
 
 
@@ -1311,11 +1314,11 @@
    contributors happily using their own editor/IDE.
 
    #+begin_src emacs-lisp
-	 (use-package editorconfig
-	   :ensure t
-	   :diminish editorconfig-mode
-	   :config
-	   (editorconfig-mode 1))
+   (use-package editorconfig
+	 :ensure t
+	 :diminish editorconfig-mode
+	 :config
+	 (editorconfig-mode 1))
    #+end_src
 
 
@@ -1328,15 +1331,15 @@
    backends. I've chosen to leverage =lsp-mode= as my language server client.
 
    #+begin_src emacs-lisp
-	 ;; LSP mode configuration
-	 (use-package lsp-mode
-	   :commands lsp
-	   :hook (c++-mode python-mode go-mode-hook)
-	   :init
-	   (setq lsp-prefer-flymake nil))
+   ;; LSP mode configuration
+   (use-package lsp-mode
+	 :commands lsp
+	 :hook (c++-mode python-mode go-mode-hook)
+	 :init
+	 (setq lsp-prefer-flymake nil))
 
-	 (use-package lsp-ui :commands lsp-ui-mode)
-	 (use-package company-lsp :commands company-lsp)
+   (use-package lsp-ui :commands lsp-ui-mode)
+   (use-package company-lsp :commands company-lsp)
    #+end_src
 
 
@@ -1345,78 +1348,78 @@
    immediately. This enforces a tight feedback loop in development.
 
    #+begin_src emacs-lisp
-	 (use-package flycheck)
+   (use-package flycheck)
 
-	 (add-hook 'after-init-hook #'global-flycheck-mode)
+   (add-hook 'after-init-hook #'global-flycheck-mode)
 
-	 (setq flycheck-checkers
-		   (quote (asciidoc
-				   c/c++-cppcheck
-				   css-csslint
-				   emacs-lisp
-				   emacs-lisp-checkdoc
-				   handlebars
-				   html-tidy
-				   javascript-eslint
-				   json-jsonlint
-				   less
-				   make
-				   perl
-				   perl-perlcritic
-				   python-flak8
-				   python-pylint
-				   rust
-				   sh-bash
-				   sh-zsh
-				   sh-spellcheck
-				   tex-chktex
-				   tex-lacheck
-				   texinfo
-				   xml-xmlstarlet
-				   xml-xmllint
-				   yaml-jayaml)))
-	 ;; Others: cfenging chef-foodcritic coffee coffee-coffeelint d-dmd elixir
-	 ;;         erlang eruby-erubis go-gofmt go-golint go-vet go-build go-test
-	 ;;         haml haskell-ghc haskell-hlint lua php php-phpmd php-phpcs
-	 ;;         puppet-parser puppet-lint racket rst rst-sphinx ruby-rubocop
-	 ;;         ruby-rubylint ruby ruby-jruby sass scala scss slim verilog-verilator
+   (setq flycheck-checkers
+		 (quote (asciidoc
+				 c/c++-cppcheck
+				 css-csslint
+				 emacs-lisp
+				 emacs-lisp-checkdoc
+				 handlebars
+				 html-tidy
+				 javascript-eslint
+				 json-jsonlint
+				 less
+				 make
+				 perl
+				 perl-perlcritic
+				 python-flak8
+				 python-pylint
+				 rust
+				 sh-bash
+				 sh-zsh
+				 sh-spellcheck
+				 tex-chktex
+				 tex-lacheck
+				 texinfo
+				 xml-xmlstarlet
+				 xml-xmllint
+				 yaml-jayaml)))
+   ;; Others: cfenging chef-foodcritic coffee coffee-coffeelint d-dmd elixir
+   ;;         erlang eruby-erubis go-gofmt go-golint go-vet go-build go-test
+   ;;         haml haskell-ghc haskell-hlint lua php php-phpmd php-phpcs
+   ;;         puppet-parser puppet-lint racket rst rst-sphinx ruby-rubocop
+   ;;         ruby-rubylint ruby ruby-jruby sass scala scss slim verilog-verilator
 
-	 (setq-default flycheck-disabled-checkers
-				   '((javascript-jshint
-					  javascript-jslint
-					  javascript-gjslint
-					  c/c++-clang)))
+   (setq-default flycheck-disabled-checkers
+				 '((javascript-jshint
+					javascript-jslint
+					javascript-gjslint
+					c/c++-clang)))
 
-	 ;; Enable C++14 support for GCC
-	 (add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++14")))
+   ;; Enable C++14 support for GCC
+   (add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++14")))
 
-	 ;; Use project relative eslint; see https://emacs.stackexchange.com/questions/21205
-	 (defun TT/use-eslint-from-node-modules ()
-	   "Use project local eslint node modules."
-	   (let* ((root (locate-dominating-file
-					 (or (buffer-file-name) default-directory)
-					 "node_modules"))
-			  (eslint (and root
-						   (expand-file-name "node_modules/eslint/bin/eslint.js"
-											 root))))
-		 (when (and eslint (file-executable-p eslint))
-		   (setq-local flycheck-javascript-eslint-executable eslint))))
+   ;; Use project relative eslint; see https://emacs.stackexchange.com/questions/21205
+   (defun TT/use-eslint-from-node-modules ()
+	 "Use project local eslint node modules."
+	 (let* ((root (locate-dominating-file
+				   (or (buffer-file-name) default-directory)
+				   "node_modules"))
+			(eslint (and root
+						 (expand-file-name "node_modules/eslint/bin/eslint.js"
+										   root))))
+	   (when (and eslint (file-executable-p eslint))
+		 (setq-local flycheck-javascript-eslint-executable eslint))))
 
-	 (add-hook 'flycheck-mode-hook #'TT/use-eslint-from-node-modules)
+   (add-hook 'flycheck-mode-hook #'TT/use-eslint-from-node-modules)
 
-	 ;; Enable flycheck globally:
-	 (add-hook 'after-init-hook #'global-flycheck-mode)
+   ;; Enable flycheck globally:
+   (add-hook 'after-init-hook #'global-flycheck-mode)
 
-	 ;; See: https://emacs.stackexchange.com/questions/13065
-	 ;; (defun setup-flycheck-clang-project-path ()
-	 ;;   "Use project local clang."
-	 ;;   (let ((root (ignore-errors (projectile-project-root))))
-	 ;; 	(when root
-	 ;; 	  (add-to-list
-	 ;; 	   (make-variable-buffer-local 'flycheck-clang-include-path)
-	 ;; 	   root))))
+   ;; See: https://emacs.stackexchange.com/questions/13065
+   ;; (defun setup-flycheck-clang-project-path ()
+   ;;   "Use project local clang."
+   ;;   (let ((root (ignore-errors (projectile-project-root))))
+   ;; 	(when root
+   ;; 	  (add-to-list
+   ;; 	   (make-variable-buffer-local 'flycheck-clang-include-path)
+   ;; 	   root))))
 
-	 ;; (add-hook 'c++-mode-hook 'setup-flycheck-clang-project-path)
+   ;; (add-hook 'c++-mode-hook 'setup-flycheck-clang-project-path)
    #+end_src
 
 
@@ -1424,24 +1427,24 @@
    Company-mode, or complete any mode, is an extremely useful tool for text/code completion.
 
    #+begin_src emacs-lisp
-	 (use-package company
-	   :ensure t
-	   :diminish
-	   :bind (:map company-active-map
-				   ("M-n" . nil)
-				   ("M-p" . nil)
-				   ("C-n" . company-select-next)
-				   ("C-p" . company-select-previous))
-	   :init (global-company-mode)
-	   :config
-	   (setq company-tooltip-align-annotations t
-			 company-idle-delay nil
-			 company-minimum-prefix-length 2
-			 company-require-match nil
-			 company-show-numbers t
-			 company-tooltip-limit 20)
-	   (with-eval-after-load 'company
-		 (global-set-key (kbd "C-c SPC") 'company-complete)))
+   (use-package company
+	 :ensure t
+	 :diminish
+	 :bind (:map company-active-map
+				 ("M-n" . nil)
+				 ("M-p" . nil)
+				 ("C-n" . company-select-next)
+				 ("C-p" . company-select-previous))
+	 :init (global-company-mode)
+	 :config
+	 (setq company-tooltip-align-annotations t
+		   company-idle-delay nil
+		   company-minimum-prefix-length 2
+		   company-require-match nil
+		   company-show-numbers t
+		   company-tooltip-limit 20)
+	 (with-eval-after-load 'company
+	   (global-set-key (kbd "C-c SPC") 'company-complete)))
    #+end_src
 
    It also plugs into =lsp-mode= which I'll be setting up later.
@@ -1459,23 +1462,23 @@
    utilities to really kick up project navigation.
 
    #+begin_src emacs-lisp
-	 (use-package projectile
-	   :ensure t
-	   :config
-	   (setq projectile-completion-system 'helm)
-	   (setq projectile-switch-project-action 'helm-projectile)
-	   (setq projectile-enable-caching t)
-	   (setq projectile-globally-ignored-directories
-			 '(".git" "node_modules" "__pycache__" ".vs"))
-	   (setq projectile-globally-ignored-file-suffixes
-			 '("#" "~" ".swp" ".o" ".so" ".exe" ".dll" ".elc" ".pyc" ".jar"))
-	   (setq projectile-globally-ignored-files
-			 '("TAGS" "tags"))
-	   (with-eval-after-load "projectile"
-		 (projectile-mode)
-		 (helm-projectile-on)))
+   (use-package projectile
+	 :ensure t
+	 :config
+	 (setq projectile-completion-system 'helm)
+	 (setq projectile-switch-project-action 'helm-projectile)
+	 (setq projectile-enable-caching t)
+	 (setq projectile-globally-ignored-directories
+		   '(".git" "node_modules" "__pycache__" ".vs"))
+	 (setq projectile-globally-ignored-file-suffixes
+		   '("#" "~" ".swp" ".o" ".so" ".exe" ".dll" ".elc" ".pyc" ".jar"))
+	 (setq projectile-globally-ignored-files
+		   '("TAGS" "tags"))
+	 (with-eval-after-load "projectile"
+	   (projectile-mode)
+	   (helm-projectile-on)))
 
-	 (use-package helm-projectile)
+   (use-package helm-projectile)
    #+end_src
 
 
@@ -1483,12 +1486,12 @@
    Magical Git interactions in Emacs.
 
    #+begin_src emacs-lisp
-	 (setq vc-handled-backends (delq 'Git vc-handled-backends))
+   (setq vc-handled-backends (delq 'Git vc-handled-backends))
 
-	 (use-package magit
-	   :ensure t
-	   :defer t
-	   :bind ("C-x g" . magit-status))
+   (use-package magit
+	 :ensure t
+	 :defer t
+	 :bind ("C-x g" . magit-status))
    #+end_src
 
 
@@ -1501,15 +1504,15 @@
 	Make sure certain files open in certain modes.
 
 	#+begin_src emacs-lisp
-	  (add-to-list 'auto-mode-alist '("\\.py$"          . python-mode))
-	  (add-to-list 'auto-mode-alist '("\\.org$"         . org-mode))
-	  (add-to-list 'auto-mode-alist '("\\.ts$"          . typescript-mode))
-	  (add-to-list 'auto-mode-alist '("\\.css$"         . css-mode))
-	  (add-to-list 'auto-mode-alist '("\\.md$"          . markdown-mode))
-	  (add-to-list 'auto-mode-alist '("\\.markdown$"    . markdown-mode))
-	  (add-to-list 'auto-mode-alist '("\\.hbs$"         . handlebars-mode))
-	  (add-to-list 'auto-mode-alist '("\\.README\\.md$" . gfm-mode))
-	  (add-to-list 'auto-mode-alist '("Jenkinsfile$"    . groovy-mode))
+	(add-to-list 'auto-mode-alist '("\\.py$"          . python-mode))
+	(add-to-list 'auto-mode-alist '("\\.org$"         . org-mode))
+	(add-to-list 'auto-mode-alist '("\\.ts$"          . typescript-mode))
+	(add-to-list 'auto-mode-alist '("\\.css$"         . css-mode))
+	(add-to-list 'auto-mode-alist '("\\.md$"          . markdown-mode))
+	(add-to-list 'auto-mode-alist '("\\.markdown$"    . markdown-mode))
+	(add-to-list 'auto-mode-alist '("\\.hbs$"         . handlebars-mode))
+	(add-to-list 'auto-mode-alist '("\\.README\\.md$" . gfm-mode))
+	(add-to-list 'auto-mode-alist '("Jenkinsfile$"    . groovy-mode))
 	#+end_src
 
 
@@ -1518,18 +1521,18 @@
 	employer. It was definitely better than the Vanilla Emacs defaults.
 
 	#+begin_src emacs-lisp
-	  (use-package cperl-mode)
+	(use-package cperl-mode)
 
-	  (defalias 'perl-mode 'cperl-mode)
-	  (defvaralias 'c-basic-offset 'tab-width)
-	  (defvaralias 'cperl-indent-level 'tab-width)
+	(defalias 'perl-mode 'cperl-mode)
+	(defvaralias 'c-basic-offset 'tab-width)
+	(defvaralias 'cperl-indent-level 'tab-width)
 
-	  ;; Override perl-mode with cperl-mode
-	  (mapc
-	   (lambda (pair)
-		 (if (eq (cdr pair) 'perl-mode)
-			 (setcdr pair 'cperl-mode)))
-	   (append auto-mode-alist interpreter-mode-alist))
+	;; Override perl-mode with cperl-mode
+	(mapc
+	 (lambda (pair)
+	   (if (eq (cdr pair) 'perl-mode)
+		   (setcdr pair 'cperl-mode)))
+	 (append auto-mode-alist interpreter-mode-alist))
 	#+end_src
 
 
@@ -1540,21 +1543,21 @@
 	supports Typescript.
 
 	#+begin_src emacs-lisp
-	  (use-package js2-mode
-		:defer t
-		:mode "\\.js$"
-		:config
-		(require 'js2-refactor)
-		(define-key js2-mode-map (kbd "M-.") nil)
-		(add-hook 'js2-mode-hook #'js2-refactor-mode)
-		(js2r-add-keybindings-with-prefix "C-c C-r")
-		(define-key js2-mode-map (kbd "C-k") #'js2r-kill)
-		(add-hook 'js2-mode-hook
-				  (lambda ()
-					(add-hook 'xref-backend-functions #'xref-js2-xref-backend nil t)))
-		(add-hook 'js2-mode-hook
-				  (lambda ()
-					(setq mode-name "js2"))))
+	(use-package js2-mode
+	  :defer t
+	  :mode "\\.js$"
+	  :config
+	  (require 'js2-refactor)
+	  (define-key js2-mode-map (kbd "M-.") nil)
+	  (add-hook 'js2-mode-hook #'js2-refactor-mode)
+	  (js2r-add-keybindings-with-prefix "C-c C-r")
+	  (define-key js2-mode-map (kbd "C-k") #'js2r-kill)
+	  (add-hook 'js2-mode-hook
+				(lambda ()
+				  (add-hook 'xref-backend-functions #'xref-js2-xref-backend nil t)))
+	  (add-hook 'js2-mode-hook
+				(lambda ()
+				  (setq mode-name "js2"))))
 	#+end_src
 
 
@@ -1568,23 +1571,23 @@
    =ledger-mode=!
 
    #+begin_src emacs-lisp
-	 (use-package ledger-mode
-	   :mode ("\\.ledger$")
-	   :bind (:map ledger-mode-map
-				   ("C-x C-s" . TT/ledger-save))
-	   :preface
-	   (defun TT/ledger-save ()
-		 "Automatically clean the ledger buffer at each save."
-		 (interactive)
-		 (save-excursion
-		   (when (buffer-modified-p)
-			 (with-demoted-errors (ledger-mode-clean-buffer))
-			 (save-buffer))))
-	   :init
-	   (setq ledger-post-amount-alignment-column 80))
+   (use-package ledger-mode
+	 :mode ("\\.ledger$")
+	 :bind (:map ledger-mode-map
+				 ("C-x C-s" . TT/ledger-save))
+	 :preface
+	 (defun TT/ledger-save ()
+	   "Automatically clean the ledger buffer at each save."
+	   (interactive)
+	   (save-excursion
+		 (when (buffer-modified-p)
+		   (with-demoted-errors (ledger-mode-clean-buffer))
+		   (save-buffer))))
+	 :init
+	 (setq ledger-post-amount-alignment-column 80))
 
-	 (use-package flycheck-ledger
-	   :after ledger-mode)
+   (use-package flycheck-ledger
+	 :after ledger-mode)
    #+end_src
 
 
@@ -1592,15 +1595,15 @@
    Emacs comes with it's own Internet Relay Chat client, =ERC=. I use this to chat over IRC from right within Emacs.
 
    #+begin_src emacs-lisp
-	 (use-package erc
-	   :defer t
-	   :config
-	   (setq erc-nick "paraparity"
-			 erc-hide-list '("PART" "QUIT" "JOIN" "NICK")
-			 erc-server "irc.freenode.net"
-			 erc-kill-buffer-on-part t
-			 erc-scrolltobottom-mode t
-			 erc-autojoin-channels-alist '(("freenode.net" "##programming" "#org-mode"))))
+   (use-package erc
+	 :defer t
+	 :config
+	 (setq erc-nick "paraparity"
+		   erc-hide-list '("PART" "QUIT" "JOIN" "NICK")
+		   erc-server "irc.freenode.net"
+		   erc-kill-buffer-on-part t
+		   erc-scrolltobottom-mode t
+		   erc-autojoin-channels-alist '(("freenode.net" "##programming" "#org-mode"))))
    #+end_src
 
 
@@ -1614,11 +1617,11 @@
    and running no problem though.
 
    #+begin_src emacs-lisp :tangle no
-	 (use-package pdf-tools
-	   :pin manual
-	   :config
-	   (setq-default pdf-view-display-size 'fit-page)
-	   (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward))
+   (use-package pdf-tools
+	 :pin manual
+	 :config
+	 (setq-default pdf-view-display-size 'fit-page)
+	 (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward))
    #+end_src
 
 
@@ -1627,23 +1630,23 @@
   is their home.
 
   #+begin_src emacs-lisp
-	;; Regardless of which buffer you're in, jump to the active minibuffer
-	(defun switch-to-minibuffer ()
-	  "Switch to minibuffer window."
-	  (interactive)
-	  (if (active-minibuffer-window)
-		  (select-window (active-minibuffer-window))
-		(error "Minibuffer is not active")))
+  ;; Regardless of which buffer you're in, jump to the active minibuffer
+  (defun switch-to-minibuffer ()
+	"Switch to minibuffer window."
+	(interactive)
+	(if (active-minibuffer-window)
+		(select-window (active-minibuffer-window))
+	  (error "Minibuffer is not active")))
 
-	(defun occur-non-ascii ()
-	  "Find any non-ascii characters in the current buffer."
-	  (interactive)
-	  (occur "[[:nonascii:]]"))
+  (defun occur-non-ascii ()
+	"Find any non-ascii characters in the current buffer."
+	(interactive)
+	(occur "[[:nonascii:]]"))
 
-	(defun open-config-file ()
-	  "Open this file."
-	  (interactive)
-	  (find-file "~/.emacs.d/configuration.org"))
+  (defun open-config-file ()
+	"Open this file."
+	(interactive)
+	(find-file "~/.emacs.d/configuration.org"))
   #+end_src
 
 
@@ -1652,30 +1655,30 @@
   typically within the context they'll be used in. This isn't a hard rule, but is what I lean towards.
 
   #+begin_src emacs-lisp
-	;; Buffer Key Bindings
-	(global-set-key (kbd "S-w") 'kill-this-buffer)
-	(global-set-key (kbd "C-S-<left>") 'shrink-window-horizontally)
-	(global-set-key (kbd "C-S-<right>") 'enlarge-window-horizontally)
-	(global-set-key (kbd "C-S-<down>") 'shrink-window)
-	(global-set-key (kbd "C-S-<up>") 'enlarge-window)
-	(global-set-key (kbd "C-x |") 'window-toggle-split-direction)
-	(global-set-key (kbd "C-c o") 'switch-to-minibuffer)
-	(global-set-key (kbd "<f8>") 'flyspell-buffer)
-	(global-set-key (kbd "<f6>") 'speedbar)
+  ;; Buffer Key Bindings
+  (global-set-key (kbd "S-w") 'kill-this-buffer)
+  (global-set-key (kbd "C-S-<left>") 'shrink-window-horizontally)
+  (global-set-key (kbd "C-S-<right>") 'enlarge-window-horizontally)
+  (global-set-key (kbd "C-S-<down>") 'shrink-window)
+  (global-set-key (kbd "C-S-<up>") 'enlarge-window)
+  (global-set-key (kbd "C-x |") 'window-toggle-split-direction)
+  (global-set-key (kbd "C-c o") 'switch-to-minibuffer)
+  (global-set-key (kbd "<f8>") 'flyspell-buffer)
+  (global-set-key (kbd "<f6>") 'speedbar)
 
-	;; Elfeed Keybindings
-	(global-set-key (kbd "C-x w") 'elfeed)
+  ;; Elfeed Keybindings
+  (global-set-key (kbd "C-x w") 'elfeed)
 
-	;; Misc Keybindings
-	(global-set-key (kbd "C-c 1") 'open-config-file)
-	(global-set-key (kbd "C-x #") 'comment-or-uncomment-region)
-	(global-set-key (kbd "C-c d") 'duplicate-current-line-or-region)
-	;;(global-set-key (kbd "M-.") 'find-tag-other-window)
+  ;; Misc Keybindings
+  (global-set-key (kbd "C-c 1") 'open-config-file)
+  (global-set-key (kbd "C-x #") 'comment-or-uncomment-region)
+  (global-set-key (kbd "C-c d") 'duplicate-current-line-or-region)
+  ;;(global-set-key (kbd "M-.") 'find-tag-other-window)
 
-	;; Modal Key Bindings
-	(add-hook 'cperl-mode-hook
-			  (lambda ()
-				(local-set-key (kbd "C-h f") 'cperl-perldoc)))
+  ;; Modal Key Bindings
+  (add-hook 'cperl-mode-hook
+			(lambda ()
+			  (local-set-key (kbd "C-h f") 'cperl-perldoc)))
   #+end_src
 
 ** Disable Problematic Bindings
@@ -1683,9 +1686,9 @@
    the value of having the binding.
 
    #+begin_src emacs-lisp
-	 ;; Kill the bane of my fat-fingers
-	 (global-unset-key (kbd "C-z"))
-	 (global-unset-key (kbd "C-x C-z"))
+   ;; Kill the bane of my fat-fingers
+   (global-unset-key (kbd "C-z"))
+   (global-unset-key (kbd "C-x C-z"))
    #+end_src
 
 
@@ -1693,11 +1696,11 @@
    I want to be able to start interacting with org-mode regardless of what buffer I'm presently in.
 
    #+begin_src emacs-lisp
-	 ;; Org-Mode Keybindings
-	 (global-set-key (kbd "C-c a") 'org-agenda)
-	 (global-set-key (kbd "C-c c") 'org-capture)
-	 (global-set-key (kbd "C-c l") 'org-store-link)
-	 (global-set-key (kbd "C-c i") 'org-capture-inbox)
+   ;; Org-Mode Keybindings
+   (global-set-key (kbd "C-c a") 'org-agenda)
+   (global-set-key (kbd "C-c c") 'org-capture)
+   (global-set-key (kbd "C-c l") 'org-store-link)
+   (global-set-key (kbd "C-c i") 'org-capture-inbox)
 
    #+end_src
 
@@ -1707,19 +1710,19 @@
    working.
 
    #+begin_src emacs-lisp
-	 ;; Numpad Key Bindings
-	 (global-set-key "\eOp" "0")
-	 (global-set-key "\eOq" "1")
-	 (global-set-key "\eOr" "2")
-	 (global-set-key "\eOs" "3")
-	 (global-set-key "\eOt" "4")
-	 (global-set-key "\eOu" "5")
-	 (global-set-key "\eOv" "6")
-	 (global-set-key "\eOw" "7")
-	 (global-set-key "\eOx" "8")
-	 (global-set-key "\eOy" "9")
-	 (global-set-key "\eOl" "+")
-	 (global-set-key "\eOn" ".")
+   ;; Numpad Key Bindings
+   (global-set-key "\eOp" "0")
+   (global-set-key "\eOq" "1")
+   (global-set-key "\eOr" "2")
+   (global-set-key "\eOs" "3")
+   (global-set-key "\eOt" "4")
+   (global-set-key "\eOu" "5")
+   (global-set-key "\eOv" "6")
+   (global-set-key "\eOw" "7")
+   (global-set-key "\eOx" "8")
+   (global-set-key "\eOy" "9")
+   (global-set-key "\eOl" "+")
+   (global-set-key "\eOn" ".")
    #+end_src
 
 
@@ -1728,22 +1731,22 @@
   kill mode-line clutter and start up the Emacs server.
 
   #+begin_src emacs-lisp
-	;; Make it so I can recover old sessions after close or reboot
-	(desktop-save-mode 1)
+  ;; Make it so I can recover old sessions after close or reboot
+  (desktop-save-mode 1)
 
-	;; Load configuration files local to employer
-	;;(org-babel-load-file "~/.emacs.d/employer.org")
+  ;; Load configuration files local to employer
+  ;;(org-babel-load-file "~/.emacs.d/employer.org")
 
-	;; Start the Emacs server
-	(require 'server)
-	(unless (server-running-p)
-	  (defvar server-name (concat "server"(number-to-string (emacs-pid))))
-	  (ignore-errors (server-start))
+  ;; Start the Emacs server
+  (require 'server)
+  (unless (server-running-p)
+	(defvar server-name (concat "server"(number-to-string (emacs-pid))))
+	(ignore-errors (server-start))
 
-	  ;; Set the environment variables for *shell*.
-	  (setenv "EDITOR" (concat "~/usr/local/bin/emacsclient -s " server-name)))
+	;; Set the environment variables for *shell*.
+	(setenv "EDITOR" (concat "~/usr/local/bin/emacsclient -s " server-name)))
 
-	;;(put 'narrow-to-region 'disabled nil)
+  ;;(put 'narrow-to-region 'disabled nil)
   #+end_src
 
 
