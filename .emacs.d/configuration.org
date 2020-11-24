@@ -479,6 +479,8 @@
 
 	(setq org-src-fontify-natively t
 		  org-src-tab-acts-natively t
+		  org-src-preserve-indentation nil
+		  org-edit-src-content-indentation 0
 		  org-ellipsis " [+]")
 
 	(custom-set-faces '(org-ellipsis ((t (:foreground "gray40" :underline nil)))))
@@ -596,6 +598,8 @@
 			 ))
    #+end_example
 
+   For further reference see the [[https://orgmode.org/worg/org-tutorials/advanced-searching.html][Worg Advanced Searching Tutorial]] or the [[https://orgmode.org/manual/Custom-Agenda-Views.html#Custom-agenda-views][Custom Agenda Views Manual]].
+
    I define these by initializing the commands list with an a weekly preview and append additional templates after. I do
    this so I can split the declarations up and describe them better in my literate configuration. I'll initialize a
    simple weekly review that shows a span of seven days highlighting stuck projects, open projects, and things awaiting
@@ -604,7 +608,7 @@
    #+begin_src emacs-lisp
 	 (defvar TT/org-agenda-custom-commands (list) '())
 
-	 (setq org-agenda-custom-commands
+	 (setq TT/org-agenda-custom-commands
 		   '(("w" "Weekly Review"
 			  ((agenda ""
 					   ((org-agenda-span 7)))
@@ -618,20 +622,20 @@
 
 *** Calendar View
 	#+begin_src emacs-lisp
-	  (setcdr (last TT/org-agenda-custom-commands
+	  (setcdr (last TT/org-agenda-custom-commands)
 					'(("c" "Calendar"
 					   ((agenda ""
 								((org-agenda-span 7)
 								 (org-agenda-start-on-weekday 0)
 								 (org-agenda-time-grid-nil)
 								 (org-agenda-repeating-timestamp-show-all t)
-								 (org-agenda-entry-types '(:timestamp :sexp)))))))))
+								 (org-agenda-entry-types '(:timestamp :sexp))))))))
 	#+end_src
 
 
 *** Daily Agenda
 	#+begin_src emacs-lisp
-	  (setcdr (last TT/org-agenda-custom-commands
+	  (setcdr (last TT/org-agenda-custom-commands)
 					'(("d" "Daily agenda and all TODOs"
 					   ((tags "PRIORITY=\"A\""
 							  ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
@@ -644,35 +648,35 @@
 										(air/org-skip-subtree-if-priority ?A)
 										(org-agenda-skip-if nil '(scheduled deadline))))
 								  (org-agenda-overriding-header "All Normal Priority Tasks:"))))
-					   ((org-agenda-compact-blocks t))))))
+					   ((org-agenda-compact-blocks t)))))
 	#+end_src
 
 
 *** Daily Actions
 	#+begin_src emacs-lisp
-	  (setcdr (last TT/org-agenda-custom-commands
+	  (setcdr (last TT/org-agenda-custom-commands)
 					'(("D" "Daily Action List"
 					   ((agenda ""
 								((org-agenda-span 1)
 								 (org-agenda-sorting-strategy
 								  '((agenda time-up priority-down tag-up)))
-								 (org-deadline-warning-ndays 0))))))))
+								 (org-deadline-warning-ndays 0)))))))
 	#+end_src
 
 
 *** Priority Matrix Commands
 	#+begin_src emacs-lisp
-	  (setcdr (last TT/org-agenda-custom-commands
+	  (setcdr (last TT/org-agenda-custom-commands)
 					'(("1" "Q1" tags-todo "+IMPORTANT+URGENT")
 					  ("2" "Q2" tags-todo "+IMPORTANT-URGENT")
 					  ("3" "Q3" tags-todo "-IMPORTANT+URGENT")
-					  ("4" "Q4" tags-todo "-IMPORTANT-URGENT"))))
+					  ("4" "Q4" tags-todo "-IMPORTANT-URGENT")))
 	#+end_src
 
 
 *** Deadline Review
 	#+begin_src emacs-lisp
-	  (setcdr (last TT/org-agenda-custom-commands
+	  (setcdr (last TT/org-agenda-custom-commands)
 					'(("x" "With deadline columns"
 					   ((alltodo ""
 								 ((org-agenda-overriding-columns-format "%20ITEM %DEADLINE")
@@ -682,13 +686,13 @@
 								((org-agenda-entry-types '(:deadline))
 								 (org-agenda-span 1)
 								 (org-deadline-warning-days 60)
-								 (org-agenda-time-grid nil))))))))
+								 (org-agenda-time-grid nil)))))))
 	#+end_src
 
 
 *** Archive Queries
 	#+begin_src emacs-lisp
-	  (setcdr (last TT/org-agenda-custom-commands
+	  (setcdr (last TT/org-agenda-custom-commands)
 					'(("Q" . "Custom Queries")
 					  ("Qa" "Archive Search"
 					   ((search ""
@@ -697,7 +701,7 @@
 					  ("QA" "Archive Tags Search"
 					   ((org-tags-view ""
 									   ((org-agenda-files
-										 (file-expand-wildcards "~/org/archive/*.org")))))))))
+										 (file-expand-wildcards "~/org/archive/*.org"))))))))
 	#+end_src
 
 
@@ -706,16 +710,24 @@
 	with them yet.
 
 	#+begin_src emacs-lisp
-	  (setcdr (last TT/org-agenda-custom-commands
+	  (setcdr (last TT/org-agenda-custom-commands)
 					'(("y" "Someday Maybe"
 					   ((todo "MAYBE"
 							  ((org-agenda-files '("~/org/maybe.org"))))))
 					  ("r" "Review"
 					   ((todo "REVIEW"
-							  ((org-agenda-files '("~/org/review.org")))))))))
+							  ((org-agenda-files '("~/org/review.org"))))))))
 	#+end_src
 
 
+*** Setting Agenda Commands
+	Lastly I set =org-agenda-custom-commands= to the value of the list I've built.
+
+	#+begin_src emacs-lisp
+	(setq org-agenda-custom-commands TT/org-agenda-custom-commands)
+	#+end_src
+
+	
 ** Org To-Do
    Org todos help keep track of work I plan to do and how I engaged with completing that work. Let's get a few general
    things set up here.
@@ -1278,6 +1290,21 @@
 
 * Development Interactions
   This section contains customizations for development and working within coding environments.
+
+** General Settings
+   A few things across languages first.
+
+*** Tabs v. Spaces
+	Let the holy wars be resolved by tooling that enables each developer to see things their way in their editor, and
+	tooling that converts these to whatver is standard for the codebases we collaborate in.
+
+	Set tabbing to spaces, keep things condensed with 2 spaces.
+
+	#+begin_src emacs-lisp
+	  (setq-default indent-tabs-mode nil)
+	  (setq tab-width 2)
+	#+end_src
+
 
 ** Editor Config
    See [[https://editorconfig.org/][EditorConfig.org]] for more details. However, this helps me play nice across source repositories, and helps keep
