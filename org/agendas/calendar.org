@@ -1,5 +1,5 @@
 * Meetings                                                         :@meeting:
-** Ad-Hoc
+** One Offs
 ** Daily
 *** TODO Scrum
 ** Weekly

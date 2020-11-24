@@ -31,7 +31,10 @@
 	  ;;; Code:
 
 	  ;; Eternally grateful to have gleaned lessons from:
+	  ;;   http://doc.norang.ca/org-mode.html
+	  ;;   http://members.optusnet.com.au/~charles57/GTD/orgmode.html
 	  ;;   http://pages.sachachua.com/.emacs.d/Sacha.html
+	  ;;   https://www.labri.fr/perso/nrougier/GTD/index.html
 	  ;;   https://github.com/purcell/emacs.d
 	  ;;   https://github.com/howardabrams/dot-files
 	  ;;   https://github.com/skeeto/.emacs.d
@@ -540,6 +543,11 @@
    #+begin_src emacs-lisp
 	 (setq org-agenda-skip-deadline-if-done t
 		   org-agenda-skip-scheduled-if-done t
+		   org-agenda-skip-timestamp-if-deadline-is-shown t
+		   org-agenda-show-future-repeats t
+		   org-agenda-dim-blocked-tasks nil ; dimming can slow the agenda  down - a filter could show blocked tasks better
+		   org-agenda-inhibit-startup t ; speedup agenda loading by ignoring startup options
+		   org-tags-column -128
 		   org-agenda-skip-deadline-prewarning-if-scheduled 'pre-scheduled)
    #+end_src
 
@@ -644,29 +652,6 @@
 						 (org-agenda-span 1)
 						 (org-deadline-warning-days 60)
 						 (org-agenda-time-grid nil)))))
-			  ("P" "Printed agenda"
-			   ((agenda ""
-						((org-agenda-span 7)
-						 (org-agenda-start-on-weekday nil)
-						 (org-agenda-repeating-timestamp-show-all t)
-						 (org-agenda-entry-types '(:timestamp :sexp))))
-				(agenda ""
-						((org-agenda-span 1)
-						 (org-deadline-warning-days 7)
-						 (org-agenda-todo-keyword-format "[ ]")
-						 (org-agenda-scheduled-leaders '("" ""))
-						 (org-agenda-prefix-format "%t%s")))
-				(todo "TODO"
-					  ((org-agenda-prefix-format "[ ] %T: ")
-					   (org-agenda-sorting-strategy '(tag-up prority-down))
-					   (org-agenda-todo-keyword-format "")
-					   (org-agenda-overriding-header "\nTasks by Context\n-----------------\n"))))
-			   ((org-agenda-with-colors nil)
-				(org-agenda-compact-blocks t)
-				(org-agenda-remove-tags t)
-				(ps-number-of-columns 2)
-				(ps-landscape-mode t))
-			   ("~/agenda.ps"))
 			  ("Q" . "Custom Queries")
 			  ("Qa" "Archive Search"
 			   ((search ""
@@ -682,6 +667,13 @@
 
 
 ** Org To-Do
+   Org todos help keep track of work I plan to do and how I engaged with completing that work. Let's get a few general
+   things set up here.
+
+   #+begin_src emacs-lisp
+	 (setq org-treat-insert-todo-heading-as-state-change t)
+   #+end_src
+
 
 *** Keywords
 	Org-mode has a set of configurable keywords, both sequenced and typed, which can be added to headlines and cycled
@@ -709,6 +701,7 @@
 			  ("CANCELLED" . "DimGray")
 			  ("DROP"    . "DimGray")))
 	#+end_src
+
 
 
 *** Tags
@@ -755,9 +748,14 @@
 			  ("URGENT"          . ?U) ; something that demands attention in a short timespan
 			  ("journal"         . ?j)))
 
-	  (setq org-tags-exclude-from-inheritance '("PROJECT" "NEXT")
-			org-stuck-projects '("+PROJECT/-WAITING-DONE"
+	  (setq org-stuck-projects '("+PROJECT/-WAITING-DONE"
 								 ("TODO" "STARTED") ()))
+	#+end_src
+
+	For speedup purposes, I could define tags on every file instead of using inheritance.
+	#+begin_src emacs-lisp
+	  (setq org-agenda-use-tag-inheritance nil)
+	  ;;(setq org-tags-exclude-from-inheritance '("PROJECT" "NEXT"))
 	#+end_src
 
 
@@ -836,8 +834,8 @@
    Capture templates allow us to quickly invoke a key-chord and select a template to capture some thought directly to a
    good home for it. Tasks to my organizer or inbox, new journal items to my journal, etc...
 
-   I define these by creating a new list to which I define and append each template one-by-one so I can group them in my
-   literate configuration to better describe each part. First we must set up this list.
+   I define these by initializing the capture list with an inbox capture and appending additional templates after. I do
+   this so I can split the configuration up and describe them better in my literate configuration.
 
    #+begin_src emacs-lisp
 	 ;; Org Capture Configuration
@@ -846,8 +844,7 @@
 	 ;; The list needs to be initialized for setcdr to work later
 	 (setq org-capture-templates
 		   '(("i" "Inbox" entry  (file+olp TT/org-inbox "Capture" "Todos")
-			 ,(concat "* TODO %?\n"
-					  "/Entered on/ %U") :empty-lines 1)))
+			  "* TODO %? :TASK:\n /Entered on/ %U" :empty-lines 1)))
    #+end_src
 
 *** Helper Functions
@@ -891,19 +888,20 @@
 	  (setcdr (last org-capture-templates)
 			  '(("s" "Sprint Capture Group")
 				("sd" "Development Task" entry (file+olp TT/org-organizer "Current Sprint" "Development")
-				 "* TODO [#A] %? :TASK:\n")
+				 "* TODO [#B] %? :@sprint:TASK:\n")
 				("sv" "Review Task" entry (file+olp TT/org-organizer "Current Sprint" "Review")
-				 "* TODO [#A] %? :TASK:\n")
+				 "* TODO [#B] %? :@sprint:TASK:\n")
 				("sr" "Research Task" entry (file+olp TT/org-organizer "Current Sprint" "Research")
-				 "* TODO [#A] RESEARCH: %? :TASK:\n")
+				 "* TODO [#B] RESEARCH: %? :@sprint:TASK:\n")
 				("ss" "Spike Task" entry (file+olp TT/org-organizer "Current Sprint" "Research")
-				 "* TODO [#A] SPIKE: %? :TASK:\n")
-				("si" "Interrupt" entry (file+olp TT/org-organizer "Current Sprint" "Other"))
-				("so" "Other Task" entry (file+olp TT/org-organizer "Current Sprint" "Other")
-				 "* TODO [#A] %? :TASK:\n")))
+				 "* TODO [#B] SPIKE: %? :@sprint:TASK:\n")
+				("si" "Interrupt" entry (file+olp TT/org-organizer "Current Sprint" "Other")
+				 "* TODO [#A] %? :@sprint:TASK:URGENT:\n")
+				("st" "Other Task" entry (file+olp TT/org-organizer "Current Sprint" "Other")
+				 "* TODO [#B] %? :@sprint:TASK:\n")))
 	#+end_src
 
-
+	
 *** Retrospective Items
 	This second capture group is for capturing information observations and information related to how the sprint is
 	going. Capture in the moment, make sense through reflection, synthesize for retrospective and present to the
@@ -914,13 +912,13 @@
 	  (setcdr (last org-capture-templates)
 			  '(("r" "Retrospective Capture Group")
 				("rk" "Kudos" item (file+olp TT/org-retrospective "Capture" "Kudos")
-				 "- %?" :empty-lines 1)
+				 "- %?")
 				("rg" "Goodness" item (file+olp TT/org-retrospective "Capture" "Goodness")
-				 "- %?" :empty-lines 1)
+				 "- %?")
 				("rb" "Badness" item (file+olp TT/org-retrospective "Capture" "Badness")
-				 "- %?" :empty-lines 1)
+				 "- %?")
 				("rz" "Kaizen" item (file+olp TT/org-retrospective "Capture" "Kaizen")
-				 "- %?" :empty-lines 1)))
+				 "- %?")))
 	#+end_src
 
 
@@ -934,35 +932,48 @@
 	  (setcdr (last org-capture-templates)
 			  '(("o" "Office Capture Group")
 				("oa" "Administrative" entry (file+olp TT/org-organizer "Office" "Administrative")
-				 "* TODO [#B] %? :TASK:\n")
+				 "* TODO [#B] %? :@office:@administrative:TASK:\n")
 				("oc" "Communication" entry (file+olp TT/org-organizer "Office" "Communication")
-				 "* TODO [#B] %? :TASK:\n")
+				 "* TODO [#B] %? :@office:@communication:TASK:\n")
 				("of" "Firefighting" entry (file+olp TT/org-organizer "Office" "Firefighting")
-				 "* TODO [#A] %? :TASK:\n")
+				 "* TODO [#A] %? :@office:@firefights:TASK:URGENT:\n")
 				("oh" "Hiring" entry (file+olp TT/org-organizer "Office" "Hiring")
-				 "* TODO [#B] %? :TASK:\n")
+				 "* TODO [#B] %? :@office:@hiring:TASK:\n")
 				("os" "Scheduling" entry (file+olp TT/org-organizer "Office" "Scheduling")
-				 "* TODO [#B] %? :TASK:\n")
+				 "* TODO [#B] %? :@office:@scheduling:TASK:\n")
 				("ot" "Task" entry (file+olp TT/org-organizer "Office" "General")
-				 "* TODO [#B] %? :TASK:\n")))
+				 "* TODO [#B] %? :@office:TASK:\n")))
 	#+end_src
 
 
-*** General To Do Items
+*** Organizer To Do Items
 	This capture group is for non-sprint related tasks, which should each go to their proper group and have a default
 	priority based on how I typically file similar tasks. These can easily be adjusted up or down via the agenda view, so
 	it's perfectly fine for them to be inaccurate for the task, as long as they're typically correct.
+
+	Ideally there should be a capture template direct to every single level headline in my organizer. Each headline with
+	sub-headings ideally will have it's own capture group
 
 	#+begin_src emacs-lisp
 	  ;; Non-Sprint Todo Capture Group
 	  (setcdr (last org-capture-templates)
 			  '(("t" "General Todo Capture Group")
 				("tc" "Career Task" entry (file+headline TT/org-organizer "Career")
-				 "* TODO [#B] %? :TASK:\n")
+				 "* TODO [#B] %? :@career:TASK:\n")
+				("th" "Health Task" entry (file+headline TT/org-organizer "Health & Wellness")
+				 "* TODO [#B] %? :@health:TASK:\n")
+				("to" "Home Task" entry (file+headline TT/org-organizer "Home")
+				 "* TODO [#B] %? :@home:TASK:\n")
+				("tf" "Financial Task" entry (file+headline TT/org-organizer "Finances")
+				 "* TODO [#B] %? :@finances:TASK:\n")
 				("tg" "Guild Task" entry (file+headline TT/org-organizer "Guild")
-				 "* TODO [#C] %? :TASK:\n")
+				 "* TODO [#C] %? :@guild:TASK:\n")
+				("tr" "Reading Task" entry (file+headline TT/org-organizer "Reading")
+				 "* TODO [#B] %? :@read:TASK:\n")
+				("tv" "Travel Task" entry (file+headline TT/org-organizer "Travel")
+				 "* TODO [#B] %? :@travel:TASK:\n")
 				("tw" "Workstation Task" entry (file+headline TT/org-organizer "Workstation")
-				 "* TODO [#C] %? :TASK:\n")
+				 "* TODO [#C] %? :@workstation:TASK:\n")
 				("tt" "General Task" entry (file+headline TT/org-organizer "Tasks")
 				 "\n* TODO [#C] %? :TASK:\n %i\n %a\n\n")))
 	#+end_src
@@ -974,14 +985,25 @@
 	
 	
 *** Meetings
-	This capture group is for meetings, habits, and other entries that should be tied to the calendar.
+	This capture group is for meetings tied to the calendar.
+
+	I'd prefer to auto-populate the date with today's date and the repeat offset, but haven't found a smooth way to do
+	it yet. So for now, I schedule to an arbitrary date and update the date with =C-s= as I fill out the template.
 
 	#+begin_src emacs-lisp
 	  ;; Capture Group for Meetings
 	  (setcdr (last org-capture-templates)
 			  '(("m" "Meeting Capture Group")
 				("mm" "Pop Up Meetings and One-Offs" entry (file+olp TT/org-calendar "Meetings" "One Offs")
-				 "* TODO %?\n")))
+				 "* MEETING %?\n\tSCHEDULED: %^t")
+				("md" "Daily Meeting" entry (file+olp TT/org-calendar "Meetings" "Daily")
+				 "* MEETING %?\n\tSCHEDULED: <2020-01-01 Sat ++1d>")
+				("mw" "Weekly Meeting" entry (file+olp TT/org-calendar "Meetings" "Weekly")
+				 "* MEETING %?\n\tSCHEDULED: <2020-01-01 Sat ++1w>")
+				("m1" "1:1 Meeting" entry (file+olp TT/org-calendar "Meetings" "1:1s")
+				 "* MEETING %?\n\tSCHEDULED: <2000-01-01 Sat ++1w>")
+				("mb" "Bi-Weekly Meeting" entry (file+olp TT/org-calendar "Meetings" "Bi-Weekly")
+				 "* MEETING %?\n\tSCHEDULED: <2000-01-01 Sat ++2w>")))
 	#+end_src
 
 
