@@ -167,10 +167,16 @@
 	(display-time-mode 1)
 	#+end_src
 
+	Let's also keep track of which column we're on in the buffer.
+
+	#+begin_src emacs-lisp
+	(setq column-number-mode t)
+    #+end_src
+
 	Let's add some transparency. Despite how powerful it is, I don't use Emacs for everything and this lets me read
 	whatever I have Emacs opened over. This can also let me see my desktop background which can be really cozy.
 
-	#+begin_src emacs-lisp
+	,#+begin_src emacs-lisp
 	(set-frame-parameter (selected-frame) 'alpha '(92 . 90))
 	(add-to-list 'default-frame-alist '(alpha . (92 . 90)))
 	#+end_src
@@ -1521,18 +1527,27 @@
 	employer. It was definitely better than the Vanilla Emacs defaults.
 
 	#+begin_src emacs-lisp
-	(use-package cperl-mode)
+        (use-package cperl-mode)
 
-	(defalias 'perl-mode 'cperl-mode)
-	(defvaralias 'c-basic-offset 'tab-width)
-	(defvaralias 'cperl-indent-level 'tab-width)
+        (setq cperl-close-paren-offset 0
+                  cperl-continued-statement-offset 0
+                  cperl-electric-backspace-untabify nil
+                  cperl-indent-comment-at-column-0 t
+                  cperl-indent-parens-as-block t
+                  cperl-label-offset 0
+                  cperl-min-label-indent 0
+                  perl-tab-to-comment t)
 
-	;; Override perl-mode with cperl-mode
-	(mapc
-	 (lambda (pair)
-	   (if (eq (cdr pair) 'perl-mode)
-		   (setcdr pair 'cperl-mode)))
-	 (append auto-mode-alist interpreter-mode-alist))
+        (defalias 'perl-mode 'cperl-mode)
+        (defvaralias 'c-basic-offset 'tab-width)
+        (defvaralias 'cperl-indent-level 'tab-width)
+
+        ;; Override perl-mode with cperl-mode
+        (mapc
+         (lambda (pair)
+           (if (eq (cdr pair) 'perl-mode)
+                   (setcdr pair 'cperl-mode)))
+         (append auto-mode-alist interpreter-mode-alist))
 	#+end_src
 
 
@@ -1552,6 +1567,15 @@
 	  (add-hook 'js2-mode-hook #'js2-refactor-mode)
 	  (js2r-add-keybindings-with-prefix "C-c C-r")
 	  (define-key js2-mode-map (kbd "C-k") #'js2r-kill)
+	  (setq js3-boring-indentation t
+			js3-cleanup-whitespace t
+			js3-consistent-level-indent-inner-bracket t
+			js3-continued-expr-mult 0
+			js3-curly-indent-offset 0
+			js3-enter-indents-newline t
+			js3-indent-level 4
+			js3-indent-on-enter-key nil
+			js3-indent-tabs-mode t)
 	  (add-hook 'js2-mode-hook
 				(lambda ()
 				  (add-hook 'xref-backend-functions #'xref-js2-xref-backend nil t)))
@@ -1750,49 +1774,56 @@
   #+end_src
 
 
-* Configuration Reading
-  That's mostly it folks. Configuration is done, the rest are future works. This section collects other articles or
-  configurations I've stumbled across and bookmarked for eventual reading.
+* Future Work
 
-** TODO List [0/39]
-   - [ ] https://github.com/hungptit/tools and integration w/ Emacs
-   - [ ] https://github.com/yjwen/org-reveal
-   - [ ] https://github.com/fniessen/org-html-themes
-   - [ ] =hydra=
-   - [ ] =ivy=
-   - [ ] =treemacs=
-   - [ ] =lsp-mode=, =lsp-ui=, =company-lsp=, =dap-mode=
-   - [ ] =org-journal=
-   - [ ] =org-brain=
-   - [ ] =bbdb=
-   - [ ] =ox-slimhtml=
-   - [ ] =realgud=
-   - [ ] bookmarks
-   - [ ] =epg=
-   - [ ] semantic
-   - [ ] tramp, docker-tramp
-   - [ ] docker-tramp
-   - [ ] =fzf= - fuzzy file finding
-   - [ ] MacOS X / Linux config
-   - [ ] exec-path-from-shell
-   - [ ] REST client
-   - [ ] org-mode blogging
-   - [ ] markdown mode
-   - [ ] straight.el (some kind of package management?)
-   - [ ] https://gitlab.com/jaor/geiser
-   - [ ] https://katherine.cox-buday.com/blog/2015/03/14/writing-specs-with-org-mode/
-   - [ ] http://kitchingroup.cheme.cmu.edu/blog/category/org-mode/
-   - [ ] https://ladicle.com/post/config/#screenshot
-   - [ ] https://orgmode.org/worg/org-web.html
-   - [ ] https://github.com/ianpan870102/.emacs.d
-   - [ ] http://emacs.cafe/emacs/orgmode/gtd/2017/06/30/orgmode-gtd.html
-   - [ ] https://joshrollinswrites.com/emacsorg/org-capture-template-1/
-   - [ ] http://www.howardism.org/Technical/Emacs/getting-boxes-done.html
-   - [ ] http://www.howardism.org/Technical/Emacs/literate-programming-tutorial.html
-   - [ ] https://orgmode.org/worg/org-tutorials/org-latex-export.html
-   - [ ] https://www.gnu.org/software/tramp/#Configuration
-   - [ ] http://doc.norang.ca/org-mode.html
-   - [ ] https://orgmode.org/worg/org-blog-articles.html
-   - [ ] https://lispcookbook.github.io/cl-cookbook/emacs-ide.html
-   - [ ] https://edwardtufte.github.io/tufte-css/
-	 - https://edwardtufte.github.io/et-book/
+** TODO Wishlist [0/1]
+   - [ ] Org file rendering in Github is still too indented; left align code blocks?
+	 - See [[https://github.com/howardabrams/dot-files/blob/master/emacs.org][Howard Abrams files]] to see what I'm aiming for.
+	 - Hmm... comparing my raw file with that one, it seems my org configuration is inserting tabs...
+
+** Configuration Reading
+   That's mostly it folks. Configuration is done, the rest are future works. This section collects other articles or
+   configurations I've stumbled across and bookmarked for eventual reading.
+
+*** TODO List [0/39]
+	- [ ] https://github.com/hungptit/tools and integration w/ Emacs
+	- [ ] https://github.com/yjwen/org-reveal
+	- [ ] https://github.com/fniessen/org-html-themes
+	- [ ] =hydra=
+	- [ ] =ivy=
+	- [ ] =treemacs=
+	- [ ] =lsp-mode=, =lsp-ui=, =company-lsp=, =dap-mode=
+	- [ ] =org-journal=
+	- [ ] =org-brain=
+	- [ ] =bbdb=
+	- [ ] =ox-slimhtml=
+	- [ ] =realgud=
+	- [ ] bookmarks
+	- [ ] =epg=
+	- [ ] semantic
+	- [ ] tramp, docker-tramp
+	- [ ] docker-tramp
+	- [ ] =fzf= - fuzzy file finding
+	- [ ] MacOS X / Linux config
+	- [ ] exec-path-from-shell
+	- [ ] REST client
+	- [ ] org-mode blogging
+	- [ ] markdown mode
+	- [ ] straight.el (some kind of package management?)
+	- [ ] https://gitlab.com/jaor/geiser
+	- [ ] https://katherine.cox-buday.com/blog/2015/03/14/writing-specs-with-org-mode/
+	- [ ] http://kitchingroup.cheme.cmu.edu/blog/category/org-mode/
+	- [ ] https://ladicle.com/post/config/#screenshot
+	- [ ] https://orgmode.org/worg/org-web.html
+	- [ ] https://github.com/ianpan870102/.emacs.d
+	- [ ] http://emacs.cafe/emacs/orgmode/gtd/2017/06/30/orgmode-gtd.html
+	- [ ] https://joshrollinswrites.com/emacsorg/org-capture-template-1/
+	- [ ] http://www.howardism.org/Technical/Emacs/getting-boxes-done.html
+	- [ ] http://www.howardism.org/Technical/Emacs/literate-programming-tutorial.html
+	- [ ] https://orgmode.org/worg/org-tutorials/org-latex-export.html
+	- [ ] https://www.gnu.org/software/tramp/#Configuration
+	- [ ] http://doc.norang.ca/org-mode.html
+	- [ ] https://orgmode.org/worg/org-blog-articles.html
+	- [ ] https://lispcookbook.github.io/cl-cookbook/emacs-ide.html
+	- [ ] https://edwardtufte.github.io/tufte-css/
+	  - https://edwardtufte.github.io/et-book/
