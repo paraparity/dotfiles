@@ -1334,7 +1334,8 @@ Let's create some short links for things I might reference often.
         ("so"       . "https://stackoverflow.com/search?q=%s")
         ("soq"      . "https://stackoverflow.com/questions/%s")
         ("ese"      . "https://emacs.stackexchange.com/search?q=%s")
-        ("eseq"     . "https://emacs.stackexchange.com/questions/%s")))
+        ("eseq"     . "https://emacs.stackexchange.com/questions/%s")
+        ("rdit"     . "https://redd.it/%s")))
 #+end_src
 
 
