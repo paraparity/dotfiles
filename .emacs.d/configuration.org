@@ -482,6 +482,7 @@ Let's also update a few general settings and behavior.
 
 #+begin_src emacs-lisp
 (add-hook 'org-mode-hook 'turn-on-auto-fill)
+(add-hook 'org-mode-hook 'org-indent-mode)
 (add-hook 'org-mode-hook
       '(lambda () (origami-mode nil)))
 
@@ -1198,15 +1199,15 @@ yet. So for now, I schedule to an arbitrary date and update the date with =C-s= 
 (setcdr (last TT/org-capture-templates)
         '(("m" "Meeting Capture Group")
           ("mm" "Pop Up Meetings and One-Offs" entry (file+olp TT/org-calendar "Meetings" "One Offs")
-           "* MEETING %?\n\tSCHEDULED: %^t")
+           "* MEETING %?\nSCHEDULED: %^t")
           ("md" "Daily Meeting" entry (file+olp TT/org-calendar "Meetings" "Daily")
-           "* MEETING %?\n\tSCHEDULED: <2020-01-01 Sat ++1d>")
+           "* MEETING %?\nSCHEDULED: <2020-01-01 Sat ++1d>")
           ("mw" "Weekly Meeting" entry (file+olp TT/org-calendar "Meetings" "Weekly")
-           "* MEETING %?\n\tSCHEDULED: <2020-01-01 Sat ++1w>")
+           "* MEETING %?\nSCHEDULED: <2020-01-01 Sat ++1w>")
           ("m1" "1:1 Meeting" entry (file+olp TT/org-calendar "Meetings" "1:1s")
-           "* MEETING %?\n\tSCHEDULED: <2000-01-01 Sat ++1w>")
+           "* MEETING %?\nSCHEDULED: <2000-01-01 Sat ++1w>")
           ("mb" "Bi-Weekly Meeting" entry (file+olp TT/org-calendar "Meetings" "Bi-Weekly")
-           "* MEETING %?\n\tSCHEDULED: <2000-01-01 Sat ++2w>")))
+           "* MEETING %?\nSCHEDULED: <2000-01-01 Sat ++2w>")))
 #+end_src
 
 
