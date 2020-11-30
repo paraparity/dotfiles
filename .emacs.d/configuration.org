@@ -301,6 +301,10 @@ help keep things in sync.
 #+end_src
 
 
+** TODO Bookmarks
+Configuration for bookmarking and returning to buffers.
+
+
 ** Multiple Cursors
 Sometimes one cursor isn't enough. This package lets me spin up multiple cursors across lines or matching patterns which
 can lead to some pretty impressive editing and refactoring feats.
@@ -443,6 +447,9 @@ Let's change where Tramp saves things, and use SSH as our default method.
 
 ;; TODO: if windows: use PuTTy Plink; if *nix: use ssh
 #+end_src
+
+*** TODO =docker-tramp=
+Either place under tramp or in development interactions section later.
 
 
 * =org-mode= Configuration
@@ -629,7 +636,7 @@ to happen.
 Now we can append new search filters to this initialized list which we'll use to initialize the
 =org-agenda-custom-commands= variable after.
 
-*** TODO GTD Views
+*** GTD Views
 I like to use David Allen's Getting Things Done (GTD) framework for inspiration to my Emacs =org-mode= agenda
 management. Here let's define several GTD views for my agenda contents.
 
@@ -646,7 +653,7 @@ management. Here let's define several GTD views for my agenda contents.
                    (org-agenda-sorting-strategy '(priority-down effort-up tag-up))
                    (org-agenda-skip-function '(org-agenda-skip-entry-if 'timestamp 'todo 'done))))))
           ("gn" "Next Actions"
-           ((todo "NEXT"
+           ((tags "NEXT"
                   ((org-agenda-overriding-header "Next Actions:")
                    (org-agenda-sorting-strategy '(priority-down effort-up tag-up))))))
           ("gw" "Delegated or Waiting-On"
@@ -669,6 +676,8 @@ management. Here let's define several GTD views for my agenda contents.
            ((org-agenda-compact-blocks t)))))
 #+end_src
 
+**** TODO Fix Inbox Filter Error
+**** TODO Add Filter for Projects without NEXT Sub-Entry
 
 *** GTD Contexts
 I use =org-mode= tags starting with an '@' symbol to designate a context. A context is a physical space, headspace, or
@@ -1364,6 +1373,19 @@ I can even use org-mode to publish static content!
 ;; TODO: https://github.com/fniessen/org-html-themes or other
 #+end_src
 
+*** TODO Publish Research [0/2]
+- [ ] =ox-slimhtml=
+- [ ] https://edwardtufte.github.io/tufte-css/
+  - https://edwardtufte.github.io/et-book/
+- [ ] https://github.com/fniessen/org-html-themes
+- [ ] https://orgmode.org/worg/org-web.html
+- [ ] https://orgmode.org/worg/org-tutorials/org-latex-export.html
+- [ ] https://orgmode.org/worg/org-blog-articles.html
+
+
+*** TODO Org Presentation Research [/]
+- [ ] https://github.com/yjwen/org-reveal
+
 
 ** Org-Babel
 
@@ -1482,85 +1504,13 @@ chosen to leverage =lsp-mode= as my language server client.
 (use-package company-lsp :commands company-lsp)
 #+end_src
 
+*** TODO LSP UI
+=lsp-ui= configuration.
 
-** On The Fly Checking
-Fly-Check enables on the fly syntax checking which helps me catch errors as I write them and prompts me to fix them
-immediately. This enforces a tight feedback loop in development.
 
-#+begin_src emacs-lisp
-(use-package flycheck)
-
-(add-hook 'after-init-hook #'global-flycheck-mode)
-
-(setq flycheck-checkers
-      (quote (asciidoc
-              c/c++-cppcheck
-              css-csslint
-              emacs-lisp
-              emacs-lisp-checkdoc
-              handlebars
-              html-tidy
-              javascript-eslint
-              json-jsonlint
-              less
-              make
-              perl
-              perl-perlcritic
-              python-flak8
-              python-pylint
-              rust
-              sh-bash
-              sh-zsh
-              sh-spellcheck
-              tex-chktex
-              tex-lacheck
-              texinfo
-              xml-xmlstarlet
-              xml-xmllint
-              yaml-jayaml)))
-;; Others: cfenging chef-foodcritic coffee coffee-coffeelint d-dmd elixir
-;;         erlang eruby-erubis go-gofmt go-golint go-vet go-build go-test
-;;         haml haskell-ghc haskell-hlint lua php php-phpmd php-phpcs
-;;         puppet-parser puppet-lint racket rst rst-sphinx ruby-rubocop
-;;         ruby-rubylint ruby ruby-jruby sass scala scss slim verilog-verilator
-
-(setq-default flycheck-disabled-checkers
-              '((javascript-jshint
-                 javascript-jslint
-                 javascript-gjslint
-                 c/c++-clang)))
-
-;; Enable C++14 support for GCC
-(add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++14")))
-
-;; Use project relative eslint; see https://emacs.stackexchange.com/questions/21205
-(defun TT/use-eslint-from-node-modules ()
-  "Use project local eslint node modules."
-  (let* ((root (locate-dominating-file
-                (or (buffer-file-name) default-directory)
-                "node_modules"))
-         (eslint (and root
-                      (expand-file-name "node_modules/eslint/bin/eslint.js"
-                                        root))))
-    (when (and eslint (file-executable-p eslint))
-      (setq-local flycheck-javascript-eslint-executable eslint))))
-
-(add-hook 'flycheck-mode-hook #'TT/use-eslint-from-node-modules)
-
-;; Enable flycheck globally:
-(add-hook 'after-init-hook #'global-flycheck-mode)
-
-;; See: https://emacs.stackexchange.com/questions/13065
-;; (defun setup-flycheck-clang-project-path ()
-;;   "Use project local clang."
-;;   (let ((root (ignore-errors (projectile-project-root))))
-;;   (when root
-;;     (add-to-list
-;;      (make-variable-buffer-local 'flycheck-clang-include-path)
-;;      root))))
-
-;; (add-hook 'c++-mode-hook 'setup-flycheck-clang-project-path)
-#+end_src
+*** TODO DAP Mode
+=dap-mode=.
+=realgud=?
 
 
 ** Company Completions
@@ -1587,6 +1537,7 @@ Company-mode, or complete any mode, is an extremely useful tool for text/code co
     (global-set-key (kbd "C-c SPC") 'company-complete)))
 #+end_src
 
+*** TODO Company LSP
 It also plugs into =lsp-mode= which I'll be setting up later.
 #+begin_src emacs-lisp
 (use-package company-lsp
@@ -1636,6 +1587,10 @@ Magical Git interactions in Emacs.
 
 
 ** TODO =treemacs=
+
+
+** TODO =restclient=
+Interactively making REST calls of a server.
 
 
 ** Language Configurations
@@ -1720,6 +1675,86 @@ Typescript.
 
 
 *** TODO C/C++
+
+
+** On The Fly Checking
+Fly-Check enables on the fly syntax checking which helps me catch errors as I write them and prompts me to fix them
+immediately. This enforces a tight feedback loop in development.
+
+#+begin_src emacs-lisp
+(use-package flycheck)
+
+(add-hook 'after-init-hook #'global-flycheck-mode)
+
+(setq flycheck-checkers
+      (quote (asciidoc
+              c/c++-cppcheck
+              css-csslint
+              emacs-lisp
+              emacs-lisp-checkdoc
+              handlebars
+              html-tidy
+              javascript-eslint
+              json-jsonlint
+              less
+              make
+              perl
+              perl-perlcritic
+              python-flak8
+              python-pylint
+              rust
+              sh-bash
+              sh-zsh
+              sh-spellcheck
+              tex-chktex
+              tex-lacheck
+              texinfo
+              xml-xmlstarlet
+              xml-xmllint
+              yaml-jayaml)))
+;; Others: cfenging chef-foodcritic coffee coffee-coffeelint d-dmd elixir
+;;         erlang eruby-erubis go-gofmt go-golint go-vet go-build go-test
+;;         haml haskell-ghc haskell-hlint lua php php-phpmd php-phpcs
+;;         puppet-parser puppet-lint racket rst rst-sphinx ruby-rubocop
+;;         ruby-rubylint ruby ruby-jruby sass scala scss slim verilog-verilator
+
+(setq-default flycheck-disabled-checkers
+              '((javascript-jshint
+                 javascript-jslint
+                 javascript-gjslint
+                 c/c++-clang)))
+
+;; Enable C++14 support for GCC
+(add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++14")))
+
+;; Use project relative eslint; see https://emacs.stackexchange.com/questions/21205
+(defun TT/use-eslint-from-node-modules ()
+  "Use project local eslint node modules."
+  (let* ((root (locate-dominating-file
+                (or (buffer-file-name) default-directory)
+                "node_modules"))
+         (eslint (and root
+                      (expand-file-name "node_modules/eslint/bin/eslint.js"
+                                        root))))
+    (when (and eslint (file-executable-p eslint))
+      (setq-local flycheck-javascript-eslint-executable eslint))))
+
+(add-hook 'flycheck-mode-hook #'TT/use-eslint-from-node-modules)
+
+;; Enable flycheck globally:
+(add-hook 'after-init-hook #'global-flycheck-mode)
+
+;; See: https://emacs.stackexchange.com/questions/13065
+;; (defun setup-flycheck-clang-project-path ()
+;;   "Use project local clang."
+;;   (let ((root (ignore-errors (projectile-project-root))))
+;;   (when root
+;;     (add-to-list
+;;      (make-variable-buffer-local 'flycheck-clang-include-path)
+;;      root))))
+
+;; (add-hook 'c++-mode-hook 'setup-flycheck-clang-project-path)
+#+end_src
 
 
 * More Emacs Modes
@@ -1908,56 +1943,19 @@ kill mode-line clutter and start up the Emacs server.
 
 * Future Work
 
-** TODO Wishlist [0/1]
-- [ ] Org file rendering in Github is still too indented; left align code blocks?
-  - See [[https://github.com/howardabrams/dot-files/blob/master/emacs.org][Howard Abrams files]] to see what I'm aiming for.
-  - Hmm... comparing my raw file with that one, it seems my org configuration is inserting tabs...
-  - Ran =untabify= on buffer - still need to update settings to prevent issues
-  - Hmm... tabs are still being really weid. I hate playing with whitespace in Emacs
-
-
-** Configuration Reading
+** TODO Configuration Reading [0/11]
 That's mostly it folks. Configuration is done, the rest are future works. This section collects other articles or
 configurations I've stumbled across and bookmarked for eventual reading.
 
-*** TODO List [0/39]
-- [ ] https://github.com/hungptit/tools and integration w/ Emacs
-- [ ] https://github.com/yjwen/org-reveal
-- [ ] https://github.com/fniessen/org-html-themes
+Research Topics or Reading Material:
 - [ ] =hydra=
 - [ ] =ivy=
-- [ ] =treemacs=
-- [ ] =lsp-mode=, =lsp-ui=, =company-lsp=, =dap-mode=
-- [ ] =org-journal=
 - [ ] =org-brain=
 - [ ] =bbdb=
-- [ ] =ox-slimhtml=
-- [ ] =realgud=
-- [ ] bookmarks
 - [ ] =epg=
 - [ ] semantic
-- [ ] tramp
-- [ ] docker-tramp
 - [ ] =fzf= - fuzzy file finding
 - [ ] MacOS X / Linux config
-- [ ] exec-path-from-shell
-- [ ] REST client
-- [ ] org-mode blogging
-- [ ] markdown mode
+- [ ] =exec-path-from-shell=
+- [ ] https://github.com/hungptit/tools and integration w/ Emacs
 - [ ] https://gitlab.com/jaor/geiser
-- [ ] https://katherine.cox-buday.com/blog/2015/03/14/writing-specs-with-org-mode/
-- [ ] http://kitchingroup.cheme.cmu.edu/blog/category/org-mode/
-- [ ] https://ladicle.com/post/config/#screenshot
-- [ ] https://orgmode.org/worg/org-web.html
-- [ ] https://github.com/ianpan870102/.emacs.d
-- [ ] http://emacs.cafe/emacs/orgmode/gtd/2017/06/30/orgmode-gtd.html
-- [ ] https://joshrollinswrites.com/emacsorg/org-capture-template-1/
-- [ ] http://www.howardism.org/Technical/Emacs/getting-boxes-done.html
-- [ ] http://www.howardism.org/Technical/Emacs/literate-programming-tutorial.html
-- [ ] https://orgmode.org/worg/org-tutorials/org-latex-export.html
-- [ ] https://www.gnu.org/software/tramp/#Configuration
-- [ ] http://doc.norang.ca/org-mode.html
-- [ ] https://orgmode.org/worg/org-blog-articles.html
-- [ ] https://lispcookbook.github.io/cl-cookbook/emacs-ide.html
-- [ ] https://edwardtufte.github.io/tufte-css/
-  - https://edwardtufte.github.io/et-book/
