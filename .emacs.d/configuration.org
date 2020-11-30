@@ -1030,6 +1030,39 @@ we can really get some value out of this functionality.
 #+end_src
 
 
+** Org Journal
+Let's set up where my journal files are stored, and the format of the entries.
+
+#+begin_src emacs-lisp
+(use-package org-journal
+  :init (setq org-journal-dir TT/org-journal-dir
+              org-journal-file-format "%Y%m%d"
+              org-journal-date-format "%e %b %Y (%A)")
+  :config (setq org-journal-date-prefix "#+TITLE: Daily Note for "))
+#+end_src
+
+*** Journal Helpers
+These are functions that will later enable us to interact with org-journal via capture templates, etc...
+
+#+begin_src emacs-lisp
+(defun get-journal-file-yesterday ()
+  "Gets filename for yesterday's journal entry."
+  (let* ((yesterday (time-subtract (current-time) (days-to-time 1)))
+         (daily-name (format-time-string "%Y%m%d" yesterday)))
+    (expand-file-name (concat org-journal-dir daily-name))))
+
+(defun journal-file-yesterday ()
+  "Create and load a file based on yesterday's date."
+  (interactive)
+  (find-file (get-journal-file-yesterday)))
+
+(defun org-journal-find-location ()
+  "Open today's journal.
+    Specify a non-nil prefix to inhibit inserting the heading"
+  (org-journal-new-entry t)
+  (goto-char (point-min)))
+#+end_src
+
 ** Capture Templates
 Capture templates allow us to quickly invoke a key-chord and select a template to capture some thought directly to a
 good home for it. Tasks to my organizer or inbox, new journal items to my journal, etc...
@@ -1268,39 +1301,6 @@ If I want to further customize this variable in machine local configurations, li
 have to append to =org-capture-templates=. I could wait to set the value at the very end, but right now I think it makes
 more sense to keep local to this section.
 
-
-** Org Journal
-Let's set up where my journal files are stored, and the format of the entries.
-
-#+begin_src emacs-lisp
-(use-package org-journal
-  :init (setq org-journal-dir TT/org-journal-dir
-              org-journal-file-format "%Y%m%d"
-              org-journal-date-format "%e %b %Y (%A)")
-  :config (setq org-journal-date-prefix "#+TITLE: Daily Note for "))
-#+end_src
-
-*** Journal Helpers
-These are functions that will later enable us to interact with org-journal via capture templates, etc...
-
-#+begin_src emacs-lisp
-(defun get-journal-file-yesterday ()
-  "Gets filename for yesterday's journal entry."
-  (let* ((yesterday (time-subtract (current-time) (days-to-time 1)))
-         (daily-name (format-time-string "%Y%m%d" yesterday)))
-    (expand-file-name (concat org-journal-dir daily-name))))
-
-(defun journal-file-yesterday ()
-  "Create and load a file based on yesterday's date."
-  (interactive)
-  (find-file (get-journal-file-yesterday)))
-
-(defun org-journal-find-location ()
-  "Open today's journal.
-    Specify a non-nil prefix to inhibit inserting the heading"
-  (org-journal-new-entry t)
-  (goto-char (point-min)))
-#+end_src
 
 
 ** Org Refile
