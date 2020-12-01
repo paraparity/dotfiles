@@ -61,6 +61,10 @@ work and personal machines all represent different contexts where I pay attentio
     (load-library "elfeed-conf"))
 #+end_src
 
+**** TODO Improve machine local customization loading
+Something could happen between checking and loading a file. Can I just attempt the load and handle an error if it
+doesn't work?
+
 
 *** Offload Custom File
 I manage my custom literate configuration, but sometimes use Emacs easy configuration to tweak settings. Until I know I
@@ -604,8 +608,7 @@ surface reports of varying complexity. It's a great way to get exactly the thing
 Agenda commands have the following form:
 #+begin_example
 (setq org-agenda-custom-commands
-      '(
-        ;; (1 key) (2 description (optional)) (3 type of search) (4 search term)
+      '(;; (1 key) (2 description (optional)) (3 type of search) (4 search term)
         ("c" "Desk Work" tags-todo "computer"
          ((org-agenda-files '("~/org/widgets.org" "~/org/clients.org")) ;; (5 settings (optional))
           (org-agenda-sorting-strategy '(priority-up effort-down)))
@@ -681,7 +684,10 @@ management. Here let's define several GTD views for my agenda contents.
 #+end_src
 
 **** TODO Fix Inbox Filter Error
-**** TODO Add Filter for Projects without NEXT Sub-Entry
+**** TODO Add Filter for Projects without NEXT Tagged Sub-Entry
+**** TODO Add Filter for TODO items without PROJECT/TASK Tags
+
+**** TODO Add Filter for standalone TODO items: Items not under a PROJECT tag
 
 
 *** GTD Contexts
@@ -876,7 +882,7 @@ things set up here.
 #+end_src
 
 
-*** Keywords
+*** Todo Keywords
 Org-mode has a set of configurable keywords, both sequenced and typed, which can be added to headlines and cycled
 through to track an arbitrary workflow you define. This is where I define my keywords.
 
@@ -952,10 +958,15 @@ the word, but it's an imperfect system.
                            ("TODO" "STARTED") ()))
 #+end_src
 
+
+*** TODO Fix inherited tag overrides
+For whatever reason my agenda is still showing inherited tags.
+
 For speedup purposes, I could define tags on every file instead of using inheritance.
 #+begin_src emacs-lisp
-(setq org-agenda-use-tag-inheritance nil)
-;;(setq org-tags-exclude-from-inheritance '("PROJECT" "NEXT"))
+(setq org-use-tag-inheritance nil
+      org-agenda-use-tag-inheritance nil
+      org-tags-exclude-from-inheritance '("PROJECT" "NEXT"))
 #+end_src
 
 
@@ -1063,6 +1074,7 @@ These are functions that will later enable us to interact with org-journal via c
   (goto-char (point-min)))
 #+end_src
 
+
 ** Capture Templates
 Capture templates allow us to quickly invoke a key-chord and select a template to capture some thought directly to a
 good home for it. Tasks to my organizer or inbox, new journal items to my journal, etc...
@@ -1135,7 +1147,7 @@ I keep it around for reference.
 #+end_src
 
 
-*** Retrospective Items
+*** Sprint Retrospective Items
 This second capture group is for capturing information observations and information related to how the sprint is
 going. Capture in the moment, make sense through reflection, synthesize for retrospective and present to the
 team. That's the general idea.
@@ -1154,6 +1166,17 @@ team. That's the general idea.
            "- %?")))
 #+end_src
 
+
+*** TODO Periodic Reflection Capture
+In addition to regular retrospectives, it is useful to do other periodic reflections that support inspection and
+adaptation.
+
+I plan to add a few capture templates here for things like:
+- [ ] Adding to a hype-document (capturing wins)
+- [ ] Adding to a list of grievances (capturing things that bug me for later review)
+  - This review could be useful for cooling off and deciding whether or not I was justified in being bugged
+- [ ] Other things maybe?
+  
 
 *** Office Work Capture
 As I made the transition from engineering work to management I found myself overusing the "office" context I originally
@@ -1360,7 +1383,7 @@ I can even use org-mode to publish static content!
 ;; TODO: https://github.com/fniessen/org-html-themes or other
 #+end_src
 
-*** TODO Publish Research [0/2]
+*** TODO Publish Research [0/6]
 - [ ] =ox-slimhtml=
 - [ ] https://edwardtufte.github.io/tufte-css/
   - https://edwardtufte.github.io/et-book/
@@ -1370,7 +1393,7 @@ I can even use org-mode to publish static content!
 - [ ] https://orgmode.org/worg/org-blog-articles.html
 
 
-*** TODO Org Presentation Research [/]
+*** TODO Org Presentation Research [0/1]
 - [ ] https://github.com/yjwen/org-reveal
 
 
