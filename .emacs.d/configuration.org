@@ -495,7 +495,7 @@ Let's also update a few general settings and behavior.
 (add-hook 'org-mode-hook 'turn-on-auto-fill)
 (add-hook 'org-mode-hook 'org-indent-mode)
 (add-hook 'org-mode-hook
-      '(lambda () (origami-mode nil)))
+          #'(lambda () (origami-mode nil)))
 
 (setq org-src-fontify-natively t
       org-src-tab-acts-natively t
@@ -584,7 +584,7 @@ Let's also modify some other agenda settings.
     #+begin_src emacs-lisp
     (defun air/org-skip-subtree-if-priority (priority)
       "Skip an agenda subtree if it has a priority of PRIORITY.
-        PRIORITY may be one of the characters ?A, ?B, or ?C."
+    PRIORITY may be one of the characters ?A, ?B, or ?C."
       (let ((subtree-end (save-excursion (org-end-of-subtree t)))
             (pri-value (* 1000 (- org-lowest-priority priority)))
             (pri-current (org-get-priority (thing-at-point 'line t))))
@@ -1069,7 +1069,7 @@ These are functions that will later enable us to interact with org-journal via c
 
 (defun org-journal-find-location ()
   "Open today's journal.
-    Specify a non-nil prefix to inhibit inserting the heading"
+Specify a non-nil prefix to inhibit inserting the heading"
   (org-journal-new-entry t)
   (goto-char (point-min)))
 #+end_src
@@ -1176,7 +1176,7 @@ I plan to add a few capture templates here for things like:
 - [ ] Adding to a list of grievances (capturing things that bug me for later review)
   - This review could be useful for cooling off and deciding whether or not I was justified in being bugged
 - [ ] Other things maybe?
-  
+
 
 *** Office Work Capture
 As I made the transition from engineering work to management I found myself overusing the "office" context I originally
@@ -1511,7 +1511,6 @@ chosen to leverage =lsp-mode= as my language server client.
   (setq lsp-prefer-flymake nil))
 
 (use-package lsp-ui :commands lsp-ui-mode)
-(use-package company-lsp :commands company-lsp)
 #+end_src
 
 *** TODO LSP UI
@@ -1545,16 +1544,6 @@ Company-mode, or complete any mode, is an extremely useful tool for text/code co
         company-tooltip-limit 20)
   (with-eval-after-load 'company
     (global-set-key (kbd "C-c SPC") 'company-complete)))
-#+end_src
-
-*** TODO Company LSP
-It also plugs into =lsp-mode= which I'll be setting up later.
-#+begin_src emacs-lisp
-(use-package company-lsp
-  :after (company lsp-mode)
-  :commands company-lsp
-  :config
-  (push 'company-lsp company-backends))
 #+end_src
 
 
@@ -1932,22 +1921,25 @@ This section contains the last moment configurations that wrap up my personal cu
 kill mode-line clutter and start up the Emacs server.
 
 #+begin_src emacs-lisp
-;; Make it so I can recover old sessions after close or reboot
-(desktop-save-mode 1)
+  ;; Make it so I can recover old sessions after close or reboot
+  (desktop-save-mode 1)
 
-;; Load configuration files local to employer
-;;(org-babel-load-file "~/.emacs.d/employer.org")
+  ;; Load configuration files local to employer
+  ;;(org-babel-load-file "~/.emacs.d/employer.org")
 
-;; Start the Emacs server
-(require 'server)
-(unless (server-running-p)
-  (defvar server-name (concat "server"(number-to-string (emacs-pid))))
-  (ignore-errors (server-start))
+  ;; Start the Emacs server
+  (require 'server)
+  (unless (server-running-p)
+    (defvar server-name (concat "server"(number-to-string (emacs-pid))))
+    (ignore-errors (server-start))
 
-  ;; Set the environment variables for *shell*.
-  (setenv "EDITOR" (concat "~/usr/local/bin/emacsclient -s " server-name)))
+    ;; Set the environment variables for *shell*.
+    (setenv "EDITOR" (concat "~/usr/local/bin/emacsclient -s " server-name)))
 
-;;(put 'narrow-to-region 'disabled nil)
+  ;;(put 'narrow-to-region 'disabled nil)
+  (provide 'configuration)
+  ;;; configuration.el ends here
+
 #+end_src
 
 
