@@ -67,7 +67,8 @@
 ;; Conditionally enable native-comp
 (if (and (fboundp 'native-comp-available-p)
 	 (native-comp-available-p))
-    (setq comp-deferred-compilation t)
+    (setq comp-deferred-compilation t
+          package-native-compile t)
   (message "Native compilation is *not* available"))
 
 (add-hook 'after-init-hook
