@@ -9,16 +9,19 @@ alias lz='ls -lhS' # List human readable size (sorted)
 #alias l='ls -CF'  # List entries by columns with classification
 
 # Git Aliases
-alias  ga='git add'
-alias  gb='git branch'
-alias  gd='git diff'
-alias  gl='git log'
-alias  gp='git pull'
-alias  gs='git status'
-alias  gu='git push'
-alias gcl='git clone'
-alias gcm='git commit'
-alias gco='git checkout'
+alias   ga='git add'
+alias   gb='git branch'
+alias   gd='git diff'
+alias   gl='git log'
+alias   gu='git pull' # update
+alias   gp='git push'
+alias  gpf='git push --force'
+alias   gs='git status'
+alias  gcl='git clone'
+alias  gcm='git commit'
+alias  gca='git commit --amend --no-edit'
+alias  gco='git checkout'
+alias gcod='git checkout develop'
 
 # Lazy directory escape rope
 alias .1='cd ..'
@@ -31,6 +34,12 @@ alias .5='cd ../../../../..'
 alias i='npm i'
 alias o='npm outdated'
 alias r='npm run'
+alias b='npm run build'
+alias t='npm run test'
+alias s='npm run start'
+
+# TODO: add OS test to conditionally set:
+# alias bu='brew update && brew upgrade'
 
 # Browsers
 [ -s /opt/google/chrome/chrome ] && alias chrome=/opt/google/chrome/chrome
@@ -49,7 +58,6 @@ export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 export WORKON_HOME=$HOME/.virtualenvs
 export PROJECT_HOME=$HOME/projects
 [ -s "./.local/bin/virtualenvwrapper.sh" ] && \. "./.local/bin/virtualenvwrapper.sh"
-
 
 # C++ 14 : g++ simple build
 # TODO: conditionally set if g++ is installed
@@ -74,3 +82,6 @@ fi
 
 # Identify busy commands
 alias freq="aqk 'print $1' ~/.bash_history | sort | uniq -c | sort -rn | head -n 20"
+
+# Misc
+alias pun="curl -H 'accept: text/plain' https://icanhazdadjoke.com/ -w '\n'"
