@@ -1,9 +1,8 @@
 ################################################################################
 # General Settings
 ################################################################################
-# TODO: make connect with emacsclient
-export EDITOR='emacs'
-export VISUAL='emacs'
+export EDITOR='emacsclient -t'
+export VISUAL='emacsclient -c -a emacs'
 
 # locale stuff
 export LC_ALL='en_US.UTF-8'

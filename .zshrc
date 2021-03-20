@@ -37,9 +37,8 @@ export PS1='%(?.%F{green}#{0}.%F{red}#{%?})$f %F{5}%n%f@%F{green}%m%f %F{14}%~%f
 HISTFILESIZE=100000
 HISTSIZE=10000
 
-# TODO: configure emacsclient
-export EDITOR='emacs'
-export VISUAL='emacs'
+export EDITOR='emacsclient -t'
+export VISUAL='emacsclient -c -a emacs'
 
 export WORDCHARS='*?_-[]~.=&;!#$%^(){}<>'
 
