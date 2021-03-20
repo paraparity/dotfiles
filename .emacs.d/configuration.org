@@ -155,7 +155,11 @@ Let's make sure our buffers have unique names. If we were to open a file of the 
 only need them to be a little unique, not full file path or even relative file path unique.
 
 #+begin_src emacs-lisp
-(require 'uniquify)
+(use-package uniquify
+  :defer t
+  :ensure nil
+  :config
+  (setq uniquify-buffer-name-style 'post-forward-angle-brackets))
 #+end_src
 
 Let's get some more screen real estate by using a small, code friendly font.
@@ -438,16 +442,16 @@ interactively fill out templates.
 #+end_src
 
 
-** TODO Remote Interactions with =tramp=
-Emacs comes packaged with a really cool utility I'm desperately under-utilizing. More work to be done here still.
+** Remote Interactions with =tramp=
+Emacs comes packaged with a really cool utility I'm desperately under-utilizing.
 
 Let's change where Tramp saves things, and use SSH as our default method.
-
 #+begin_src emacs-lisp
-(use-package tramp)
-
-(set-default 'tramp-auto-save-directory "~/.saves/tramp/")
-(setq tramp-default-method "ssh")
+(use-package tramp
+  :defer t
+  :config
+  (setq tramp-default-method "ssh")
+  (set-default 'tramp-auto-save-directory "~/.saves/tramp/"))
 
 ;; TODO: if windows: use PuTTy Plink; if *nix: use ssh
 #+end_src
