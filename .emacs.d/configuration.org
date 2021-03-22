@@ -1626,9 +1626,13 @@ richer set of programming interactions.
 #+end_src
 
 
-** TODO =restclient=
-Interactively making REST calls of a server.
+** =restclient=
+Interactively making REST calls of a server. Mode associated with =*.http= files.
 
+#+begin_src emacs-lisp
+(use-package restclient
+  :mode ("\\.http$"))
+#+end_src
 
 ** Language Configurations
 
