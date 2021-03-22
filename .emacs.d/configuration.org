@@ -326,7 +326,6 @@ can lead to some pretty impressive editing and refactoring feats.
 
 #+begin_src emacs-lisp
 (use-package multiple-cursors
-  :ensure t
   :bind (;; Note that recomended 'C->' and 'C-<' are not characters in the shell.
          ;; Thus I use their lowercase alternatives
          ("C-c ."   . mc/mark-next-like-this)
@@ -373,7 +372,7 @@ can lead to some pretty impressive editing and refactoring feats.
         helm-candidate-number-limit   100
         helm-autoresize-max-height     20
         helm-autoresize-min-height      0)
-  (add-to-list 'helm-sources-using-default-as-input 'heml-source-man-pages)
+  (add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages)
   (helm-autoresize-mode t))
 #+end_src
 
@@ -1498,7 +1497,6 @@ contributors happily using their own editor/IDE.
 
 #+begin_src emacs-lisp
 (use-package editorconfig
-  :ensure t
   :diminish editorconfig-mode
   :config
   (editorconfig-mode 1))
@@ -1538,7 +1536,6 @@ Company-mode, or complete any mode, is an extremely useful tool for text/code co
 
 #+begin_src emacs-lisp
 (use-package company
-  :ensure t
   :diminish
   :bind (:map company-active-map
               ("M-n" . nil)
@@ -1564,22 +1561,24 @@ utilities to really kick up project navigation.
 
 #+begin_src emacs-lisp
 (use-package projectile
-  :ensure t
+  :after (helm)
+  :bind ("C-c p" . projectile-command-map)
   :config
-  (setq projectile-completion-system 'helm)
-  (setq projectile-switch-project-action 'helm-projectile)
-  (setq projectile-enable-caching t)
-  (setq projectile-globally-ignored-directories
-        '(".git" "node_modules" "__pycache__" ".vs"))
-  (setq projectile-globally-ignored-file-suffixes
-        '("#" "~" ".swp" ".o" ".so" ".exe" ".dll" ".elc" ".pyc" ".jar"))
-  (setq projectile-globally-ignored-files
-        '("TAGS" "tags"))
+  (setq projectile-completion-system 'helm
+        projectile-switch-project-action 'helm-projectile
+        projectile-enable-caching t
+        projectile-globally-ignored-directories '(".git" "node_modules" "__pycache__" ".vs")
+        projectile-globally-ignored-file-suffixes '("#" "~" ".swp" ".o" ".so" ".exe" ".dll" ".elc" ".pyc" ".jar")
+        projectile-globally-ignored-files '("TAGS" "tags"))
   (with-eval-after-load "projectile"
     (projectile-mode)
     (helm-projectile-on)))
 
-(use-package helm-projectile)
+(use-package helm-projectile
+  :after (helm projectile)
+  :bind ("M-t" . helm-projectile-find-file)
+  :config
+  (helm-projectile-on))
 #+end_src
 
 
@@ -1590,13 +1589,41 @@ Magical Git interactions in Emacs.
 (setq vc-handled-backends (delq 'Git vc-handled-backends))
 
 (use-package magit
-  :ensure t
   :defer t
   :bind ("C-x g" . magit-status))
    #+end_src
 
 
-** TODO =treemacs=
+** =treemacs=
+Bring a tree layout file explorer to Emacs with =treemacs=. Integrate =treemacs= with =projectile= and =magit= for a
+richer set of programming interactions.
+
+#+begin_src emacs-lisp
+(use-package treemacs
+  :defer t
+  :config
+  (progn
+    (setq treemacs-collapse-dirs 3
+          treemacs-sorting       'alphabetic-desc)
+    (treemacs-follow-mode t)
+    (treemacs-filewatch-mode t))
+  :bind
+  (:map global-map
+        ("M-0"       . treemacs-select-window)
+        ("C-x t 1"   . treemacs-delete-other-windows)
+        ("C-x t t"   . treemacs)
+        ("C-x t B"   . treemacs-bookmark)
+        ("C-x t C-t" . treemacs-find-file)
+        ("C-x t M-t" . treemacs-find-tag)))
+
+(use-package treemacs-projectile
+  :after (treemacs projectile)
+  :config
+  (setq treemacs-header-function #'treemacs-projectile-create-header))
+
+(use-package treemacs-magit
+  :after (treemacs magit))
+#+end_src
 
 
 ** TODO =restclient=
@@ -1891,7 +1918,6 @@ typically within the context they'll be used in. This isn't a hard rule, but is 
 (global-set-key (kbd "C-x |") 'window-toggle-split-direction)
 (global-set-key (kbd "C-c o") 'switch-to-minibuffer)
 (global-set-key (kbd "<f8>") 'flyspell-buffer)
-(global-set-key (kbd "<f6>") 'speedbar)
 
 ;; Elfeed Keybindings
 (global-set-key (kbd "C-x w") 'elfeed)
