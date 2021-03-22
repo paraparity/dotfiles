@@ -1810,20 +1810,28 @@ Emacs comes with it's own Internet Relay Chat client, =ERC=. I use this to chat 
 #+end_src
 
 
-** TODO PDF-Tools
+** PDF-Tools
 PDF-Tools enable PDF viewing within Emacs, so I don't have to have a second application open to read and take notes on
 PDF files. Just one more reason to never leave Emacs.
 
 Unfortunately my current configuration has trouble doing a fresh install as this has a dependency on =pdf-tools= being
 installed on the host running Emacs, which it may not be. On a system with this dependency installed we're up and
-running no problem though.
+running no problem though. As such, I tell =use-package= not to ensure the package is installed and to leave updating to
+me as a manual task.
 
 #+begin_src emacs-lisp :tangle no
 (use-package pdf-tools
+  :ensure nil
   :pin manual
+  :mode ("\\.pdf\\'" . pdf-view-mode)
   :config
   (setq-default pdf-view-display-size 'fit-page)
-  (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward))
+  (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward)
+  (pdf-tools-install :no-query))
+
+(use-package org-pdfview
+  :ensure nil
+  :after pdf-tools)
 #+end_src
 
 
