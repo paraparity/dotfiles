@@ -235,6 +235,13 @@ some answer that said disable this, and I've never looked back since.
 (setq auto-window-vscroll nil)
 #+end_src
 
+In general I use screns that aren't limited to 80 characters width. I'd prefer to take advantage of that width and have
+a better default fill-column.
+
+#+begin_src emacs-lisp
+(setq-default fill-column 120)
+#+end_src
+
 This probably deserves it's own section and some more configuration, but for now here's a minimal GPG setup.
 
 #+begin_src emacs-lisp
