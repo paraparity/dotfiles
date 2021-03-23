@@ -473,7 +473,8 @@ compares to the real thing.
 Let's load all the things! Well, all the things I use anyway.
 
 #+begin_src emacs-lisp
-(use-package org)
+(use-package org
+  :pin org)
 (use-package ob-C :ensure nil)
 (use-package ob-ditaa :ensure nil)
 (use-package ob-dot :ensure nil)
@@ -487,6 +488,7 @@ Let's load all the things! Well, all the things I use anyway.
 (use-package ox :ensure nil)
 (use-package ox-ascii :ensure nil)
 (use-package ox-asciidoc)
+(use-package ox-confluence :ensure nil)
 (use-package ox-html :ensure nil)
 (use-package ox-latex :ensure nil)
 (use-package ox-pandoc)
