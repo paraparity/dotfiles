@@ -576,7 +576,6 @@ Org-mode agendas pull from a list of files which I have mostly tucked away under
             (mapcar (lambda (x) (and x (file-exists-p x) x))
                     `("~/org/agendas/calendar.org"
                       "~/org/agendas/habits.org"
-                      "~/org/agendas/inbox.org"
                       "~/org/agendas/organizer.org"
                       "~/org/agendas/tickler.org"
                       "~/org/agendas/waiting.org"))))
@@ -587,6 +586,8 @@ Let's also modify some other agenda settings.
 #+begin_src emacs-lisp
 (setq org-agenda-skip-deadline-if-done t
       org-agenda-skip-scheduled-if-done t
+      org-agenda-skip-scheduled-if-deadline-is-shown t
+      org-agenda-skip-timestamp-if-done t
       org-agenda-skip-timestamp-if-deadline-is-shown t
       org-agenda-show-future-repeats t
       org-agenda-dim-blocked-tasks nil ; dimming can slow the agenda  down - a filter could show blocked tasks better
@@ -1526,16 +1527,11 @@ to leverage =lsp-mode= as my language server client.
   (setq lsp-prefer-flymake nil))
 
 (use-package lsp-ui :commands lsp-ui-mode)
+(use-package helm-lsp :commands helm-lsp-workspace-symbol)
+(use-package lsp-treemacs :commands lsp-treemacs-error-list)
+
+(use-package dap-mode)
 #+end_src
-
-*** TODO LSP UI
-=lsp-ui= configuration.
-
-
-*** TODO DAP Mode
-=dap-mode=.
-=realgud=?
-
 
 ** Company Completions
 Company-mode, or complete any mode, is an extremely useful tool for text/code completion.
