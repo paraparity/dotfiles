@@ -1844,10 +1844,10 @@ Emacs comes with it's own Internet Relay Chat client, =erc=. I use this to chat 
   :config
   (setq erc-nick "paraparity"
         erc-hide-list '("PART" "QUIT" "JOIN" "NICK")
-        erc-server "irc.freenode.net"
+        erc-server "irc.libera.chat"
         erc-kill-buffer-on-part t
         erc-scrolltobottom-mode t
-        erc-autojoin-channels-alist '(("freenode.net" "##programming" "#org-mode"))))
+        erc-autojoin-channels-alist '(("#emacs" "#erc" "#org-mode"))))
 #+end_src
 
 
