@@ -53,6 +53,12 @@
 (require 'use-package-ensure)
 (setq use-package-always-ensure t)
 
+(use-package exec-path-from-shell
+  :ensure t
+  :if (memq window-system '(mac ns x))
+  :config
+  (exec-path-from-shell-initialize))
+
 ;; Broken in [feature/native-comp]
 ;; Ref:
 ;; - https://github.com/dholm/benchmark-init-el/issues/15
