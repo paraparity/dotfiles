@@ -198,6 +198,14 @@ Emacs opened over. This can also let me see my desktop background which can be r
 (add-to-list 'default-frame-alist '(alpha . (92 . 90)))
 #+end_src
 
+Finally, let's load a theme and bring some style to Emacs.
+
+#+begin_src emacs-lisp
+(use-package kaolin-themes
+  :config
+  (load-theme 'kaolin-eclipse t))
+#+end_src
+
 
 *** Hunt Trailing White-space, Sometimes
 I personally disdain trailing white-space, but also dislike how visually congested =whitespace-mode= can be sometimes. As such,
