@@ -261,6 +261,13 @@ default fill-column.
 (setq-default fill-column 120)
 #+end_src
 
+I also find it useful in some languages and environments to have a hard tab stop list to get spacing right.
+
+#+begin_src emacs-lisp
+(setq tab-stop-list
+   '(4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84 88 92 96))
+#+end_src
+
 This probably deserves it's own section and some more configuration, but for now here's a minimal GPG setup.
 
 #+begin_src emacs-lisp
