@@ -499,7 +499,7 @@ Let's load all the things! Well, all the things I use anyway.
 
 #+begin_src emacs-lisp
 (use-package org
-  :pin org)
+  :pin gnu)
 (use-package ob-C :ensure nil)
 (use-package ob-ditaa :ensure nil)
 (use-package ob-dot :ensure nil)

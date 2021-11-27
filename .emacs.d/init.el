@@ -39,15 +39,15 @@
 
 ;; Ensure desired packages are installed, cache package refresh contents
 (unless	(and (package-installed-p 'use-package)
-	     (package-installed-p 'org-plus-contrib))
+	     (package-installed-p 'org-contrib))
   (package-refresh-contents)
 
   (unless (package-installed-p 'use-package)
     (package-install 'use-package)
     (package-install 'use-package-ensure-system-package))
 
-  (unless (package-installed-p 'org-plus-contrib)
-    (package-install 'org-plus-contrib)))
+  (unless (package-installed-p 'org-contrib)
+    (package-install 'org-contrib)))
 
 (require 'use-package)
 (require 'use-package-ensure)
