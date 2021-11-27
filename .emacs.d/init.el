@@ -32,9 +32,9 @@
 ;; Configure package.el to include melpa
 (when (>= emacs-major-version 24)
   (require 'package)
-  (setq package-archives '(("org"   . "https://orgmode.org/elpa/")
-			   ("gnu"   . "https://elpa.gnu.org/packages/")
-			   ("melpa" . "https://melpa.org/packages/")))
+  (setq package-archives '(("gnu"    . "https://elpa.gnu.org/packages/")
+			   ("melpa"  . "https://melpa.org/packages/")
+                           ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
   (package-initialize))
 
 ;; Ensure desired packages are installed, cache package refresh contents
