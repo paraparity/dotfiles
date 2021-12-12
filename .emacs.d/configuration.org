@@ -523,7 +523,7 @@ Let's load all the things! Well, all the things I use anyway.
 (require 'org-tempo)
 
 (setq org-modules
-      '((org-bbdb org-bibtex org-docview org-eww org-gnus org-habit org-info org-irc org-mhe org-rmail org-tempo org-w3m)))
+      '(ol-doi ol-bbdb ol-bibtex ol-docview ol-gnus ol-info ol-eww org-habit org-tempo))
 #+end_src
 
 Let's also update a few general settings and behavior.
@@ -1048,6 +1048,17 @@ This can be 0 for immediate, or a floating point value.")
 (defalias 'archive-done-tasks 'org-my-archive-done-tasks)
 #+end_src
 
+
+** Org Habit
+=org-habit= is helpful for keeping track of periodic todos that are or should be habitual. It's a little bit more
+lenient in scheduling than using scheduled days, recurrances, or deadlines in that you can set min and max repeat
+ranges. Most importantly, it visually displays a habit graph useful for seeing how you're keeping up with these habits.
+
+#+begin_src emacs-lisp
+(setq org-habit-preceeding-days 14
+      org-habit-following-days 7
+      org-habit-graph-column 96)
+#+end_src
 
 ** Org Clocking
 Org-mode gives us the ability to track time by clocking in and out of headlines. Combined with to-do items and agendas, we can
