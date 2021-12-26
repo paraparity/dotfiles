@@ -2050,18 +2050,18 @@ mode-line clutter and start up the Emacs server.
 
 * Future Work
 
-** TODO Configuration Reading [0/10]
+** TODO Configuration Reading [0/8]
 That's mostly it folks. Configuration is done, the rest are future works. This section collects other articles or
 configurations I've stumbled across and bookmarked for eventual reading.
 
 Research Topics or Reading Material:
-- [ ] =hydra=
-- [ ] =ivy=
+- [ ] Org-ql
+- [ ] org-capture updates
+- [ ] Journaling Configuration (daily journals)
+- [ ] Refiling
 - [ ] =bbdb=
 - [ ] =epg=
-- [ ] semantic
 - [ ] =fzf= - fuzzy file finding
-- [ ] Mac OS X / Linux config
-- [ ] =exec-path-from-shell=
-- [ ] https://github.com/hungptit/tools and integration w/ Emacs
-- [ ] https://gitlab.com/jaor/geiser
+- [ ] Inspiration Exploration (conf reading)
+  - [ ] https://github.com/hungptit/tools and integration w/ Emacs
+  - [ ] https://gitlab.com/jaor/geiser
