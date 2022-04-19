@@ -1,6 +1,9 @@
 # Source in system-wide rc settings
 [ -f /etc/bashrc ] && . /etc/bashrc
 
+# Disable XON/XOFF to avoid collision with C-s forward bash searching
+stty -ixon
+
 # Configure Command Prompt
 # See ANSI Escape Sequences for details: https://www.tldp.org/HOWTO/Bash-Prompt-HOWTO/c327.html
 # See also, the ASCII Table: http://www.asciitable.com/
