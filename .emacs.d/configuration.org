@@ -247,6 +247,14 @@ Enable quick Y/N prompts.
 (fset 'yes-or-no-p 'y-or-n-p)
 #+end_src
 
+I want to quickly get back to files I've recently been working in. Emacs can help with that using =recentf-mode=. We can
+take this even further by using =save-place-mode= to remember cursor position in files too.
+
+#+begin_src emacs-lisp
+(recentf-mode 1)
+(save-place-mode 1)
+#+end_src
+
 At one point I had some slowness with cursor movement and scrolling. I forget why at this point, but I stumbled upon some answer
 that said disable this, and I've never looked back since.
 
