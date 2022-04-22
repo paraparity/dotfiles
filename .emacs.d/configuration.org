@@ -646,6 +646,223 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
 #+end_src
 
 
+** Org To-Do
+Org todos help keep track of work I plan to do and how I engaged with completing that work. Let's get a few general things set
+up here.
+
+#+begin_src emacs-lisp
+(setq org-treat-insert-todo-heading-as-state-change t)
+#+end_src
+
+
+*** To Do Keywords
+Org-mode has a set of configurable keywords, both sequenced and typed, which can be added to headlines and cycled through to
+track an arbitrary workflow you define. This is where I define my keywords.
+
+The default org-mode sequence is as follows:
+#+begin_example
+,-> (unmarked) -> TODO -> DONE --.
+'--------------------------------'
+#+end_example
+
+However, that's pretty simple and I have something else in mind.
+
+#+begin_src emacs-lisp
+(setq org-todo-keywords
+      '((sequence "TODO(t)" "NEXT(n)" "STARTED(s)" "WAITING(w@)" "|" "DONE(d)" "DROP(x@)")
+        (sequence "MEETING(m)" "APPOINTMENT(a)" "|" "FINISHED(f)" "CANCELLED(l)")
+        (sequence "DELEGATED(g@)"               "|" "COMPLETED(p)")
+        (sequence "REVIEW(r)" "REWORK(k@)"      "|" "REVIEWED(v)")
+        (sequence "OPEN(o)"                     "|" "CLOSED(c@)")))
+
+(setq org-todo-keyword-faces
+      '(("STARTED" . "cyan")
+        ("MAYBE"   . "purple")
+        ("WAITING" . (:foreground "yellow" :weight bold))
+        ("CANCELLED" . "DimGray")
+        ("DROP"    . "DimGray")))
+#+end_src
+
+
+*** Tags
+Org-mode files and headlines can be tagged to enable searching and correlating information across files and directories.
+
+To support my Emacs implementation of Getting Things Done (GTD), I have a set of tags I use to denote tasks, projects, and
+contexts. For now this is enough, though I think there's still more improvement to make here, especially when it comes to
+searching behavior.
+
+My tags come in three flavors:
+1. '@context' - indicates physical location, head-space, or tool these tasks are associated with, or some other
+   context in which to act on them in
+2. 'TYPE' - indicates whether the item is a project or task, if it's next up, or if it has some other classification
+3. 'info' - represents informational tags for categorization and search
+
+I try to give each tag a mnemonic hotkey and resolve collisions with capitalization or by choosing another key within the word,
+but it's an imperfect system.
+
+#+begin_src emacs-lisp
+(setq org-tag-alist
+      '(("@administrative" . ?a) ; administrative tasks, paperwork, check-boxes, overhead, etc...
+        ("@career"         . ?c) ; personal professional development (different than learn?)
+        ("@communication"  . ?m) ; messaging, email, outreach, inquiry, and publication work
+        ("@finances"       . ?f) ; banking, budgeting, investing, and most things money related
+        ("@firefights"     . ?F) ; incident response, unexpected/chaotic work, high-urgency (war-room, incident team, etc...)
+        ("@guild"          . ?g) ; involvement in communities of practice
+        ("@health"         . ?h) ; exercise, diet, point-of-care, etc...
+        ("@hiring"         . ?i) ; talent acquisition: outreach, correspondence, and interviewing
+        ("@home"           . ?H) ; apartment related things
+        ("@learn"          . ?l) ; courses, intentional learning, study (different than career?)
+        ("@office"         . ?o) ; general office tasks (un-bucketed)
+        ("@read"           . ?r) ; books and reading nook items
+        ("@review"         . ?R) ; periodic review - timed reminders (tickler)
+        ("@scheduling"     . ?d) ; calendar work, planning, conflict resolution
+        ("@self"           . ?S) ; personal reflection and planning
+        ("@sprint"         . ?s) ; sprint work (primarily development)
+        ("@travel"         . ?t) ; trip planning, packing, and similar
+        ("@workstation"    . ?w) ; home and office hardware, configurations, etc...
+        ("IMPORTANT"       . ?I) ; something of significance or of great value
+        ("NEXT"            . ?N) ; the very next thing to be doing within a project
+        ("PROJECT"         . ?P) ; something that takes significant effort or time, and can be decomposed into individual tasks
+        ("TASK"            . ?T) ; an atomic actionable thing
+        ("URGENT"          . ?U) ; something that demands attention in a short time-span
+        ("journal"         . ?j)))
+
+(setq org-stuck-projects '("+PROJECT/-WAITING-DONE"
+                           ("TODO" "STARTED") ()))
+#+end_src
+
+
+*** TODO Fix inherited tag overrides
+For whatever reason my agenda is still showing inherited tags.
+
+For speedup purposes, I could define tags on every file instead of using inheritance.
+#+begin_src emacs-lisp
+(setq org-use-tag-inheritance nil
+      org-agenda-use-tag-inheritance nil
+      org-tags-exclude-from-inheritance '("PROJECT" "NEXT"))
+#+end_src
+
+
+*** TODO Archiving
+I typically only look back a sprint, about two weeks, for recent time tracking.
+
+Thankfully, John Wiegley shared [[https://orgmode.org/list/m21wc7dz4r.fsf@newartisans.com/][a solution]] for this that I now use. Although, it doesn't quite work yet. Do I have the right
+hooks set?
+
+#+begin_src emacs-lisp
+(defvar org-my-archive-expiry-days 15
+  "The number of days after which a completed task should be auto-archived.
+This can be 0 for immediate, or a floating point value.")
+
+(defun org-my-archive-done-tasks ()
+  "Archive completed org tasks."
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (let ((done-regexp
+           (concat "\\* \\(" (regexp-opt org-done-keywords) "\\) "))
+          (state-regexp
+           (concat "- State \"\\(" (regexp-opt org-done-keywords)
+                   "\\)\"\\s-*\\[\\([^]\n]+\\)\\]")))
+      (while (re-search-forward done-regexp nil t)
+        (let ((end (save-excursion
+                     (outline-next-heading)
+                     (point)))
+              begin)
+          (goto-char (line-beginning-position))
+          (setq begin (point))
+          (if (re-search-forward state-regexp end t)
+              (let* ((time-string (match-string 2))
+                     (when-closed (org-parse-time-string time-string)))
+                (if (>= (time-to-number-of-days
+                         (time-subtract (current-time)
+                                        (apply #'encode-time when-closed)))
+                        org-my-archive-expiry-days)
+                    (org-archive-subtree)))
+            (goto-char end)))))
+    (save-buffer)))
+
+(setq safe-local-variable-values (quote ((after-save-hook archive-done-tasks))))
+
+(defalias 'archive-done-tasks 'org-my-archive-done-tasks)
+#+end_src
+
+
+** Org Habit
+=org-habit= is helpful for keeping track of periodic todos that are or should be habitual. It's a little bit more
+lenient in scheduling than using scheduled days, recurrances, or deadlines in that you can set min and max repeat
+ranges. Most importantly, it visually displays a habit graph useful for seeing how you're keeping up with these habits.
+
+#+begin_src emacs-lisp
+(setq org-habit-preceeding-days 14
+      org-habit-following-days 7
+      org-habit-graph-column 96)
+#+end_src
+
+
+** Org Clocking
+Org-mode gives us the ability to track time by clocking in and out of headlines. Combined with to-do items and agendas, we can
+really get some value out of this functionality.
+
+#+begin_src emacs-lisp
+(setq org-clock-continuously t
+      org-clock-in-resume t
+      org-clock-into-drawer 1
+      org-clock-out-remove-zero-time-clocks t
+      org-clock-out-when-done t
+      org-clock-persist t
+      org-clock-report-include-clocking-task t
+      org-treat-insert-todo-heading-as-state-change t
+      org-expiry-inactive-timestamps t
+      org-log-done 'time
+      org-log-into-drawer "LOGBOOK"
+      org-clock-in-switch-to-state "STARTED")
+
+;; TODO: Move these somewhere more appropriate
+(setq org-src-window-setup 'current-window)
+(setq org-html-postamble nil)
+
+(org-clock-persistence-insinuate); Resume clocking task when emacs is restarted
+#+end_src
+
+
+** Org Linking
+Org-mode supports creating links to various resources across org-mode files and materials online.
+
+Let's create some short links for things I might reference often.
+
+#+begin_src emacs-lisp
+;; Links - use like: cpan:HTML or rfc-txt:7522
+(setq org-link-abbrev-alist
+      '(("rfc-html" . "https://tools.ietf.org/html/rfc%s")
+        ("rfc-txt"  . "https://tools.ietf.org/rfc/rfc%s.txt")
+        ("rfc-pdf"  . "https://tools.ietf.org/pdf/rfc%s.pdf")
+        ("fhir-r4"  . "https://www.hl7.org/fhir/R4/%s")
+        ("us-core"  . "https://www.hl7.org/fhir/us/core/%s")
+        ("cpan"     . "https://metacpan.org/search?q=%s")
+        ("so"       . "https://stackoverflow.com/search?q=%s")
+        ("soq"      . "https://stackoverflow.com/questions/%s")
+        ("ese"      . "https://emacs.stackexchange.com/search?q=%s")
+        ("eseq"     . "https://emacs.stackexchange.com/questions/%s")
+        ("rdit"     . "https://redd.it/%s")))
+#+end_src
+
+
+
+** Org Reporting with =org-ql=
+=org-ql= is a package that lets us query our org files with a bit more power and flexibility than default methods. As
+such I use =org-ql= to dig a bit deeper into my Org usage. Let's also make it play nice with Helm.
+
+#+begin_src emacs-lisp
+(use-package orq-ql
+  :ensure t)
+
+(use-package helm-org-ql
+  :ensure t
+  :after org-ql)
+#+end_src
+
+
 ** Org Agenda Commands
 Agenda commands are the powerhouse behind org-mode and agendas. These allow you to query across your agenda files and surface
 reports of varying complexity. It's a great way to get exactly the thing you want, with only a few keystrokes.
@@ -914,184 +1131,6 @@ Lastly I set =org-agenda-custom-commands= to the value of the list I've built.
 (setq org-agenda-custom-commands TT/org-agenda-custom-commands)
 #+end_src
 
-
-** Org To-Do
-Org todos help keep track of work I plan to do and how I engaged with completing that work. Let's get a few general things set
-up here.
-
-#+begin_src emacs-lisp
-(setq org-treat-insert-todo-heading-as-state-change t)
-#+end_src
-
-
-*** To Do Keywords
-Org-mode has a set of configurable keywords, both sequenced and typed, which can be added to headlines and cycled through to
-track an arbitrary workflow you define. This is where I define my keywords.
-
-The default org-mode sequence is as follows:
-#+begin_example
-,-> (unmarked) -> TODO -> DONE --.
-'--------------------------------'
-#+end_example
-
-However, that's pretty simple and I have something else in mind.
-
-#+begin_src emacs-lisp
-(setq org-todo-keywords
-      '((sequence "TODO(t)" "NEXT(n)" "STARTED(s)" "WAITING(w@)" "|" "DONE(d)" "DROP(x@)")
-        (sequence "MEETING(m)" "APPOINTMENT(a)" "|" "FINISHED(f)" "CANCELLED(l)")
-        (sequence "DELEGATED(g@)"               "|" "COMPLETED(p)")
-        (sequence "REVIEW(r)" "REWORK(k@)"      "|" "REVIEWED(v)")
-        (sequence "OPEN(o)"                     "|" "CLOSED(c@)")))
-
-(setq org-todo-keyword-faces
-      '(("STARTED" . "cyan")
-        ("MAYBE"   . "purple")
-        ("WAITING" . (:foreground "yellow" :weight bold))
-        ("CANCELLED" . "DimGray")
-        ("DROP"    . "DimGray")))
-#+end_src
-
-
-*** Tags
-Org-mode files and headlines can be tagged to enable searching and correlating information across files and directories.
-
-To support my Emacs implementation of Getting Things Done (GTD), I have a set of tags I use to denote tasks, projects, and
-contexts. For now this is enough, though I think there's still more improvement to make here, especially when it comes to
-searching behavior.
-
-My tags come in three flavors:
-1. '@context' - indicates physical location, head-space, or tool these tasks are associated with, or some other
-   context in which to act on them in
-2. 'TYPE' - indicates whether the item is a project or task, if it's next up, or if it has some other classification
-3. 'info' - represents informational tags for categorization and search
-
-I try to give each tag a mnemonic hotkey and resolve collisions with capitalization or by choosing another key within the word,
-but it's an imperfect system.
-
-#+begin_src emacs-lisp
-(setq org-tag-alist
-      '(("@administrative" . ?a) ; administrative tasks, paperwork, check-boxes, overhead, etc...
-        ("@career"         . ?c) ; personal professional development (different than learn?)
-        ("@communication"  . ?m) ; messaging, email, outreach, inquiry, and publication work
-        ("@finances"       . ?f) ; banking, budgeting, investing, and most things money related
-        ("@firefights"     . ?F) ; incident response, unexpected/chaotic work, high-urgency (war-room, incident team, etc...)
-        ("@guild"          . ?g) ; involvement in communities of practice
-        ("@health"         . ?h) ; exercise, diet, point-of-care, etc...
-        ("@hiring"         . ?i) ; talent acquisition: outreach, correspondence, and interviewing
-        ("@home"           . ?H) ; apartment related things
-        ("@learn"          . ?l) ; courses, intentional learning, study (different than career?)
-        ("@office"         . ?o) ; general office tasks (un-bucketed)
-        ("@read"           . ?r) ; books and reading nook items
-        ("@review"         . ?R) ; periodic review - timed reminders (tickler)
-        ("@scheduling"     . ?d) ; calendar work, planning, conflict resolution
-        ("@self"           . ?S) ; personal reflection and planning
-        ("@sprint"         . ?s) ; sprint work (primarily development)
-        ("@travel"         . ?t) ; trip planning, packing, and similar
-        ("@workstation"    . ?w) ; home and office hardware, configurations, etc...
-        ("IMPORTANT"       . ?I) ; something of significance or of great value
-        ("NEXT"            . ?N) ; the very next thing to be doing within a project
-        ("PROJECT"         . ?P) ; something that takes significant effort or time, and can be decomposed into individual tasks
-        ("TASK"            . ?T) ; an atomic actionable thing
-        ("URGENT"          . ?U) ; something that demands attention in a short time-span
-        ("journal"         . ?j)))
-
-(setq org-stuck-projects '("+PROJECT/-WAITING-DONE"
-                           ("TODO" "STARTED") ()))
-#+end_src
-
-
-*** TODO Fix inherited tag overrides
-For whatever reason my agenda is still showing inherited tags.
-
-For speedup purposes, I could define tags on every file instead of using inheritance.
-#+begin_src emacs-lisp
-(setq org-use-tag-inheritance nil
-      org-agenda-use-tag-inheritance nil
-      org-tags-exclude-from-inheritance '("PROJECT" "NEXT"))
-#+end_src
-
-
-*** TODO Archiving
-I typically only look back a sprint, about two weeks, for recent time tracking.
-
-Thankfully, John Wiegley shared [[https://orgmode.org/list/m21wc7dz4r.fsf@newartisans.com/][a solution]] for this that I now use. Although, it doesn't quite work yet. Do I have the right
-hooks set?
-
-#+begin_src emacs-lisp
-(defvar org-my-archive-expiry-days 15
-  "The number of days after which a completed task should be auto-archived.
-This can be 0 for immediate, or a floating point value.")
-
-(defun org-my-archive-done-tasks ()
-  "Archive completed org tasks."
-  (interactive)
-  (save-excursion
-    (goto-char (point-min))
-    (let ((done-regexp
-           (concat "\\* \\(" (regexp-opt org-done-keywords) "\\) "))
-          (state-regexp
-           (concat "- State \"\\(" (regexp-opt org-done-keywords)
-                   "\\)\"\\s-*\\[\\([^]\n]+\\)\\]")))
-      (while (re-search-forward done-regexp nil t)
-        (let ((end (save-excursion
-                     (outline-next-heading)
-                     (point)))
-              begin)
-          (goto-char (line-beginning-position))
-          (setq begin (point))
-          (if (re-search-forward state-regexp end t)
-              (let* ((time-string (match-string 2))
-                     (when-closed (org-parse-time-string time-string)))
-                (if (>= (time-to-number-of-days
-                         (time-subtract (current-time)
-                                        (apply #'encode-time when-closed)))
-                        org-my-archive-expiry-days)
-                    (org-archive-subtree)))
-            (goto-char end)))))
-    (save-buffer)))
-
-(setq safe-local-variable-values (quote ((after-save-hook archive-done-tasks))))
-
-(defalias 'archive-done-tasks 'org-my-archive-done-tasks)
-#+end_src
-
-
-** Org Habit
-=org-habit= is helpful for keeping track of periodic todos that are or should be habitual. It's a little bit more
-lenient in scheduling than using scheduled days, recurrances, or deadlines in that you can set min and max repeat
-ranges. Most importantly, it visually displays a habit graph useful for seeing how you're keeping up with these habits.
-
-#+begin_src emacs-lisp
-(setq org-habit-preceeding-days 14
-      org-habit-following-days 7
-      org-habit-graph-column 96)
-#+end_src
-
-** Org Clocking
-Org-mode gives us the ability to track time by clocking in and out of headlines. Combined with to-do items and agendas, we can
-really get some value out of this functionality.
-
-#+begin_src emacs-lisp
-(setq org-clock-continuously t
-      org-clock-in-resume t
-      org-clock-into-drawer 1
-      org-clock-out-remove-zero-time-clocks t
-      org-clock-out-when-done t
-      org-clock-persist t
-      org-clock-report-include-clocking-task t
-      org-treat-insert-todo-heading-as-state-change t
-      org-expiry-inactive-timestamps t
-      org-log-done 'time
-      org-log-into-drawer "LOGBOOK"
-      org-clock-in-switch-to-state "STARTED")
-
-;; TODO: Move these somewhere more appropriate
-(setq org-src-window-setup 'current-window)
-(setq org-html-postamble nil)
-
-(org-clock-persistence-insinuate); Resume clocking task when emacs is restarted
-#+end_src
 
 
 ** Org Journal
@@ -1385,28 +1424,6 @@ want to move something.
 (setq org-refile-targets '((org-agenda-files :maxlevel . 6)))
 ;;(setq org-outline-path-complete-in-steps nil)
 (setq org-refile-allow-creating-parent-nodes 'confirm)
-#+end_src
-
-
-** Org Linking
-Org-mode supports creating links to various resources across org-mode files and materials online.
-
-Let's create some short links for things I might reference often.
-
-#+begin_src emacs-lisp
-;; Links - use like: cpan:HTML or rfc-txt:7522
-(setq org-link-abbrev-alist
-      '(("rfc-html" . "https://tools.ietf.org/html/rfc%s")
-        ("rfc-txt"  . "https://tools.ietf.org/rfc/rfc%s.txt")
-        ("rfc-pdf"  . "https://tools.ietf.org/pdf/rfc%s.pdf")
-        ("fhir-r4"  . "https://www.hl7.org/fhir/R4/%s")
-        ("us-core"  . "https://www.hl7.org/fhir/us/core/%s")
-        ("cpan"     . "https://metacpan.org/search?q=%s")
-        ("so"       . "https://stackoverflow.com/search?q=%s")
-        ("soq"      . "https://stackoverflow.com/questions/%s")
-        ("ese"      . "https://emacs.stackexchange.com/search?q=%s")
-        ("eseq"     . "https://emacs.stackexchange.com/questions/%s")
-        ("rdit"     . "https://redd.it/%s")))
 #+end_src
 
 
