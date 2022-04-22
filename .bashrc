@@ -1,6 +1,9 @@
 # Source in system-wide rc settings
 [ -f /etc/bashrc ] && . /etc/bashrc
 
+# Check for other system configurations and load
+[ -f /usr/share/nvm/init-nvm.sh ] && . /usr/share/nvm/init-nvm.sh
+
 # Disable XON/XOFF to avoid collision with C-s forward bash searching
 stty -ixon
 
@@ -30,6 +33,12 @@ shopt -s checkwinsize
 set -o ignoreeof
 shopt -s extglob # Reg-ex globbing (e.g: 'ls ?(a*|b*)' # list files starting with a or b; Uses '?!*+@'
 
+# Configure NVM if present
+[ -z "$NVM_DIR" ] && export NVM_DIR="$HOME/.nvm"
+[ -f /usr/share/nvm/nvm.sh ] && . /usr/share/nvm/nvm.sh
+[ -f /usr/share/nvm/bash_completion ] && . /usr/share/nvm/bash_completion
+[ -f /usr/share/nvm/install-nvm-exec ] && . /usr/share/nvm/install-nvm-exec
+
 # # ex - archive extractor
 # # usage: ex <file>
 ex ()
@@ -39,7 +48,7 @@ ex ()
       *.tar.bz2)   tar xjf $1   ;;
       *.tar.gz)    tar xzf $1   ;;
       *.bz2)       bunzip2 $1   ;;
-      *.rar)       unrar x $1     ;;
+      *.rar)       unrar x $1   ;;
       *.gz)        gunzip $1    ;;
       *.tar)       tar xf $1    ;;
       *.tbz2)      tar xjf $1   ;;
