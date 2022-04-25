@@ -89,3 +89,6 @@ ex ()
 
 # Check if I have an alias file present; Install if so
 [ -s ~/.bash_aliases ] && . ~/.bash_aliases
+
+# Load machine specific bash configurations if any
+[ -s ~/.bash_machine ] && . ~/.bash_machine
