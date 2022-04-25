@@ -33,14 +33,35 @@ shopt -s checkwinsize
 set -o ignoreeof
 shopt -s extglob # Reg-ex globbing (e.g: 'ls ?(a*|b*)' # list files starting with a or b; Uses '?!*+@'
 
-# Attempt to start/find ssh-agent if user has ssh directory
-[ -d ~/.ssh ] && eval $(ssh-agent)
-
 # Configure NVM if present
 [ -z "$NVM_DIR" ] && export NVM_DIR="$HOME/.nvm"
 [ -f /usr/share/nvm/nvm.sh ] && . /usr/share/nvm/nvm.sh
 [ -f /usr/share/nvm/bash_completion ] && . /usr/share/nvm/bash_completion
 [ -f /usr/share/nvm/install-nvm-exec ] && . /usr/share/nvm/install-nvm-exec
+
+# Better ssh agent management via:
+# https://vlaams-supercomputing-centrum-vscdocumentation.readthedocs-hosted.com/en/latest/access/using_ssh_agent.html
+# For some background: https://rabexc.org/posts/pitfalls-of-ssh-agents
+start-ssh-agent() {
+    sshfile=~/.ssh-agent-environment
+
+    if [ -n \"$SSH_AUTH_SOCK\" ]; then
+        ssh-add -l &>/dev/null
+        [[ $? != 2 ]] && unset sshfile && return 0
+    fi
+
+    if [ -e \"$sshfile\" ]; then
+        . $sshfile &>/dev/null
+        ssh-add -l &>/dev/null
+        [[ $? != 2 ]] && unset sshfile && return 0
+    fi
+
+    ssh-agent -s > $sshfile && . $sshfile &>/dev/null
+    unset sshfile
+}
+
+# Now invoke the above as part of setup:
+start-ssh-agent &>/dev/null
 
 # # ex - archive extractor
 # # usage: ex <file>
