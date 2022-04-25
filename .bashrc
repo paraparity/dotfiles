@@ -33,6 +33,9 @@ shopt -s checkwinsize
 set -o ignoreeof
 shopt -s extglob # Reg-ex globbing (e.g: 'ls ?(a*|b*)' # list files starting with a or b; Uses '?!*+@'
 
+# Attempt to start/find ssh-agent if user has ssh directory
+[ -d ~/.ssh ] && eval $(ssh-agent)
+
 # Configure NVM if present
 [ -z "$NVM_DIR" ] && export NVM_DIR="$HOME/.nvm"
 [ -f /usr/share/nvm/nvm.sh ] && . /usr/share/nvm/nvm.sh
