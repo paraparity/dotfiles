@@ -175,7 +175,7 @@ them to be a little unique, not full file path or even relative file path unique
 Let's get some more screen real estate by using a small, code friendly font.
 
 #+begin_src emacs-lisp
-(set-frame-font "monospace-10")
+(set-frame-font "Fira Code-10")
 #+end_src
 
 Let's keep track of time in the mode-line.
@@ -231,6 +231,31 @@ everywhere until I find somewhere that bites me because of it.
 #+end_src
 
 
+*** Ligatures with [[https://github.com/tonsky/FiraCode][FiraCode]]
+I like the math symbol support from ligature friendly fonts like FiraCode. There are a few pre-requisites:
+- FiraCode font is installed on your system
+- Emacs was compiled with =Harfbuzz= and =Cairo= support
+- There is a local copy of [[https://github.com/mickeynp/ligature.el][ligature.el]] to source from
+
+When present Emacs can be configured to support it using the =ligature.el= package.
+
+#+begin_src emacs-lisp
+(use-package ligature
+  :load-path "~/.emacs.d/elisp/"
+  :config
+  ;; Enable these ligatures in all major modes
+  (ligature-set-ligatures 't '("www" "**" "***" "**/" "*>" "*/" "\\\\" "\\\\\\" "{-" "::"
+                               ":::" ":=" "!!" "!=" "!==" "-}" "----" "-->" "->" "->>"
+                               "-<" "-<<" "-~" "#{" "#[" "##" "###" "####" "#(" "#?" "#_"
+                               "#_(" ".-" ".=" ".." "..<" "..." "?=" "??" ";;" "/*" "/**"
+                               "/=" "/==" "/>" "//" "///" "&&" "||" "||=" "|=" "|>" "^=" "$>"
+                               "++" "+++" "+>" "=:=" "==" "===" "==>" "=>" "=>>" "<="
+                               "=<<" "=/=" ">-" ">=" ">=>" ">>" ">>-" ">>=" ">>>" "<*"
+                               "<*>" "<|" "<|>" "<$" "<$>" "<!--" "<-" "<--" "<->" "<+"
+                               "<+>" "<=" "<==" "<=>" "<=<" "<>" "<<" "<<-" "<<=" "<<<"
+                               "<~" "<~~" "</" "</>" "~@" "~-" "~>" "~~" "~~>" "%%"))
+  (global-ligature-mode 't))
+#+end_src
 
 ** Various Emacs Settings
 Since I don't use directory local variables for Emacs very much if at all, and considering they could load arbitrary emacs-lisp,
