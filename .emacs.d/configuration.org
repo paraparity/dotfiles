@@ -81,6 +81,10 @@ Emacs can get a bit aggressive with file backups and auto-saves. I dislike how i
 collaborative projects with tilde files (e.g: =myfile.txt~=). Usually things like =.gitignore= are sufficient to insulate others
 from these, but I'd prefer not to see them myself.
 
+In some places I use directory backups which have a bad habit of replicating Emacs lock files, bloating the remote
+location. I'd rather keep lock behavior while avoiding replication bloat, so I change the default lock file
+location. Configuration courtesy of [[https://www.gnu.org/software/emacs/manual/html_node/elisp/File-Locks.html#index-lock_002dfile_002dname_002dtransforms][File Locks - lock-file-name-transforms]].
+
 #+begin_src emacs-lisp
 ;; File Backup Management
 (setq backup-by-copying t
@@ -93,6 +97,10 @@ from these, but I'd prefer not to see them myself.
 ;; Auto-save File Management
 (setq auto-save-file-name-transforms
       `((".*" ,temporary-file-directory t)))
+
+;; Lock File Management
+(setq lock-file-name-transforms
+      '(("\\`/.*/\\([^/]+\\)\\'" "/var/tmp/\\1" t)))
 #+end_src
 
 
