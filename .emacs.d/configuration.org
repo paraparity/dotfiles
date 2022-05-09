@@ -1981,6 +1981,21 @@ home.
   "Open this file."
   (interactive)
   (find-file "~/.emacs.d/configuration.org"))
+
+;; From EmacsWiki: https://www.emacswiki.org/emacs/FlySpell#h5o-16
+(defun flyspell-learn-word-at-point ()
+  "Takes the highlighted word at point and insert it into the personal/private dictionary."
+  (interactive)
+  (let ((current-location (point))
+	(word (flyspell-get-word)))
+    (when (consp word)
+      (flyspell-do-correct
+       'save nil
+       (car word)
+       current-location
+       (cadr word)
+       (caddr word)
+       current-location))))
   #+end_src
 
 
@@ -2015,6 +2030,7 @@ within the context they'll be used in. This isn't a hard rule, but is what I lea
 (global-set-key (kbd "C-x |") 'window-toggle-split-direction)
 (global-set-key (kbd "C-c o") 'switch-to-minibuffer)
 (global-set-key (kbd "<f8>") 'flyspell-buffer)
+(global-set-key (kbd "C-c s") 'flyspell-learn-word-at-point)
 
 ;; Elfeed Keybindings
 (global-set-key (kbd "C-x w") 'elfeed)
