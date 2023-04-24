@@ -945,23 +945,23 @@ let's define several GTD views for my agenda contents.
                      ((org-agenda-files '(TT/org-inbox))
                       (org-agenda-overriding-header "Items in my Inbox")))))
           ("gu" "Unscheduled TODOs"
-           ((todo ""
-                  ((org-agenda-overriding-header "Unscheduled TODOs:")
-                   (org-agenda-sorting-strategy '(priority-down effort-up tag-up))
-                   (org-agenda-skip-function '(org-agenda-skip-entry-if 'timestamp 'todo 'done))))))
+           ((org-ql-block '(and (todo)
+                                (not (done))
+                                (not (scheduled)))
+                          ((org-ql-block-header "Unscheduled TODOs")))))
           ("gn" "Next Actions"
-           ((tags "NEXT"
-                  ((org-agenda-overriding-header "Next Actions:")
-                   (org-agenda-sorting-strategy '(priority-down effort-up tag-up))))))
+           ((org-ql-block '(and (not (done))
+                                (tags "NEXT"))
+                          ((org-ql-block-header "Next Actions")))))
           ("gr" "Work to Review"
-           ((tags "REVIEW"
-                  ((org-agenda-overriding-header "Work to Review:")
-                   (org-agenda-sorting-strategy '(priority-down effort-up tag-up))))))
+           ((org-ql-block '(and (not (done))
+                                (todo "REVIEW"))
+                          ((org-ql-block-header "For Review")))))
           ("gw" "Delegated or Waiting-On"
-           ((todo "WAITING"
-                  ((org-agenda-overriding-header "Awaiting Response or Action:")))
-            (todo "DELEGATED"
-                  ((org-agenda-overriding-header "Pending Delegate Completion:")))))
+           ((org-ql-block '(todo "WAITING")
+                          ((org-ql-block-header "Awaiting Response or Action:")))
+            (org-ql-block '(todo "DELEGATED")
+                          ((org-ql-block-header "Pending Delegate Completion:")))))
           ("gd" "Daily agenda and all TODOs"
            ((tags "PRIORITY=\"A\""
                   ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
@@ -978,9 +978,6 @@ let's define several GTD views for my agenda contents.
 #+end_src
 
 **** TODO Fix Inbox Filter Error
-**** TODO Add Filter for Projects without NEXT Tagged Sub-Entry
-**** TODO Add Filter for TODO items without PROJECT/TASK Tags
-**** TODO Add Filter for standalone TODO items: Items not under a PROJECT tag
 
 
 *** GTD Contexts
@@ -995,61 +992,57 @@ context.
 (setcdr (last TT/org-agenda-custom-commands)
         '(("@" . "Context Filters")
           ("@a" "Administrative Work"
-           ((tags-todo "@administrative"
-                       ((org-agenda-overriding-header "Open Administrative Tasks:")
-                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))))))
-          ("@c" "Career Work"
-           ((tags-todo "@career"
-                       ((org-agenda-overriding-header "Open Career Tasks:")
-                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))))))
-          ("@m" "Communication Work"
-           ((tags-todo "@communication"
-                       ((org-agenda-overriding-header "Open Communications Tasks:")
-                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))))))
-          ("@f" "Finance Work"
-           ((tags-todo "@finances"
-                       ((org-agenda-overriding-header "Open Financial Tasks:")
-                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))))))
-          ("@g" "Guild and Community of Practice Work"
-           ((tags-todo "@guild"
-                       ((org-agenda-overriding-header "Open Guild Tasks:")
-                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))))))
-          ("@h" "Health and Wellness Work"
-           ((tags-todo "@health"
-                       ((org-agenda-overriding-header "Open Health and Wellness Tasks:")
-                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))))))
-          ("@i" "Hiring Work"
-           ((tags-todo "@hiring"
-                       ((org-agenda-overriding-header "Open Hiring Tasks:")
-                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))))))
-          ("@H" "Home Work"
-           ((tags-todo "@home"
-                       ((org-agenda-overriding-header "Open Home Tasks:")
-                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))))))
+           ((org-ql-block '(and (not (done))
+				(tags "@administrative"))
+                          ((org-ql-block-header "Open Administrative Tasks:")))))
+          ("@c" "Career"
+           ((org-ql-block '(and (not (done))
+				(tags "@career"))
+                          ((org-ql-block-header "Open Career Tasks:")))))
+          ("@m" "Communication"
+           ((org-ql-block '(and (not (done))
+				(tags "@communication"))
+                          ((org-ql-block-header "Open Communication Tasks:")))))
+          ("@f" "Finance"
+           ((org-ql-block '(and (not (done))
+				(tags "@finances"))
+                          ((org-ql-block-header "Open Financial Tasks:")))))
+          ("@g" "Guild and Community of Practice"
+           ((org-ql-block '(and (not (done))
+				(tags "@guild"))
+                          ((org-ql-block-header "Open Guild Tasks:")))))
+          ("@h" "Health and Wellness"
+           ((org-ql-block '(and (not (done))
+				(tags "@health"))
+                          ((org-ql-block-header "Open Health and Wellness Tasks:")))))
+          ("@i" "Hiring"
+           ((org-ql-block '(and (not (done))
+				(tags "@hiring"))
+                          ((org-ql-block-header "Open Hiring Tasks:")))))
+          ("@H" "Home"
+           ((org-ql-block '(and (not (done))
+				(tags "@home"))
+                          ((org-ql-block-header "Open Home Tasks:")))))
           ("@l" "Learning Agenda"
-           ((tags-todo "@learn"
-                       ((org-agenda-overriding-header "Open Learning Agenda Items:")
-                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))))))
-          ("@R" "Review Work"
-           ((tags-todo "@review"
-                       ((org-agenda-overriding-header "Open Items for Review:")
-                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))))))
-          ("@d" "Scheduling and Calendar Work"
-           ((tags-todo "@scheduling"
-                       ((org-agenda-overriding-header "Open Scheduling and Calendar Tasks:")
-                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))))))
+           ((org-ql-block '(and (not (done))
+				(tags "@learn"))
+                          ((org-ql-block-header "Open Learning Agenda Tasks:")))))
+          ("@d" "Scheduling Work"
+           ((org-ql-block '(and (not (done))
+				(tags "@scheduling"))
+                          ((org-ql-block-header "Open Scheduling Tasks:")))))
           ("@s" "Sprint Work"
-           ((tags-todo "@sprint"
-                       ((org-agenda-overriding-header "Open Sprint Tasks:")
-                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))))))
+           ((org-ql-block '(and (not (done))
+				(tags "@sprint"))
+                          ((org-ql-block-header "Open Sprint Tasks:")))))
           ("@t" "Travel and Planning Work"
-           ((tags-todo "@travel"
-                       ((org-agenda-overriding-header "Open Travel Tasks:")
-                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))))))
+           ((org-ql-block '(and (not (done))
+				(tags "@travel"))
+                          ((org-ql-block-header "Open Travel Tasks:")))))
           ("@w" "Workstation Work"
-           ((tags-todo "@workstation"
-                       ((org-agenda-overriding-header "Open Workstation Tasks:")
-                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))))))))
+           ((org-ql-block '(and (not (done))
+				(tags "@workstation"))
+                          ((org-ql-block-header "Open Workstation Tasks:")))))))
 #+end_src
 
 
@@ -1110,7 +1103,6 @@ most useful on an end of sprint day.
           ("4" "Q4" tags-todo "-IMPORTANT-URGENT")))
 #+end_src
 
-
 *** Deadline Review
 #+begin_src emacs-lisp
 (setcdr (last TT/org-agenda-custom-commands)
@@ -1127,6 +1119,35 @@ most useful on an end of sprint day.
 #+end_src
 
 **** TODO Fix "With Deadline Columns" Filter
+
+
+*** Someday Items
+#+begin_src emacs-lisp
+(setcdr (last TT/org-agenda-custom-commands)
+        '(("ces" "Custom: Agenda SOMEDAY items"
+           ((org-ql-block '(and (todo "SOMEDAY")
+                                (priority "A"))
+                          ((org-ql-block-header "SOMEDAY High-priority")))
+            (agenda)))))
+#+end_src
+
+
+*** Hygiene Queries
+#+begin_src emacs-lisp
+(setcdr (last TT/org-agenda-custom-commands)
+        '(("h" "Hygiene Filters")
+          ("ht" "Missing Todo/Project Tags"
+           ((org-ql-block '(and (not (done))
+                                (not (or (tags "TASK")
+                                         (tags "PROJECT"))))
+                          ((org-ql-block-header "Missing Task/Project Tags")))))
+          ("hs" "Stuck Projects"
+           ((org-ql-block '(and (tags "PROJECT")
+                                (not (done))
+                                (not (descendants (todo "NEXT")))
+                                (not (descendants (scheduled))))
+                          ((org-ql-block-header "Stuck Projects")))))))
+#+end_src
 
 
 *** TODO Archive Queries
