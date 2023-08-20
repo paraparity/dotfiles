@@ -602,8 +602,9 @@ and the like.
 (defvar TT/org-someday          (concat TT/org-incubate-dir "/someday.org")     "Someday agenda for things I may want to revisit.")
 (defvar TT/org-travel           (concat TT/org-incubate-dir "/travel.org")      "Someday agenda for travel related things.")
 (defvar TT/org-learning         (concat TT/org-agenda-dir "/learning.org")      "Agenda for structured learning.")
-(defvar TT/org-manager          (concat TT/org-agenda-dir "/manager.org")       "Actionable captures for 1:1s with my manager.")
 (defvar TT/org-organizer        (concat TT/org-agenda-dir "/organizer.org")     "Core organizer tracking prioritized actionable work.")
+(defvar TT/org-people-dir       (concat TT/org-agenda-dir "/people")            "Org files specific to people.")
+(defvar TT/org-manager          (concat TT/org-people-dir "/manager.org")       "Actionable captures for 1:1s with my manager.")
 (defvar TT/org-retrospective    (concat TT/org-agenda-dir "/retro.org")         "Capture target for retro related info or actionable items.")
 (defvar TT/org-review           (concat TT/org-agenda-dir "/review.org")        "Reference on and journal for reflection.")
 (defvar TT/org-tickler          (concat TT/org-agenda-dir "/tickler.org")       "Time relevant reminders for 'decide to do later' items.")
@@ -614,6 +615,7 @@ and the like.
 (defvar TT/org-commonplace-dir  (concat org-directory "/commonplace")           "Top level org directory for 'commonplace book' material.")
 (defvar TT/org-journal-dir      (concat org-directory "/journal")               "Top level org directory for journal entries.")
 (defvar TT/org-ledger-dir       (concat org-directory "/ledger")                "Top level org directory for accounting/budgeting ledgers.")
+(defvar TT/org-projects         (concat org-directory "/projects")              "Top level org directory for projects.")
 
 (defvar org-default-notes-file TT/org-inbox)
 #+end_src
