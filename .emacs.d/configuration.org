@@ -970,11 +970,6 @@ let's define several GTD views for my agenda contents. All of these exist under 
                             (org-agenda-skip-if nil '(scheduled deadline))))
                       (org-agenda-overriding-header "All Normal Priority Tasks:"))))
            ((org-agenda-compact-blocks t)))
-          ("gu" "Unscheduled TODOs"
-           ((org-ql-block '(and (todo)
-                                (not (done))
-                                (not (scheduled)))
-                          ((org-ql-block-header "Unscheduled TODOs")))))
           ("gn" "Next Actions"
            ((org-ql-block '(and (not (done))
                                 (tags "NEXT"))
@@ -996,7 +991,9 @@ let's define several GTD views for my agenda contents. All of these exist under 
 #+end_src
 
 **** TODO Fix Inbox Filter Error
-
+#+begin_example
+org-agenda-files: Wrong type argument: stringp, TT/org-inbox
+#+end_example
 
 *** GTD Contexts
 I use =org-mode= tags starting with an '@' symbol to designate a context. A context is a physical space, head-space, or tool that
@@ -1155,17 +1152,27 @@ most useful on an end of sprint day.
 #+begin_src emacs-lisp
 (setcdr (last TT/org-agenda-custom-commands)
         '(("h" "Hygiene Filters")
-          ("ht" "Missing Todo/Project Tags"
-           ((org-ql-block '(and (not (done))
-                                (not (or (tags "TASK")
-                                         (tags "PROJECT"))))
-                          ((org-ql-block-header "Missing Task/Project Tags")))))
+          ("hp" "Missing Priority"
+           ((org-ql-block '(and (todo)
+                                (not (done))
+                                (not (priority)))
+                          ((org-ql-block-header "Missing Priority")))))
           ("hs" "Stuck Projects"
            ((org-ql-block '(and (tags "PROJECT")
                                 (not (done))
                                 (not (descendants (todo "NEXT")))
                                 (not (descendants (scheduled))))
-                          ((org-ql-block-header "Stuck Projects")))))))
+                          ((org-ql-block-header "Stuck Projects")))))
+          ("ht" "Missing Todo/Project Tags"
+           ((org-ql-block '(and (not (done))
+                                (not (or (tags "TASK")
+                                         (tags "PROJECT"))))
+                          ((org-ql-block-header "Missing Task/Project Tags")))))
+          ("hu" "Unscheduled TODOs"
+           ((org-ql-block '(and (todo)
+                                (not (done))
+                                (not (planning))) ;; Planning is any of (deadline, scheduled, closed)
+                          ((org-ql-block-header "Unscheduled TODOs")))))))
 #+end_src
 
 
