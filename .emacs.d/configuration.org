@@ -1112,10 +1112,52 @@ most useful on an end of sprint day.
 *** Priority Matrix Commands
 #+begin_src emacs-lisp
 (setcdr (last TT/org-agenda-custom-commands)
-        '(("1" "Q1" tags-todo "+IMPORTANT+URGENT")
-          ("2" "Q2" tags-todo "+IMPORTANT-URGENT")
-          ("3" "Q3" tags-todo "-IMPORTANT+URGENT")
-          ("4" "Q4" tags-todo "-IMPORTANT-URGENT")))
+        '(("p" . "Priority Matrix")
+          ("pq" "Quadrants"
+           ((org-ql-block '(and (todo)
+                                (not (done))
+                                (tags "IMPORTANT")
+                                (tags "URGENT"))
+                          ((org-ql-block-header "Urgent")))
+            (org-ql-block '(and (todo)
+                                (not (done))
+                                (tags "IMPORTANT")
+                                (not (tags "URGENT")))
+                          ((org-ql-block-header "Important")))
+            (org-ql-block '(and (todo)
+                                (not (done))
+                                (tags "URGENT")
+                                (not (tags "IMPORTANT")))
+                          ((org-ql-block-header "Delegate")))
+            (org-ql-block '(and (todo)
+                                (not (done))
+                                (not (habit))
+                                (not (tags "URGENT" "IMPORTANT")))
+                          ((org-ql-block-header "Decline")))))
+          ("p1" "Q1"
+           ((org-ql-block '(and (todo)
+                                (not (done))
+                                (tags "IMPORTANT")
+                                (tags "URGENT"))
+                          ((org-ql-block-header "Urgent")))))
+          ("p2" "Q2"
+           ((org-ql-block '(and (todo)
+                                (not (done))
+                                (tags "IMPORTANT")
+                                (not (tags "URGENT")))
+                          ((org-ql-block-header "Important")))))
+          ("p3" "Q3"
+           ((org-ql-block '(and (todo)
+                                (not (done))
+                                (tags "URGENT")
+                                (not (tags "IMPORTANT")))
+                          ((org-ql-block-header "Delegate")))))
+          ("p4" "Q4"
+           ((org-ql-block '(and (todo)
+                                (not (done))
+                                (not (habit))
+                                (not (tags "URGENT" "IMPORTANT")))
+_                          ((org-ql-block-header "Decline")))))))
 #+end_src
 
 
