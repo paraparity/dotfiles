@@ -995,6 +995,7 @@ let's define several GTD views for my agenda contents. All of these exist under 
 org-agenda-files: Wrong type argument: stringp, TT/org-inbox
 #+end_example
 
+
 *** GTD Contexts
 I use =org-mode= tags starting with an '@' symbol to designate a context. A context is a physical space, head-space, or tool that
 a set of work is associated with.
@@ -1058,54 +1059,6 @@ context.
            ((org-ql-block '(and (not (done))
 				(tags "@workstation"))
                           ((org-ql-block-header "Open Workstation Tasks:")))))))
-#+end_src
-
-
-*** Calendar View
-#+begin_src emacs-lisp
-(setcdr (last TT/org-agenda-custom-commands)
-        '(("c" "Calendar"
-           ((agenda ""
-                    ((org-agenda-span 7)
-                     (org-agenda-start-on-weekday 0)
-                     (org-agenda-time-grid-nil)
-                     (org-agenda-repeating-timestamp-show-all t)
-                     (org-agenda-entry-types '(:timestamp :sexp))))))))
-#+end_src
-
-
-*** TODO Sprint Views
-Sprint views are intended to highlight sprint work as well as to surface todos that were completed in the last sprint
-interval. I don't care to get the interval exactly right, instead I'll just do a two week look-back for completed work that is
-most useful on an end of sprint day.
-
-#+begin_src emacs-lisp
-(setcdr (last TT/org-agenda-custom-commands)
-        '(("v" "Sprint and Retro Views")
-          ("vc" "Retro Completed Work"
-           ((todo "DONE"
-                  ((org-agenda-span "-14d")
-                   (org-agenda-start-on-weekday nil)
-                   (org-agenda-sorting-strategy '(tag-up priority-down))
-                   (org-agenda-todo-keyword-format "")
-                   (org-agenda-overriding-header "Completed Work")))
-            (todo "COMPLETED"
-                  ((org-agenda-span "-14d")
-                   (org-agenda-start-on-weekday nil)
-                   (org-agenda-todo-keyword-format "")
-                   (org-agenda-overriding-header "Attended Meetings")))))))
-#+end_src
-
-
-*** TODO Daily Actions
-#+begin_src emacs-lisp
-(setcdr (last TT/org-agenda-custom-commands)
-        '(("D" "Daily Action List"
-           ((agenda ""
-                    ((org-agenda-span 1)
-                     (org-agenda-sorting-strategy
-                      '((agenda time-up priority-down tag-up)))
-                     (org-deadline-warning-ndays 0)))))))
 #+end_src
 
 
@@ -1179,17 +1132,6 @@ _                          ((org-ql-block-header "Decline")))))))
 **** TODO Fix "With Deadline Columns" Filter
 
 
-*** Someday Items
-#+begin_src emacs-lisp
-(setcdr (last TT/org-agenda-custom-commands)
-        '(("ces" "Custom: Agenda SOMEDAY items"
-           ((org-ql-block '(and (todo "SOMEDAY")
-                                (priority "A"))
-                          ((org-ql-block-header "SOMEDAY High-priority")))
-            (agenda)))))
-#+end_src
-
-
 *** Hygiene Queries
 #+begin_src emacs-lisp
 (setcdr (last TT/org-agenda-custom-commands)
@@ -1232,17 +1174,6 @@ Verify these work. I picked them up from a worg demo or something but haven't us
            ((org-tags-view ""
                            ((org-agenda-files
                              (file-expand-wildcards "~/org/archive/*.org"))))))))
-#+end_src
-
-
-*** TODO Misc Commands
-A few of these commands that I'm workshopping didn't quite make sense elsewhere. Still not sure what I want to do with them yet.
-
-#+begin_src emacs-lisp
-(setcdr (last TT/org-agenda-custom-commands)
-        '(("y" "Someday Maybe"
-           ((todo "MAYBE"
-                  ((org-agenda-files '(TT/org-someday))))))))
 #+end_src
 
 
