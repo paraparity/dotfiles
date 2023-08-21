@@ -991,7 +991,7 @@ let's define several GTD views for my agenda contents. All of these exist under 
           ("gb" "Braindead"
            ((org-ql-block '(and (todo)
                                 (not (done))
-                                (tags ("braindead")))
+                                (tags "braindead"))
                           ((org-ql-block-header "Braindead")))))))
 #+end_src
 
