@@ -135,3 +135,10 @@ ex ()
     echo "'$1' is not a valid file"
   fi
 }
+
+################################################################################
+# Source Locals
+################################################################################
+# Load machine specific zsh configurations if any
+[ -s ~/.zshrc_machine ] && . ~/.zshrc_machine
+
