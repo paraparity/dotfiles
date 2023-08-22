@@ -7,15 +7,14 @@
 ;;; Code:
 ;;(setq debug-on-error t)
 
-;; Since Emacs 27 hasn't yet been released, let's duplicate my gc code from my preemptive early-init.el
-;; Defer garbage collection further back in the startup process
-(setq gc-cons-threshold 268435456)
-
-;; Restore after startup
+;; Restore garbage collection settings after startup
 (add-hook 'after-init-hook
 	  (lambda ()
-	    (setq gc-cons-threshold 1000000)
-	    (message "gc-cons-threshold restored to %s" gc-cons-threshold)))
+	    (setq gc-cons-threshold 1000000
+                  gc-cons-percentage 0.2)
+	    (message "gc-cons-threshold restored to %s and gc-cons-percentage to %s"
+                     gc-cons-threshold
+                     gc-cons-percentage)))
 
 ;; Per: https://blog.d46.us/advanced-emacs-startup/
 ;; Let's monitor startup performance
