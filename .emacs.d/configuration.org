@@ -960,6 +960,9 @@ let's define several GTD views for my agenda contents. All of these exist under 
             (org-ql-block '(and (not (done))
                                 (tags "NEXT"))
                           ((org-ql-block-header "Next Actions")))
+            (org-ql-block '(and (not (done))
+                                (tags "PROJECT"))
+                          ((org-ql-block-header "Open Projects")))
             (org-ql-block '(and (todo)
                                 (priority "B")
                                 (not (done))
@@ -1155,29 +1158,29 @@ _                          ((org-ql-block-header "Decline")))))))
 *** Hygiene Queries
 #+begin_src emacs-lisp
 (setcdr (last TT/org-agenda-custom-commands)
-        '(("h" "Hygiene Filters")
-          ("hi" "Incomplete"
+        '(("H" "Hygiene Filters")
+          ("Hi" "Incomplete"
            ((org-ql-block '(and (todo)
                                 (not (done))
                                 (ancestors (done)))
                           ((org-ql-block-header "Incomplete Sub-Tasks")))))
-          ("hp" "Missing Priority"
+          ("Hp" "Missing Priority"
            ((org-ql-block '(and (todo)
                                 (not (done))
                                 (not (priority)))
                           ((org-ql-block-header "Missing Priority")))))
-          ("hs" "Stuck Projects"
+          ("Hs" "Stuck Projects"
            ((org-ql-block '(and (tags "PROJECT")
                                 (not (done))
                                 (not (descendants (todo "NEXT")))
                                 (not (descendants (scheduled))))
                           ((org-ql-block-header "Stuck Projects")))))
-          ("ht" "Missing Todo/Project Tags"
+          ("Ht" "Missing Todo/Project Tags"
            ((org-ql-block '(and (not (done))
                                 (not (or (tags "TASK")
                                          (tags "PROJECT"))))
                           ((org-ql-block-header "Missing Task/Project Tags")))))
-          ("hu" "Unscheduled TODOs"
+          ("Hu" "Unscheduled TODOs"
            ((org-ql-block '(and (todo)
                                 (not (done))
                                 (not (planning))) ;; Planning is any of (deadline, scheduled, closed)
@@ -2169,7 +2172,7 @@ mode-line clutter and start up the Emacs server.
 
 * Future Work
 
-** TODO Configuration Reading [0/8]
+** TODO Configuration Reading [0/9]
 That's mostly it folks. Configuration is done, the rest are future works. This section collects other articles or
 configurations I've stumbled across and bookmarked for eventual reading.
 
@@ -2184,3 +2187,5 @@ Research Topics or Reading Material:
 - [ ] Inspiration Exploration (conf reading)
   - [ ] https://github.com/hungptit/tools and integration w/ Emacs
   - [ ] https://gitlab.com/jaor/geiser
+- [ ] email
+  - [ ] https://github.com/rougier/emacs-gtd#working-with-mail
