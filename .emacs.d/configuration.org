@@ -1366,6 +1366,8 @@ better categorizes things within sub-groups of the "office" context.
            "* TODO [#A] %? :@office:@firefights:TASK:URGENT:\n")
           ("oh" "Hiring" entry (file+olp TT/org-organizer "Office" "Hiring")
            "* TODO [#B] %? :@office:@hiring:TASK:\n")
+          ("oi" "Interrupts" entry (file+olp TT/org-organizer "Office" "Interrupts")
+           "* TODO [#B] %? :@office:TASK:\n")
           ("os" "Scheduling" entry (file+olp TT/org-organizer "Office" "Scheduling")
            "* TODO [#B] %? :@office:@scheduling:TASK:\n")
           ("ot" "Task" entry (file+olp TT/org-organizer "Office" "General")
