@@ -122,10 +122,10 @@ Pretty much just set the coding system to UTF-8. Also enable the Japanese langua
 
 #+begin_src emacs-lisp
 (prefer-coding-system 'utf-8)
+(set-default-coding-systems 'utf-8)
 (set-keyboard-coding-system 'utf-8)
 (set-terminal-coding-system 'utf-8)
 (set-selection-coding-system 'utf-8)
-(set-default-coding-systems 'utf-8)
 
 (set-language-environment "japanese")
 #+end_src
@@ -265,6 +265,7 @@ When present Emacs can be configured to support it using the =ligature.el= packa
   (global-ligature-mode 't))
 #+end_src
 
+
 ** Various Emacs Settings
 Since I don't use directory local variables for Emacs very much if at all, and considering they could load arbitrary emacs-lisp,
 potentially without my knowing, lets prevent that from happening.
@@ -307,6 +308,12 @@ I also find it useful in some languages and environments to have a hard tab stop
 #+begin_src emacs-lisp
 (setq tab-stop-list
    '(4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84 88 92 96))
+#+end_src
+
+Most other applications I use replace selected text on input, and Emacs can be set to do the same.
+
+#+begin_src emacs-lisp
+(delete-selection-mode t)
 #+end_src
 
 This probably deserves it's own section and some more configuration, but for now here's a minimal GPG setup.

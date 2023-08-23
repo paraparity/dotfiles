@@ -73,7 +73,9 @@
 (if (and (fboundp 'native-comp-available-p)
 	 (native-comp-available-p))
     (setq comp-deferred-compilation t
-          package-native-compile t)
+          package-native-compile t
+          native-comp-async-report-warnings-errors silent
+          byte-compile-warnings '(not docstrings free-vars lexical))
   (message "Native compilation is *not* available"))
 
 (add-hook 'after-init-hook
