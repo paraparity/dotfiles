@@ -867,6 +867,16 @@ Let's create some short links for things I might reference often.
 
 
 
+** Org Templates
+Emacs =org-mode= has builtin templates that allow you to type something like =<s= and hit =TAB= to insert a source
+block. We can customize this to add a few I commonly use.
+
+#+begin_src emacs-lisp
+(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+(add-to-list 'org-structure-template-alist '("sh" . "src shell"))
+#+end_src
+
+
 ** Org Reporting with =org-ql=
 =org-ql= is a package that lets us query our org files with a bit more power and flexibility than default methods. As
 such I use =org-ql= to dig a bit deeper into my Org usage. Let's also make it play nice with Helm.
