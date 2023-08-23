@@ -1618,7 +1618,7 @@ I'm only going to configure the subset of languages I use, but there are way mor
 With =org-babel= mostly configured, lets plug it into some other stuff.
 
 #+begin_src emacs-lisp
-(add-to-list 'org-src-lang-modes (quote ("plantuml" . fundamental)))
+(add-to-list 'org-src-lang-modes '("plantuml" . fundamental))
 #+end_src
 
 
