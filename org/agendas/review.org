@@ -1,0 +1,61 @@
+* Clock Reviews
+Org Agenda clock tables and reports for review
+
+** Daily
+#+BEGIN: clocktable :scope agenda :block today :maxlevel 3 :fileskip0 t :link t :indent t :formula % :compact t :properties ("Effort")
+#+END:
+
+
+** Weekly
+#+BEGIN: clocktable :scope agenda :block thisweek :fileskip0 t
+#+END:
+
+
+** Sprint
+#+BEGIN: clocktable :scope agenda :tstart "<-2w>" :tend "<now>" :step week :stepskip0 t :fileskip0 t
+#+END:
+
+
+* Weekly Review Checklist
+From the GTD weekly review guide.
+
+** Get Clear
+1. Collect loose papers & materials
+   - Put in inbox
+2. Get "IN" to Zero
+   - process all outstanding materials (papers, journals, meeting minutes, voicemails, dictation, emails, etc...)
+3. Empty your Head
+   - Put in writing and process any uncaptured new projects, action items, waiting for's, someday maybe's, etc...
+
+
+** Get Current
+1. Review Action Lists
+   - Mark off completed actions
+   - Review for reminders of further action steps to record
+2. Review Previous Calendar Data
+   - Review past calendar for remaining action items, reference data, etc...
+   - Transfer into active system
+3. Review Upcoming Calendar
+   - Review upcoming calendar events, long and short term
+   - Capture actions triggered
+4. Review Waiting for List
+   - Review appropriate actions for any needed follow-up
+   - Check off any received ones
+5. Review Project (and larger outcome) Lists
+   - Evaluate status of projects, goals, and outcomes one by one
+   - Ensure at least one current action item on each
+   - Browse through project plans, support material, and any other WIP material for triggers
+6. Review any relevant checklists
+   - Use as a trigger for any new actions
+
+
+** Get Creative
+1. Review Someday Maybe list
+   - Review for any projects which may now become active
+   - Transfer into "Projects"
+   - Delete items no longer of interest
+2. Be Creative and Courageous
+   - Capture anything you can think of into your system
+
+
+

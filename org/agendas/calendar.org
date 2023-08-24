@@ -1,23 +1,23 @@
 * Meetings                                                         :@meeting:
-** One Offs
 ** Daily
-*** TODO Scrum
+*** TODO Stand Up
 ** Weekly
-*** TODO Reflection
-*** TODO Planning
-*** TODO Write Digest
+*** TODO Weekly Review
+*** TODO Backlog Refinement
 ** 1:1s
+*** TODO {person}
 ** Bi-Weekly
-*** TODO Sprint Review
 *** TODO Retrospective
 *** TODO Sprint Planning
+*** TODO Sprint Review
 ** Monthly
 ** Quarterly
+** One Offs
 * Overhead
 ** TODO Lunch
-** TODO Morning Comms Ingest
-** TODO Afternoon Comms Ingest
-** TODO Evening Comms Ingest
+** TODO Morning Messaging
+** TODO Afternoon Messaging
+** TODO Evening Messaging
 ** Disruptions
 *** Reboot
 *** Hardware Issue

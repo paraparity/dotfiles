@@ -1,27 +1,19 @@
-* Current Sprint                                                    :@sprint:
-** Development
-** Research
-** Review
-** Other
-* Last Sprint                                                       :@sprint:
-** Development
-** Research
-** Review
-** Other
-* Health & Wellness                                                 :@health:
-* Home                                                                :@home:
-* Learn                                                              :@learn:
-* Career                                                            :@career:
-* Office                                                            :@office:
-** Administrative                                            :administrative:
-** Communication                                             :@communication:
-** Firefighting                                                 :@firefights:
-** Hiring                                                            :hiring:
-** Scheduling                                                   :@scheduling:
+* Career
+* Finances
+* Guild
+* Health & Wellness
+* Home
+* Learn
+* Office
+** Administrative
+** Communication
+** Firefighting
+** Hiring
+** Interrupts
+** Scheduling
 ** General
-* Finances                                                        :@finances:
-* Guild                                                              :@guild:
-* Read                                                                :@read:
-* Travel                                                            :@travel:
-* Workstation                                                  :@workstation:
-* Tasks
+* Reading
+* Self
+* Social
+* Travel
+* Workstation
