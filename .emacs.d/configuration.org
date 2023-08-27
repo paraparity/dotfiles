@@ -1243,7 +1243,7 @@ Let's set up where my journal files are stored, and the format of the entries.
 #+begin_src emacs-lisp
 (use-package org-journal
   :init (setq org-journal-dir TT/org-journal-dir
-              org-journal-file-format "%Y%m%d"
+              org-journal-file-format "%Y%m%d.org"
               org-journal-date-format "%e %b %Y (%A)")
   :config (setq org-journal-date-prefix "#+TITLE: Daily Note for "))
 #+end_src
