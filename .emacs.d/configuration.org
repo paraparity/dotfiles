@@ -641,11 +641,11 @@ Org-mode agendas pull from a list of files which I have mostly tucked away under
 (setq org-agenda-files
       (delq nil
             (mapcar (lambda (x) (and x (file-exists-p x) x))
-                    `("~/org/agendas/calendar.org"
-                      "~/org/agendas/habits.org"
-                      "~/org/agendas/organizer.org"
-                      "~/org/agendas/tickler.org"
-                      "~/org/agendas/waiting.org"))))
+                    `(,TT/org-calendar
+                      ,TT/org-habits
+                      ,TT/org-organizer
+                      ,TT/org-tickler
+                      ,TT/org-waiting))))
 #+end_src
 
 Let's also modify some other agenda settings.
