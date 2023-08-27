@@ -1455,20 +1455,34 @@ for now, I schedule to an arbitrary date and update the date with =C-s= as I fil
 #+end_src
 
 
+*** Journal
+Capture templates for journaling. Contains a basic capture, and a few templates for structured entries.
+
+#+begin_src emacs-lisp
+(setcdr (last TT/org-capture-templates)
+        `(("j" "Journal Capture Group")
+          ("jd" "Daily Goals" entry (function org-journal-find-location)
+           (file ,(concat TT/org-cap-templates-dir "/daily-goals.org"))
+           :empty-lines 1)
+          ("jj" "Journal" entry (function org-journal-find-location)
+           "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?")))
+#+end_src
+
+
 *** Miscellaneous
 The remaining capture templates are things that don't fit neatly into any one group.
 
 #+begin_src emacs-lisp
 ;; Other Capture Templates (un-grouped)
 (setcdr (last TT/org-capture-templates)
-        '(("j" "Journal" entry (function org-journal-find-location)
-           "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?")
-          ("n" "Note" entry (file+olp TT/org-inbox "Capture" "Notes")
-           "* %?\n:PROPERTIES:\n:CREATED:%U:END:\n\n%i\n\nFrom: %a" :empty-lines 1)
+        `(("n" "Note" entry (file+olp TT/org-inbox "Capture" "Notes")
+           "* %?\n:PROPERTIES:\n:CREATED:%U\n:END:\n\n%i\n\nFrom: %a"
+           :empty-lines 1)
           ("m" "Manager Notes" item (file+olp TT/org-manager "1:1 Prep" "Capture")
            "- %?" :empty-lines 1)
           ("x" "Incident Notes" entry (file (capture-incident-response-file "~/org/incidents"))
-           "* Incident Trigger\n%?\n\n* Five Whys\n\n* Action Items\n\n" :clock-in t)
+           (file ,(concat TT/org-cap-templates-dir "/incident.org"))
+           :clock-in t)
           ("X" "Item to Current Clock" item
            (clock)
            "%i%?" :empty-lines 1)
