@@ -1147,7 +1147,7 @@ context.
                                 (not (done))
                                 (not (habit))
                                 (not (tags "URGENT" "IMPORTANT")))
-_                          ((org-ql-block-header "Decline")))))))
+                          ((org-ql-block-header "Decline")))))))
 #+end_src
 
 
@@ -1172,7 +1172,7 @@ _                          ((org-ql-block-header "Decline")))))))
 *** Hygiene Queries
 #+begin_src emacs-lisp
 (setcdr (last TT/org-agenda-custom-commands)
-        '(("H" "Hygiene Filters")
+        '(("H" . "Hygiene Filters")
           ("Hi" "Incomplete"
            ((org-ql-block '(and (todo)
                                 (not (done))
@@ -1180,24 +1180,33 @@ _                          ((org-ql-block-header "Decline")))))))
                           ((org-ql-block-header "Incomplete Sub-Tasks")))))
           ("Hp" "Missing Priority"
            ((org-ql-block '(and (todo)
-                                (not (done))
-                                (not (priority)))
+                                (not
+                                 (or (done)
+                                     (habit)
+                                     (priority))))
                           ((org-ql-block-header "Missing Priority")))))
           ("Hs" "Stuck Projects"
            ((org-ql-block '(and (tags "PROJECT")
-                                (not (done))
-                                (not (descendants (todo "NEXT")))
-                                (not (descendants (scheduled))))
+                                (not
+                                 (or (done)
+                                     (descendants (todo "NEXT"))
+                                     (descendants (scheduled)))))
                           ((org-ql-block-header "Stuck Projects")))))
           ("Ht" "Missing Todo/Project Tags"
-           ((org-ql-block '(and (not (done))
-                                (not (or (tags "TASK")
-                                         (tags "PROJECT"))))
+           ((org-ql-block '(and (todo)
+                                (not
+                                 (or
+                                  (done)
+                                  (habit)
+                                  (tags "TASK")
+                                  (tags "PROJECT"))))
                           ((org-ql-block-header "Missing Task/Project Tags")))))
           ("Hu" "Unscheduled TODOs"
            ((org-ql-block '(and (todo)
-                                (not (done))
-                                (not (planning))) ;; Planning is any of (deadline, scheduled, closed)
+                                (not
+                                 (or
+                                  (done)
+                                  (planning)))) ;; Planning is any of (deadline, scheduled, closed)
                           ((org-ql-block-header "Unscheduled TODOs")))))))
 #+end_src
 
