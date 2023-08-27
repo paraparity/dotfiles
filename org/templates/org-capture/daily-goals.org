@@ -1,0 +1,7 @@
+* %(format-time-string org-journal-time-format)Daily Goals
+Today I plan to:
+1. %^{goal-one}
+2. %^{goal-two}
+3. %^{goal-three}
+
+%?

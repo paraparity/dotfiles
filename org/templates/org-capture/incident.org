@@ -1,0 +1,22 @@
+* %(format-time-string org-journal-time-format)Incident Response
+
+** Overview
+%?
+
+** Five Whys
+
+1.
+2.
+3.
+4.
+5.
+
+** Action Items
+
+*** Increase Time to Detect
+
+
+*** Shorten Response & Resolution
+
+
+*** Reduce Likelihood

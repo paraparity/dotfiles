@@ -1,0 +1,1 @@
+* %(format-time-string org-journal-time-format)Daily Reflection
