@@ -962,10 +962,10 @@ let's define several GTD views for my agenda contents. All of these exist under 
 
 #+begin_src emacs-lisp
 (setcdr (last TT/org-agenda-custom-commands)
-        '(("g" . "GTD Views")
+        `(("g" . "GTD Views")
           ("gi" "Inbox"
            ((alltodo ""
-                     ((org-agenda-files '(TT/org-inbox))
+                     ((org-agenda-files '(,TT/org-inbox))
                       (org-agenda-overriding-header "Items in my Inbox")))))
           ("gd" "Daily agenda and TODOs"
            ((org-ql-block '(and (priority "A")
@@ -1031,11 +1031,6 @@ let's define several GTD views for my agenda contents. All of these exist under 
                                 (tags "braindead"))
                           ((org-ql-block-header "Braindead")))))))
 #+end_src
-
-**** TODO Fix Inbox Filter Error
-#+begin_example
-org-agenda-files: Wrong type argument: stringp, TT/org-inbox
-#+end_example
 
 
 *** GTD Contexts
