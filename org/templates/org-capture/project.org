@@ -1,0 +1,19 @@
+#+TITLE: %^{project-title}
+
+* Overview
+%^{purpose}
+
+** Outcome
+%^{outcome}
+
+
+* Brainstorm
+- %?
+
+
+* TODO %^{project-title} Plan [0/0]                                                                                      :PROJECT:
+Organize ideas from the brainstorm and move to project organizer.
+
+
+* Reference
+- 
