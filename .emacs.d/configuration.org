@@ -2115,6 +2115,15 @@ home.
        current-location))))
   #+end_src
 
+** Reload Configuration
+Ideal for when I've edited my configuration and want to re-load my configuration. My =init.el= tangles and loads my
+literate config, so we'll just invoke that again.
+
+#+begin_src emacs-lisp
+(defun TT/reload-emacs-configuration ()
+  (interactive)
+  (load-file "~/.emacs.d/init.el"))
+#+end_src
 
 ** Screenshots
 In Emacs 27.1+ you can use Cairo to take an SVG screenshot of Emacs.
