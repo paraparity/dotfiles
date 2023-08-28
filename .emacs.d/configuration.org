@@ -2075,12 +2075,11 @@ just use a =lsp-mode= solution that also supports Typescript.
 (use-package rjsx-mode)
 #+end_src
 
-**** TODO Possible JS Mode Refactor
-I can probably clean up the above a bit using =use-package= capabilities.
-
-Reference:
-- [[https://github.com/jwiegley/use-package#hooks][use-package hooks]]
-- [[https://github.com/zamansky/using-emacs/blob/master/myinit.org][Zamansky init]]
+**** =jq= Script Editing with =jq-mode=
+#+begin_src emacs-lisp
+(use-package jq-mode
+  :mode "\\.jq\\'")
+#+end_src
 
 
 *** TODO C/C++
@@ -2203,6 +2202,7 @@ literate config, so we'll just invoke that again.
   (interactive)
   (load-file "~/.emacs.d/init.el"))
 #+end_src
+
 
 ** Screenshots
 In Emacs 27.1+ you can use Cairo to take an SVG screenshot of Emacs.
