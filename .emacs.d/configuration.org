@@ -446,7 +446,7 @@ lead to some pretty impressive editing and refactoring feats.
 #+end_src
 
 
-** =helm=
+** Incremental Narrowing with =helm=
 =helm= gives us incremental completions and narrowing capabilities that really help find what you're looking for.
 
 #+begin_src emacs-lisp
@@ -1739,7 +1739,7 @@ to leverage =lsp-mode= as my language server client.
   (setq lsp-prefer-flymake nil))
 #+end_src
 
-*** =lsp-ui=
+*** Language Server UI Modules with =lsp-ui=
 #+begin_src emacs-lisp
 (use-package lsp-ui
   :commands lsp-ui-mode
@@ -1829,9 +1829,7 @@ really kick up project navigation.
 #+end_src
 
 
-** TODO =magit= and Version Control
-Magical Git interactions in Emacs.
-
+** Magical Git Interactions with =magit=
 #+begin_src emacs-lisp
 (setq vc-handled-backends (delq 'Git vc-handled-backends))
 
@@ -1840,7 +1838,7 @@ Magical Git interactions in Emacs.
   :bind ("C-x g" . magit-status))
    #+end_src
 
-*** =magit= Forge
+*** Access Git Forges with =forge=
 
 #+begin_src emacs-lisp
 (use-package forge
@@ -1848,7 +1846,7 @@ Magical Git interactions in Emacs.
 #+end_src
 
 
-** =treemacs=
+** Project and Directory Viewing with =treemacs=
 Bring a tree layout file explorer to Emacs with =treemacs=. Integrate =treemacs= with =projectile= and =magit= for a
 richer set of programming interactions.
 
@@ -1880,7 +1878,7 @@ richer set of programming interactions.
 #+end_src
 
 
-** =restclient=
+** HTTP Interactions with =restclient=
 Interactively making REST calls of a server. Mode associated with =*.http= files.
 
 #+begin_src emacs-lisp
@@ -1969,7 +1967,7 @@ immediately. This enforces a tight feedback loop in development.
 #+end_src
 
 
-** =docker= Integration
+** Containerized Development with =docker=
 Some projects I work on use Docker, and Emacs can too!
 
 #+begin_src emacs-lisp
