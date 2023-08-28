@@ -2015,6 +2015,7 @@ just use a =lsp-mode= solution that also supports Typescript.
 (use-package js2-mode
   :defer t
   :mode "\\.js$"
+  :interpreter "node"
   :config
   (require 'js2-refactor)
   (define-key js2-mode-map (kbd "M-.") nil)
@@ -2036,6 +2037,8 @@ just use a =lsp-mode= solution that also supports Typescript.
   (add-hook 'js2-mode-hook
             (lambda ()
               (setq mode-name "js2"))))
+
+(use-package rjsx-mode)
 #+end_src
 
 **** TODO Possible JS Mode Refactor
