@@ -68,7 +68,10 @@ can have them.
 Minimal GPG setup that could use some expansion.
 
 #+begin_src emacs-lisp
-(defvar epg-gpg-program "gpg2")
+(use-package epg
+  :defer t
+  :custom
+  (epg-gpg-program "gpg2"))
 
 ;; Auth
 (defvar auth-sources '((:source "~/.emacs.d/secrets/.authinfo.gpg")) "Auth info source location.")
