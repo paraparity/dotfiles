@@ -656,6 +656,7 @@ Let's also modify some other agenda settings.
       org-agenda-skip-scheduled-if-deadline-is-shown t
       org-agenda-skip-timestamp-if-done t
       org-agenda-skip-timestamp-if-deadline-is-shown t
+      org-agenda-compact-blocks t
       org-agenda-show-future-repeats t
       org-agenda-dim-blocked-tasks nil ; dimming can slow the agenda  down - a filter could show blocked tasks better
       org-agenda-inhibit-startup t ; speedup agenda loading by ignoring startup options
@@ -1271,7 +1272,7 @@ Specify a non-nil prefix to inhibit inserting the heading"
 #+end_src
 
 
-** Capture Templates
+** Org Capture Templates
 Capture templates allow us to quickly invoke a key-chord and select a template to capture some thought directly to a good home
 for it. Tasks to my organizer or inbox, new journal items to my journal, etc...
 
@@ -2214,14 +2215,11 @@ mode-line clutter and start up the Emacs server.
 
 * Future Work
 
-** TODO Configuration Reading [0/9]
+** TODO Configuration Reading [0/8]
 That's mostly it folks. Configuration is done, the rest are future works. This section collects other articles or
 configurations I've stumbled across and bookmarked for eventual reading.
 
 Research Topics or Reading Material:
-- [ ] Org-ql
-- [ ] org-capture updates
-- [ ] Journaling Configuration (daily journals)
 - [ ] Refiling
 - [ ] =bbdb=
 - [ ] =epg=
@@ -2231,3 +2229,5 @@ Research Topics or Reading Material:
   - [ ] https://gitlab.com/jaor/geiser
 - [ ] email
   - [ ] https://github.com/rougier/emacs-gtd#working-with-mail
+- [ ] [[https://olmon.gitlab.io/org-themes/][org-themes]]
+- [ ] [[https://github.com/rougier/notebook-mode][notebook-mode]]
