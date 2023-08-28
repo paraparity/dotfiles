@@ -1766,7 +1766,14 @@ to leverage =lsp-mode= as my language server client.
 #+begin_src emacs-lisp
 (use-package lsp-treemacs
   :commands lsp-treemacs-error-list
-  :after lsp-mode)
+  :after lsp-mode
+  :config
+  (setq treemacs-indentation 2
+        treemacs-width 32
+        treemacs-git-integration t
+        treemacs-sorting 'alphabetic-desc
+        treemacs-show-hidden-files t)
+  (treemacs-filewatch-mode t))
 #+end_src
 
 
