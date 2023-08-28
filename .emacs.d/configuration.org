@@ -1992,12 +1992,9 @@ Some projects I work on use Docker, and Emacs can too!
 
 
 ** Language Configurations
-
-*** Mode Bindings by File Type
 Make sure certain files open in certain modes.
 
 #+begin_src emacs-lisp
-(add-to-list 'auto-mode-alist '("\\.py$"          . python-mode))
 (add-to-list 'auto-mode-alist '("\\.org$"         . org-mode))
 (add-to-list 'auto-mode-alist '("\\.ts$"          . typescript-mode))
 (add-to-list 'auto-mode-alist '("\\.css$"         . css-mode))
@@ -2008,34 +2005,7 @@ Make sure certain files open in certain modes.
 (add-to-list 'auto-mode-alist '("Jenkinsfile$"    . groovy-mode))
 #+end_src
 
-
-*** Perl Customization
-I used to write mostly in Perl for work, and =cperl-mode= was what my Emacs wielding colleagues used at my employer. It was
-definitely better than the Vanilla Emacs defaults.
-
-#+begin_src emacs-lisp
-(use-package cperl-mode)
-
-(setq cperl-close-paren-offset 0
-      cperl-continued-statement-offset 0
-      cperl-electric-backspace-untabify nil
-      cperl-indent-comment-at-column-0 t
-      cperl-indent-parens-as-block t
-      cperl-label-offset 0
-      cperl-min-label-indent 0
-      perl-tab-to-comment t)
-
-(defalias 'perl-mode 'cperl-mode)
-(defvaralias 'c-basic-offset 'tab-width)
-(defvaralias 'cperl-indent-level 'tab-width)
-
-;; Override perl-mode with cperl-mode
-(mapc
- (lambda (pair)
-   (if (eq (cdr pair) 'perl-mode)
-       (setcdr pair 'cperl-mode)))
- (append auto-mode-alist interpreter-mode-alist))
-#+end_src
+*** TODO C/C++
 
 
 *** JavaScript
@@ -2080,7 +2050,52 @@ just use a =lsp-mode= solution that also supports Typescript.
 #+end_src
 
 
-*** TODO C/C++
+*** Perl Customization
+I used to write mostly in Perl for work, and =cperl-mode= was what my Emacs wielding colleagues used at my employer. It was
+definitely better than the Vanilla Emacs defaults.
+
+#+begin_src emacs-lisp
+(use-package cperl-mode)
+
+(setq cperl-close-paren-offset 0
+      cperl-continued-statement-offset 0
+      cperl-electric-backspace-untabify nil
+      cperl-indent-comment-at-column-0 t
+      cperl-indent-parens-as-block t
+      cperl-label-offset 0
+      cperl-min-label-indent 0
+      perl-tab-to-comment t)
+
+(defalias 'perl-mode 'cperl-mode)
+(defvaralias 'c-basic-offset 'tab-width)
+(defvaralias 'cperl-indent-level 'tab-width)
+
+;; Override perl-mode with cperl-mode
+(mapc
+ (lambda (pair)
+   (if (eq (cdr pair) 'perl-mode)
+       (setcdr pair 'cperl-mode)))
+ (append auto-mode-alist interpreter-mode-alist))
+#+end_src
+
+
+*** Python
+#+begin_src emacs-lisp
+(use-package python-mode
+  :mode "\\.py\\'"
+  :interpreter "python3")
+#+end_src
+
+**** TODO Formatting with Black
+
+
+*** Rust
+#+begin_src emacs-lisp
+(use-package rust-mode
+  :mode "\\.rs\\'"
+  :config
+  (rust-format-on-save t))
+#+end_src
 
 
 * More Emacs Modes
@@ -2326,6 +2341,10 @@ mode-line clutter and start up the Emacs server.
 
 
 * Future Work
+
+** Questions to Anwswer
+- [ ] When to use =:custom= vs =:config= and others in =use-package=?
+
 
 ** TODO Configuration Reading [0/8]
 That's mostly it folks. Configuration is done, the rest are future works. This section collects other articles or
