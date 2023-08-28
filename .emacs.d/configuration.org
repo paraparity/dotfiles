@@ -1791,7 +1791,7 @@ Company-mode, or complete any mode, is an extremely useful tool for text/code co
 #+end_src
 
 
-** Projectile Project Management
+** Project Management with =projectile=
 Projectile allows for project interaction from within Emacs. Additionally, it can hook into other powerful search utilities to
 really kick up project navigation.
 
@@ -1802,10 +1802,10 @@ really kick up project navigation.
   :bind ("C-c p" . projectile-command-map)
   :config
   (setq projectile-completion-system 'helm
-        projectile-switch-project-action 'helm-projectile
-        projectile-enable-caching t
+        projectile-switch-project-action 'helm-projectile)
+  (setq projectile-enable-caching t
         projectile-globally-ignored-directories '(".git" "node_modules" "__pycache__" ".vs")
-        projectile-globally-ignored-file-suffixes '("#" "~" ".swp" ".o" ".so" ".exe" ".dll" ".elc" ".pyc" ".jar")
+        projectile-globally-ignored-file-suffixes '(".swp" ".o" ".so" ".exe" ".dll" ".elc" ".pyc" ".jar" ".cache")
         projectile-globally-ignored-files '("TAGS" "tags"))
   (with-eval-after-load "projectile"
     (projectile-mode)
