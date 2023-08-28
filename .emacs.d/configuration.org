@@ -130,10 +130,6 @@ location. Configuration courtesy of [[https://www.gnu.org/software/emacs/manual/
 ;; Auto-save File Management
 (setq auto-save-file-name-transforms
       `((".*" ,temporary-file-directory t)))
-
-;; Lock File Management
-(setq lock-file-name-transforms
-      '(("\\`/.*/\\([^/]+\\)\\'" "/var/tmp/\\1" t)))
 #+end_src
 
 
@@ -144,6 +140,14 @@ until I need it.
 
 #+begin_src emacs-lisp
 (setq create-lockfiles nil)
+#+end_src
+
+This is my old config for lock files which I keep around in case I need to restore it. This section is not tangled.
+
+#+begin_src emacs-lisp :tangle no
+;; Lock File Management
+(setq lock-file-name-transforms
+      '(("\\`/.*/\\([^/]+\\)\\'" "/var/tmp/\\1" t)))
 #+end_src
 
 
