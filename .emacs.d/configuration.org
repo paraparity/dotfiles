@@ -43,6 +43,13 @@ configuration code, so let's keep my old =init.el= header around.
 * General Settings
 
 ** Security
+Since I don't use directory local variables for Emacs very much if at all, and considering they could load arbitrary emacs-lisp,
+potentially without my knowing, lets prevent that from happening.
+
+#+begin_src emacs-lisp
+(setq enable-local-eval nil
+      enable-local-variables nil)
+#+end_src
 
 *** GnuTLS
 GnuTLS establishes encrypted SSL or TLS connections, and it can be used by Emacs. We want secure connections wherever we
@@ -55,6 +62,7 @@ can have them.
   :config
   (setq gnutls-verify-error t))
 #+end_src
+
 
 *** TODO GPG
 Minimal GPG setup that could use some expansion.
@@ -292,14 +300,6 @@ When present Emacs can be configured to support it using the =ligature.el= packa
 
 
 ** Various Emacs Settings
-Since I don't use directory local variables for Emacs very much if at all, and considering they could load arbitrary emacs-lisp,
-potentially without my knowing, lets prevent that from happening.
-
-#+begin_src emacs-lisp
-(setq enable-local-eval nil
-      enable-local-variables nil)
-#+end_src
-
 Enable quick Y/N prompts.
 
 #+begin_src emacs-lisp
@@ -340,6 +340,7 @@ Most other applications I use replace selected text on input, and Emacs can be s
 #+begin_src emacs-lisp
 (delete-selection-mode t)
 #+end_src
+
 
 ** Key Frequency Tracking
 This helps identify frequently used commands which could be bound for faster use.
