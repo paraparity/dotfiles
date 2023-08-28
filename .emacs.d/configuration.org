@@ -1962,6 +1962,30 @@ immediately. This enforces a tight feedback loop in development.
 #+end_src
 
 
+** =docker= Integration
+Some projects I work on use Docker, and Emacs can too!
+
+#+begin_src emacs-lisp
+(use-package docker
+  :defer t
+  :diminish
+  :bind ("C-c d" . docker))
+#+end_src
+
+*** Edit Docker Compose Files with =docker-compose-mode=
+#+begin_src emacs-lisp
+(use-package docker-compose-mode
+  :mode "docker-compose.*\.yml\\'")
+#+end_src
+
+
+*** Edit Dockerfiles with =dockerfile-mode=
+#+begin_src emacs-lisp
+(use-package dockerfile-mode
+  :mode "Dockerfile[a-zA-Z.-]*\\'")
+#+end_src
+
+
 ** Language Configurations
 
 *** Mode Bindings by File Type
