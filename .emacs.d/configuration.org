@@ -2112,8 +2112,10 @@ Emacs comes with it's own Internet Relay Chat client, =erc=. I use this to chat 
 #+begin_src emacs-lisp
 (use-package erc
   :defer t
+  :hook (erc-mode . abbrev-mode)
   :config
-  (setq erc-nick "paraparity"
+  (setq erc-port "6667"
+        erc-nick "paraparity"
         erc-hide-list '("PART" "QUIT" "JOIN" "NICK")
         erc-server "irc.libera.chat"
         erc-kill-buffer-on-part t
