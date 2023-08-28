@@ -1,1 +1,21 @@
 * %(format-time-string org-journal-time-format)Daily Reflection
+
+** Daily Clock Review
+#+BEGIN: clocktable :scope agenda :block today :maxlevel 3 :fileskip0 t :link t :indent t :formula % :compact t :properties ("Effort")
+#+END:
+
+
+** Reflections
+
+1. What new knowledge or insights have I gained today?
+   - 
+
+2. How did I do pursuing my daily goals today?
+   1. 
+   2. 
+   3. 
+
+3. What do I want to strive to accomplish tomorrow?
+   - 
+
+

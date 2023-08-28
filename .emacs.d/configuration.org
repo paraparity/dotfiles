@@ -692,7 +692,11 @@ Let's also modify some other agenda settings.
       org-agenda-inhibit-startup t ; speedup agenda loading by ignoring startup options
       org-tags-column -128
       org-agenda-todo-keyword-format "%-12s"
-      org-agenda-skip-deadline-prewarning-if-scheduled 'pre-scheduled)
+      org-agenda-skip-deadline-prewarning-if-scheduled 'pre-scheduled
+      org-agenda-time-grid
+      '((daily today)
+        (800 1000 1200 1400 1600 1800 2000)
+        " ...... " "----------------"))
 #+end_src
 
 
