@@ -605,7 +605,7 @@ and the like.
 (defvar TT/org-incubate-dir      (concat TT/org-agenda-dir "/incubate")          "Categories of in-actionable things to incubate.")
 (defvar TT/org-emacs-maybe       (concat TT/org-incubate-dir "/emacs-maybe.org") "Someday agenda for Emacs related things.")
 (defvar TT/org-ideas             (concat TT/org-incubate-dir "/ideas.org")       "Someday agenda to capture general or \\='idea?\\=' ideas.")
-(defvar TT/org-projects          (concat TT/org-incubate-dir "/projects.org")    "Someday agenda for project ideas.")
+(defvar TT/org-maybe-projects    (concat TT/org-incubate-dir "/projects.org")    "Someday agenda for project ideas.")
 (defvar TT/org-someday           (concat TT/org-incubate-dir "/someday.org")     "Someday agenda for things I may want to revisit.")
 (defvar TT/org-travel            (concat TT/org-incubate-dir "/travel.org")      "Someday agenda for travel related things.")
 (defvar TT/org-learning          (concat TT/org-agenda-dir "/learning.org")      "Agenda for structured learning.")
@@ -1541,7 +1541,10 @@ Despite having some nice capture templates, sometimes things still don't end up 
 want to move something.
 
 #+begin_src emacs-lisp
-(setq org-refile-targets '((org-agenda-files :maxlevel . 6)))
+(setq org-refile-targets `((org-agenda-files :maxlevel . 6)
+                           (,TT/org-ideas :maxlevel . 3)
+                           (,TT/org-maybe-projects :maxlevel . 2)
+                           (,TT/org-someday :maxlevel . 4)))
 ;;(setq org-outline-path-complete-in-steps nil)
 (setq org-refile-allow-creating-parent-nodes 'confirm)
 #+end_src
