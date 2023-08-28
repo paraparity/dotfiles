@@ -1734,12 +1734,36 @@ to leverage =lsp-mode= as my language server client.
   :hook (c++-mode python-mode go-mode-hook)
   :init
   (setq lsp-prefer-flymake nil))
+#+end_src
 
-(use-package lsp-ui :commands lsp-ui-mode)
-(use-package helm-lsp :commands helm-lsp-workspace-symbol)
-(use-package lsp-treemacs :commands lsp-treemacs-error-list)
+*** =lsp-ui=
+#+begin_src emacs-lisp
+(use-package lsp-ui
+  :commands lsp-ui-mode
+  :after lsp-mode)
+#+end_src
 
-(use-package dap-mode)
+
+*** =dap-mode= Debugger Integration
+#+begin_src emacs-lisp
+(use-package dap-mode
+  :after lsp-mode)
+#+end_src
+
+
+*** =helm= Integration
+#+begin_src emacs-lisp
+(use-package helm-lsp
+  :commands helm-lsp-workspace-symbol
+  :after lsp-mode)
+#+end_src
+
+
+*** =treemacs= Integration
+#+begin_src emacs-lisp
+(use-package lsp-treemacs
+  :commands lsp-treemacs-error-list
+  :after lsp-mode)
 #+end_src
 
 
