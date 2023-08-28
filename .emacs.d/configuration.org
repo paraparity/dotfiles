@@ -43,7 +43,7 @@ configuration code, so let's keep my old =init.el= header around.
 * General Settings
 
 ** Security
-Since I don't use directory local variables for Emacs very much if at all, and considering they could load arbitrary emacs-lisp,
+Since I don't use directory local variables for Emacs very much if at all. Considering they could load arbitrary emacs-lisp,
 potentially without my knowing, lets prevent that from happening.
 
 #+begin_src emacs-lisp
@@ -134,6 +134,16 @@ location. Configuration courtesy of [[https://www.gnu.org/software/emacs/manual/
 ;; Lock File Management
 (setq lock-file-name-transforms
       '(("\\`/.*/\\([^/]+\\)\\'" "/var/tmp/\\1" t)))
+#+end_src
+
+
+*** Lock Files
+I've never run into a situation where an Emacs lockfile has helped me, and isntead find them to be more like disk litter
+than anything. Given I predominantly work on single-user environments that sync out to remote systems, let's kill this
+until I need it.
+
+#+begin_src emacs-lisp
+(setq create-lockfiles nil)
 #+end_src
 
 
