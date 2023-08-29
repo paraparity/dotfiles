@@ -920,14 +920,22 @@ block. We can customize this to add a few I commonly use.
 =org-ql= is a package that lets us query our org files with a bit more power and flexibility than default methods. As
 such I use =org-ql= to dig a bit deeper into my Org usage. Let's also make it play nice with Helm.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (use-package orq-ql
   :ensure t)
 
+
 (use-package helm-org-ql
-  :ensure t
-  :after org-ql)
+  :after org-ql
+  :ensure t)
 #+end_src
+
+I've set =org-ql= to not tangle for the moment. It's failing with:
+#+begin_example
+"Package `org-ql' is unavailable"
+#+end_example
+
+Yet a very minimal init file with =use-package= and =org-ql= works just fine...
 
 A quick note on writing agenda views using =org-ql-block= syntax from this comment on a [[https://github.com/alphapapa/org-ql/issues/79#issuecomment-787454462][working template]]. It doesn't
 look like this will be in =org-ql= until at least v0.8.
@@ -1995,7 +2003,6 @@ Make sure certain files open in certain modes.
 
 #+begin_src emacs-lisp
 (add-to-list 'auto-mode-alist '("\\.org$"         . org-mode))
-(add-to-list 'auto-mode-alist '("\\.ts$"          . typescript-mode))
 (add-to-list 'auto-mode-alist '("\\.css$"         . css-mode))
 (add-to-list 'auto-mode-alist '("\\.md$"          . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.markdown$"    . markdown-mode))
@@ -2052,7 +2059,7 @@ just use a =lsp-mode= solution that also supports Typescript.
 **** TypeScript with =typescript-mode=
 #+begin_src emacs-lisp
 (use-package typescript-mode
-  :mode "\\.ts\\'"
+  :mode "\\.ts\\'")
 #+end_src
 
 

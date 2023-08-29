@@ -7,6 +7,9 @@
 ;;; Code:
 ;;(setq debug-on-error t)
 
+(if init-file-debug
+    (setq debug-on-error t))
+
 ;; Restore garbage collection settings after startup
 (add-hook 'after-init-hook
 	  (lambda ()
@@ -51,6 +54,17 @@
 (require 'use-package)
 (require 'use-package-ensure)
 (setq use-package-always-ensure t)
+
+(if init-file-debug
+    (setq use-package-verbose t
+          use-package-expand-minimally nil
+          use-package-compute-statistics t)
+  (setq use-package-verbose nil
+        use-package-expand-minimally t))
+
+;; Trying to load this early as it's having trouble in my configuration.org
+(use-package org-ql
+  :ensure t)
 
 (use-package exec-path-from-shell
   :ensure t
