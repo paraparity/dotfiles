@@ -2006,13 +2006,35 @@ Make sure certain files open in certain modes.
 
 #+begin_src emacs-lisp
 (add-to-list 'auto-mode-alist '("\\.org$"         . org-mode))
-(add-to-list 'auto-mode-alist '("\\.css$"         . css-mode))
 (add-to-list 'auto-mode-alist '("\\.md$"          . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.markdown$"    . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.hbs$"         . handlebars-mode))
 (add-to-list 'auto-mode-alist '("\\.README\\.md$" . gfm-mode))
 (add-to-list 'auto-mode-alist '("Jenkinsfile$"    . groovy-mode))
 #+end_src
+
+*** Web Development
+
+#+begin_src emacs-lisp
+(use-package web-mode
+  :mode (("\\.html?\\'" . web-mode)
+         ("\\.php\\'" . web-mode)
+         ("\\.[agj]sp\\'" . web-mode)
+         ("\\.mustache\\'" . web-mode))
+  :bind ("C-c w n" . web-mode-tag-match)
+  :config
+  (setq web-mode-markup-indent-offset 2)
+  (setq web-mode-code-indent-offset 2)
+  (setq web-mode-enable-auto-pairing t))
+#+end_src
+
+And more specifically for CSS
+
+#+begin_src emacs-lisp
+(use-package css-mode
+  :mode ("\\.css$" . css-mode))
+#+end_src
+
 
 *** TODO C/C++
 
@@ -2051,6 +2073,30 @@ just use a =lsp-mode= solution that also supports Typescript.
 
 (use-package rjsx-mode)
 #+end_src
+
+**** Pretty Printing with =prettier-js=
+
+#+begin_src emacs-lisp
+(use-package prettier-js
+  :after (js2-mode web-mode)
+  :init
+  (defun enable-minor-mode (my-pair)
+    "Enable minor mode if filename match the regexp.  MY-PAIR is a cons cell (regexp . minor-mode)."
+    (if (buffer-file-name)
+        (if (string-match (car my-pair) buffer-file-name)
+            (funcall (cdr my-pair)))))
+  :hook ((js2-mode-hook . prettier-js-mode)
+         (web-mode-hook . prettier-js-mode))
+  :config
+  (setq prettier-js-args
+        '("--use-tabs" "false"
+          "--trailing-comma" "all"
+          "--bracket-spacing" "false"))
+  (add-hook 'web-mode-hook #'(lambda ()
+                               (enable-minor-mode
+                                '("\\.jsx?\\'" . prettier-js-mode)))))
+#+end_src
+
 
 **** =jq= Script Editing with =jq-mode=
 #+begin_src emacs-lisp
