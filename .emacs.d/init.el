@@ -13,7 +13,7 @@
 ;; Restore garbage collection settings after startup
 (add-hook 'after-init-hook
 	  (lambda ()
-	    (setq gc-cons-threshold 1000000
+	    (setq gc-cons-threshold 100000000
                   gc-cons-percentage 0.2)
 	    (message "gc-cons-threshold restored to %s and gc-cons-percentage to %s"
                      gc-cons-threshold
