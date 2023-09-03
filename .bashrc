@@ -33,15 +33,43 @@ shopt -s checkwinsize
 set -o ignoreeof
 shopt -s extglob # Reg-ex globbing (e.g: 'ls ?(a*|b*)' # list files starting with a or b; Uses '?!*+@'
 
+################################################################################
+# Configure Additional Package Managers
+################################################################################
 # Configure Linuxbrew if present
 [ -f /home/linuxbrew/.linuxbrew/bin/brew ] && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
+################################################################################
+# Configure Dev Tools
+################################################################################
 # Configure NVM if present
-[ -z "$NVM_DIR" ] && export NVM_DIR="$HOME/.nvm"
-[ -f /usr/share/nvm/nvm.sh ] && . /usr/share/nvm/nvm.sh
-[ -f /usr/share/nvm/bash_completion ] && . /usr/share/nvm/bash_completion
-[ -f /usr/share/nvm/install-nvm-exec ] && . /usr/share/nvm/install-nvm-exec
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
+# Configure Python and virtualenv
+export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
+export WORKON_HOME=$HOME/.virtualenvs
+export PROJECT_HOME=$HOME/devel/projects
+[ -s "./.local/bin/virtualenvwrapper.sh" ] && \. "./.local/bin/virtualenvwrapper.sh"
+
+################################################################################
+# Path updates
+################################################################################
+# Set PATH so it includes .local binaries iff it exists
+if [ -d "$HOME/.local/bin" ] ; then
+	PATH="$HOME/.local/bin:$PATH"
+fi
+
+if [ -d "/usr/local/go" ] ; then
+	PATH="$PATH:/usr/local/go/bin"
+	# TODO: Guarantee devel path structure exists
+	export GOPATH=$HOME/devel/langs/go
+fi
+
+################################################################################
+# Helper Functions
+################################################################################
 # Better ssh agent management via:
 # https://vlaams-supercomputing-centrum-vscdocumentation.readthedocs-hosted.com/en/latest/access/using_ssh_agent.html
 # For some background: https://rabexc.org/posts/pitfalls-of-ssh-agents
@@ -62,9 +90,6 @@ start-ssh-agent() {
     ssh-agent -s > $sshfile && . $sshfile &>/dev/null
     unset sshfile
 }
-
-# Now invoke the above as part of setup:
-start-ssh-agent &>/dev/null
 
 # # ex - archive extractor
 # # usage: ex <file>
@@ -89,6 +114,12 @@ ex ()
     echo "'$1' is not a valid file"
   fi
 }
+
+################################################################################
+# Helper Setup Invocations
+################################################################################
+# Use smart ssh-agent setup
+start-ssh-agent &>/dev/null
 
 ################################################################################
 # Source Locals
