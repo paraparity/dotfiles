@@ -551,8 +551,8 @@ interactively fill out templates.
          ("C-c y d" . yas-describe-tables)
          ("C-c y v" . yas-visit-snippet-file)
          ("C-c y l" . yas-load-snippet-buffer-and-close))
-  :hook ((prog-mode-hook . yas-minor-mode)
-         (text-mode-hook . yas-minor-mode))
+  :hook ((prog-mode . yas-minor-mode)
+         (text-mode . yas-minor-mode))
   :config
   (setq yas-verbosity 1)
   (yas-global-mode 1))
@@ -1749,8 +1749,8 @@ to leverage =lsp-mode= as my language server client.
   :commands lsp
   :init (setq lsp-keymap-prefix "C-c l")
   :hook (c++-mode
-         go-mode-hook
-         rust-mode-hook
+         go-mode
+         rust-mode
          python-mode)
   :config
   (setq lsp-prefer-flymake nil)
@@ -2117,8 +2117,8 @@ just use a =lsp-mode= solution that also supports Typescript.
     (if (buffer-file-name)
         (if (string-match (car my-pair) buffer-file-name)
             (funcall (cdr my-pair)))))
-  :hook ((js2-mode-hook . prettier-js-mode)
-         (web-mode-hook . prettier-js-mode))
+  :hook ((js2-mode . prettier-js-mode)
+         (web-mode . prettier-js-mode))
   :config
   (setq prettier-js-args
         '("--use-tabs" "false"
