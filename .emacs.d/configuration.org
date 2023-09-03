@@ -1,5 +1,6 @@
 #+TITLE: Paraparity's Literate Emacs Configuration
 #+PROPERTY: header-args :tangle yes
+#+PROPERTY: ^:nil
 
 * Overview
 I've maintained my Emacs configuration in a number of styles across the years, each having its own strengths and
@@ -43,7 +44,7 @@ configuration code, so let's keep my old =init.el= header around.
 * General Settings
 
 ** Security
-Since I don't use directory local variables for Emacs very much if at all. Considering they could load arbitrary emacs-lisp,
+I don't use directory local variables for Emacs very much if at all. Considering they could load arbitrary emacs-lisp,
 potentially without my knowing, lets prevent that from happening.
 
 #+begin_src emacs-lisp
@@ -66,6 +67,8 @@ can have them.
 
 *** TODO GPG
 Minimal GPG setup that could use some expansion.
+
+Needs to first check =gpg= exists on the system and conditionally loads.
 
 #+begin_src emacs-lisp
 (use-package epg
