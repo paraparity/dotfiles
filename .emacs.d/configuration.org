@@ -551,6 +551,8 @@ interactively fill out templates.
          ("C-c y d" . yas-describe-tables)
          ("C-c y v" . yas-visit-snippet-file)
          ("C-c y l" . yas-load-snippet-buffer-and-close))
+  :hook ((prog-mode-hook . yas-minor-mode)
+         (text-mode-hook . yas-minor-mode))
   :config
   (setq yas-verbosity 1)
   (yas-global-mode 1))
@@ -1752,8 +1754,9 @@ to leverage =lsp-mode= as my language server client.
          python-mode)
   :config
   (setq lsp-prefer-flymake nil)
+  (setq gc-cons-threshold (* 100 1024 1024))
   (setq read-process-output-max (* 1024 1024))
-  (setq lsp-idle-delay 0.500)
+  (setq lsp-idle-delay 0.200)
   (setq lsp-log-io nil)
   (setq lsp-modeline-diagnostics-scope :workspace))
 #+end_src
@@ -1775,6 +1778,7 @@ to leverage =lsp-mode= as my language server client.
          (python-mode . dap-mode))
   :config
   (require 'dap-python)
+  (require 'dap-cpptools)
   (setq dap-python-debugger 'debugpy)
   (defun dap-python--pyenv-executable-find (command)
     (with-venv (executable-find "python")))
@@ -1817,13 +1821,14 @@ Company-mode, or complete any mode, is an extremely useful tool for text/code co
               ("M-p" . nil)
               ("C-n" . company-select-next)
               ("C-p" . company-select-previous))
+  :custom
+  (company-idle-delay nil)
   :config
-  (setq company-tooltip-align-annotations t
-        company-idle-delay nil
-        company-minimum-prefix-length 2
-        company-require-match nil
-        company-show-numbers t
-        company-tooltip-limit 20)
+  (setq company-tooltip-align-annotations t)
+  (setq company-minimum-prefix-length 2)
+  (setq company-require-match nil)
+  (setq company-show-numbers t)
+  (setq company-tooltip-limit 20)
   (global-company-mode)
   (with-eval-after-load 'company
     (global-set-key (kbd "C-c SPC") 'company-complete)))
@@ -2194,6 +2199,8 @@ definitely better than the Vanilla Emacs defaults.
   :bind (:map rustic-mode-map
               ("M-j" . lsp-ui-imenu)
               ("M-?" . lsp-find-references))
+  :custom
+  (rustic-analyzer-command '("rustup" "run" "stable" "rust-analyzer"))
   :config
   (setq rustic-format-on-save t))
 #+end_src
