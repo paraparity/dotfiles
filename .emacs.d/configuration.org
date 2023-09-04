@@ -463,32 +463,47 @@ lead to some pretty impressive editing and refactoring feats.
   :init (progn
           (helm-mode))
   :bind (("C-c h"   . helm-command-prefix)
-         ("M-x"     . helm-M-x)
-         ("M-y"     . helm-show-kill-ring)
          ("C-x b"   . helm-mini)
          ("C-c h a" . helm-apropos)
+         ("C-c h b" . helm-buffers-list)
          ("C-c h f" . helm-find-files)
+         ("C-c h i" . helm-info)
          ("C-c h o" . helm-occur)
-         ("C-c h m" . helm-man-woman))
+         ("C-c h m" . helm-man-woman)
+         ("C-c h s" . helm-swoop)
+         ("C-c h y" . helm-yas-complete)
+         :map global-map
+         ("M-x"     . helm-M-x)
+         ("M-y"     . helm-show-kill-ring)
+         :map helm-map
+         ("<tab>" . helm-execute-persistent-action)
+         ("C-i" . helm-execute-persistent-action)
+         ("C-z" . helm-select-action))
   :config
   (require 'helm-command)
   (require 'helm-for-files)
   (require 'helm-imenu)
   (require 'helm-semantic)
   (require 'helm-misc)
-  (setq helm-split-window-inside-p      t
-        helm-M-x-fuzzy-match            t
-        helm-buffers-fuzzy-matching     t
-        helm-recentf-fuzzy-match        t
-        helm-semantic-fuzzy-match       t
-        helm-imenu-fuzzy-match          t
-        helm-apropos-fuzzy-match        t
-        helm-candidate-number-limit   100
-        helm-autoresize-max-height     20
-        helm-autoresize-min-height      0)
+  (setq helm-split-window-inside-p        t
+        helm-move-to-line-cycle-in-source t
+        helm-M-x-fuzzy-match              t
+        helm-buffers-fuzzy-matching       t
+        helm-recentf-fuzzy-match          t
+        helm-semantic-fuzzy-match         t
+        helm-imenu-fuzzy-match            t
+        helm-apropos-fuzzy-match          t
+        helm-candidate-number-limit       100
+        helm-autoresize-max-height        20
+        helm-autoresize-min-height        0
+        helm-idle-delay                   0.01
+        helm-input-idle-delay             0.01
+        helm-quick-update                 t)
   (add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages)
   (helm-autoresize-mode t))
 #+end_src
+
+For a quick intro to =helm=, see: https://tuhdo.github.io/helm-intro.html
 
 
 ** Buffer Folding with =origami=
@@ -575,6 +590,15 @@ Let's change where Tramp saves things, and use SSH as our default method.
   (set-default 'tramp-auto-save-directory "~/.saves/tramp/"))
 
 ;; TODO: if windows: use PuTTy PLINK; if *nix: use ssh
+#+end_src
+
+=helm-tramp= docs: https://github.com/masasam/emacs-helm-tramp
+
+#+begin_src emacs-lisp
+(use-package helm-tramp
+  :after tramp
+  :bind ("C-c t" . helm-tramp))
+
 #+end_src
 
 *** TODO =docker-tramp=
@@ -1796,6 +1820,7 @@ to leverage =lsp-mode= as my language server client.
 *** =helm= Integration
 #+begin_src emacs-lisp
 (use-package helm-lsp
+  :after (lsp-mode helm)
   :commands helm-lsp-workspace-symbol
   :after lsp-mode)
 #+end_src
