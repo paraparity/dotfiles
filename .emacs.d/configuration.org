@@ -552,6 +552,37 @@ not yet familiar with those short-strings. However, this is also extremely usefu
 #+end_src
 
 
+** Region Wrapping with =wrap-region=
+#+begin_src emacs-lisp
+(use-package wrap-region
+  :diminish wrap-region-mode
+  :config
+  (wrap-region-global-mode t)
+  (wrap-region-add-wrappers
+   '(("(" ")")
+     ("[" "]")
+     ("{" "}")
+     ("<" ">")
+     ("'" "'")
+     ("\"" "\"")
+     ("‘" "’"   "q")
+     ("“" "”"   "Q")
+     ("*" "*"   "b" org-mode)
+     ("*" "*"   "*" org-mode)
+     ("/" "/"   "i" org-mode)
+     ("/" "/"   "/" org-mode)
+     ("~" "~"   "c" org-mode)
+     ("~" "~"   "~" org-mode)
+     ("=" "="   "v" org-mode)
+     ("=" "="   "=" org-mode)
+     ("_" "_"   "u" '(org-mode markdown-mode))
+     ("**" "**" "b" markdown-mode)
+     ("*" "*"   "i" markdown-mode)
+     ("`" "`"   "c" '(markdown-mode ruby-mode))
+     ("`" "'"   "c" lisp-mode))))
+  #+end_src
+
+
 ** Templating with =yasnippet=
 Both for programming and regular editing I have a bunch of snippets for text expansion. It doesn't always seem suitable
 for me to use =abbrev=, especially for large templates, but that's more of a personal choice than a "can it be done"
