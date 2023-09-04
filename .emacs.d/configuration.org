@@ -636,6 +636,17 @@ Let's change where Tramp saves things, and use SSH as our default method.
 Either place under tramp or in development interactions section later.
 
 
+** Screen Casting with =keykast=
+Sometimes you want to share how something behaves in Emacs. For these scenarios, it's also really important to show a
+peek behind the scenes. What keys or chords are you entering and what are they triggering? For this, there's
+=keycast-mode= which you can enable/disable as needed with =M-x keycast-mode=.
+
+#+begin_src emacs-lisp
+(use-package keycast
+  :pin melpa)
+#+end_src
+
+
 * =org-mode= Configuration
 =org-mode= is probably my biggest anchor to Emacs. I've tried org-like plugins for other editors and IDEs, but nothing compares
 to the real thing.
