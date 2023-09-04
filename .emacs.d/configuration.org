@@ -2241,27 +2241,34 @@ I used to write mostly in Perl for work, and =cperl-mode= was what my Emacs wiel
 definitely better than the Vanilla Emacs defaults.
 
 #+begin_src emacs-lisp
-(use-package cperl-mode)
+(use-package cperl-mode
+  :config
+  (setq cperl-close-paren-offset 0
+        cperl-continued-statement-offset 0
+        cperl-electric-backspace-untabify nil
+        cperl-indent-comment-at-column-0 t
+        cperl-indent-parens-as-block t
+        cperl-label-offset 0
+        cperl-min-label-indent 0
+        perl-tab-to-comment t)
 
-(setq cperl-close-paren-offset 0
-      cperl-continued-statement-offset 0
-      cperl-electric-backspace-untabify nil
-      cperl-indent-comment-at-column-0 t
-      cperl-indent-parens-as-block t
-      cperl-label-offset 0
-      cperl-min-label-indent 0
-      perl-tab-to-comment t)
+  (defalias 'perl-mode 'cperl-mode)
+  (defvaralias 'c-basic-offset 'tab-width)
+  (defvaralias 'cperl-indent-level 'tab-width)
 
-(defalias 'perl-mode 'cperl-mode)
-(defvaralias 'c-basic-offset 'tab-width)
-(defvaralias 'cperl-indent-level 'tab-width)
+  ;; Override perl-mode with cperl-mode
+  (mapc
+   (lambda (pair)
+     (if (eq (cdr pair) 'perl-mode)
+         (setcdr pair 'cperl-mode)))
+   (append auto-mode-alist interpreter-mode-alist)))
+#+end_src
 
-;; Override perl-mode with cperl-mode
-(mapc
- (lambda (pair)
-   (if (eq (cdr pair) 'perl-mode)
-       (setcdr pair 'cperl-mode)))
- (append auto-mode-alist interpreter-mode-alist))
+#+begin_src emacs-lisp
+(use-package helm-perldoc
+  :after (helm cperl-mode)
+  :config
+  (helm-perldoc:setup))
 #+end_src
 
 
