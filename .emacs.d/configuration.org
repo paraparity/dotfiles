@@ -76,9 +76,12 @@ Needs to first check =gpg= exists on the system and conditionally loads.
   :custom
   (epg-gpg-program "gpg")
   (setq epa-pinentry-mode 'loopback))
+#+end_src
 
-;; Auth
-(defvar auth-sources '((:source "~/.emacs.d/secrets/.authinfo.gpg")) "Auth info source location.")
+*** TODO Auth Sources
+#+begin_src emacs-lisp
+(use-package auth-source
+  :config (setq auth-sources '("~/.emacs.d/secrets/.authinfo.gpg")))
 #+end_src
 
 
@@ -2049,6 +2052,7 @@ Make sure certain files open in certain modes.
   :config
   (require 'lsp-marksman))
 #+end_src
+
 
 *** Web Development
 
