@@ -1819,6 +1819,8 @@ Company-mode, or complete any mode, is an extremely useful tool for text/code co
 #+begin_src emacs-lisp
 (use-package company
   :diminish
+  :hook ((prog-mode . company-mode)
+         (text-mode . company-mode))
   :bind (:map company-active-map
               ("M-n" . nil)
               ("M-p" . nil)
