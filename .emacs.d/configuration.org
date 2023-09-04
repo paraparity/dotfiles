@@ -2317,6 +2317,19 @@ Initial configuration informed through:
 #+end_src
 
 
+**** TODO LSP Resume Error
+I'm noticing an error happening as LSP initializes on a desktop save relaunch.
+
+#+begin_example
+Error in rustic-flycheck-setup: (user-error "~/.cargo/bin/cargo metadata --no-deps --manifest-path ~/.rustup/toolchains/<architecture>/lib/rustlib/src/rust/library/std/Cargo.toml --format-version 1 exited with 101.") [2 times]
+LSP :: rust-analyzer:864 initialized successfully in folders: (/home/hephaestus/devel/learn/rust/grrs)
+Error in rustic-flycheck-setup: (user-error "~/.cargo/bin/cargo metadata --no-deps --manifest-path ~/.rustup/toolchains/<architecture>/lib/rustlib/src/rust/library/std/Cargo.toml --format-version 1 exited with 101.") [6 times]
+Wrote ~/.emacs.d/.emacs.desktop.lock
+Desktop: 1 frame, 33 buffers restored.
+Error in rustic-flycheck-setup: (user-error "~/.cargo/bin/cargo metadata --no-deps --manifest-path ~/.rustup/toolchains/<architecture>/lib/rustlib/src/rust/library/std/Cargo.toml --format-version 1 exited with 101.")
+#+end_example
+
+
 * More Emacs Modes
 
 ** Ledger - Command Line Accounting
