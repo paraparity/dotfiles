@@ -2465,6 +2465,17 @@ mode-line clutter and start up the Emacs server.
 - [ ] When to use =:custom= vs =:config= and others in =use-package=?
 
 
+** TODO =use-package= statistics report improvements
+#+begin_example
+Package                   Status      ...   Time
+helm                      Configured  ...   8.33
+org-ql                    Configured  ...   2.68
+rjsx-mode                 Configured  ...   2.33
+ox                        Configured  ...   1.80
+elfeed                    Configured  ...   1.79
+#+end_example
+
+
 ** TODO Configuration Reading [0/8]
 That's mostly it folks. Configuration is done, the rest are future works. This section collects other articles or
 configurations I've stumbled across and bookmarked for eventual reading.
