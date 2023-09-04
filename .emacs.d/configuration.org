@@ -1781,6 +1781,7 @@ to leverage =lsp-mode= as my language server client.
   :config
   (require 'dap-python)
   (require 'dap-cpptools)
+  (require 'dap-chrome)
   (setq dap-python-debugger 'debugpy)
   (defun dap-python--pyenv-executable-find (command)
     (with-venv (executable-find "python")))
