@@ -1918,7 +1918,9 @@ really kick up project navigation.
 (use-package projectile
   :after (helm)
   :delight '(:eval (concat " {" (projectile-project-name) "}"))
-  :bind ("C-c p" . projectile-command-map)
+  :bind (:map projectile-mode-map
+              ("S-p" . projectile-command-map)
+              ("C-c p" . projectile-command-map))
   :config
   (setq projectile-completion-system 'helm
         projectile-switch-project-action 'helm-projectile)
@@ -1926,10 +1928,13 @@ really kick up project navigation.
         projectile-globally-ignored-directories '(".git" "node_modules" "__pycache__" ".vs")
         projectile-globally-ignored-file-suffixes '(".swp" ".o" ".so" ".exe" ".dll" ".elc" ".pyc" ".jar" ".cache")
         projectile-globally-ignored-files '("TAGS" "tags"))
-  (with-eval-after-load "projectile"
-    (projectile-mode)
-    (helm-projectile-on)))
+  (setq projectile-project-search-path '("~/devel/projects/"))
+  (projectile-mode))
+#+end_src
 
+And integrate with =helm=.
+
+#+begin_src emacs-lisp
 (use-package helm-projectile
   :after (helm projectile)
   :bind ("M-t" . helm-projectile-find-file)
