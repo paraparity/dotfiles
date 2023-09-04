@@ -74,7 +74,8 @@ Needs to first check =gpg= exists on the system and conditionally loads.
 (use-package epg
   :defer t
   :custom
-  (epg-gpg-program "gpg"))
+  (epg-gpg-program "gpg")
+  (setq epa-pinentry-mode 'loopback))
 
 ;; Auth
 (defvar auth-sources '((:source "~/.emacs.d/secrets/.authinfo.gpg")) "Auth info source location.")
