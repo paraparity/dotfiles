@@ -1751,6 +1751,7 @@ to leverage =lsp-mode= as my language server client.
   :init (setq lsp-keymap-prefix "C-c l")
   :hook (c++-mode
          go-mode
+         js2-mode
          rust-mode
          python-mode)
   :config
