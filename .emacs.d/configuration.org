@@ -2098,6 +2098,33 @@ Make sure certain files open in certain modes.
 (add-to-list 'auto-mode-alist '("Jenkinsfile$"    . groovy-mode))
 #+end_src
 
+*** Shell with =eshell=
+Setup eshell.
+
+#+begin_src emacs-lisp
+(use-package eshell
+  :config
+  (setq eshell-scroll-to-bottom-on-input 'all
+        eshell-hist-ignoredups t
+        eshell-save-history-on-exit t
+        eshell-prefer-lisp-functions nil
+        eshell-destroy-buffer-when-process-dies t)
+  (add-hook 'eshell-mode-hook
+            (lambda ()
+              (add-to-list 'eshell-visual-commands "ssh")
+              (add-to-list 'eshell-visual-commands "tail")
+              (add-to-list 'eshell-visual-commands "top"))))
+#+end_src
+
+And add some helm integration for
+
+#+begin_src emacs-lisp
+(use-package helm-eshell
+  :after (eshell-mode helm)
+  :hook eshell-mode
+  :bind (:map eshell-mode-map ("C-c C-l" . helm-eshell-history)))
+#+end_src
+
 *** Markdown with =markdown-mode=
 
 #+begin_src emacs-lisp
