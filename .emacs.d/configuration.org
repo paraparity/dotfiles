@@ -2282,6 +2282,12 @@ definitely better than the Vanilla Emacs defaults.
   :after python-mode)
 #+end_src
 
+#+begin_src emacs-lisp
+(use-package helm-pydoc
+  :after (helm python-mode)
+  :bind (:map python-mode-map
+         ("C-c C-d" . helm-pydoc)))
+#+end_src
 
 **** TODO Formatting with Black
 
