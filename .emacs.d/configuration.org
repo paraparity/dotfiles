@@ -175,6 +175,17 @@ Let's make it a only take a key-chord to pull up my literate configuration.
 #+end_src
 
 
+*** Recent Files with =recentf=
+#+begin_src emacs-lisp
+(use-package recentf
+  :bind ("C-x C-r" . recentf-open-files)
+  :diminish recentf-mode
+  :init
+  (setq recentf-exclude '("\\.gpg\\'"))
+  (recentf-mode t))
+#+end_src
+
+
 ** Encoding Systems
 Pretty much just set the coding system to UTF-8. Also enable the Japanese language environment to support study.
 
@@ -336,7 +347,7 @@ I want to quickly get back to files I've recently been working in. Emacs can hel
 take this even further by using =save-place-mode= to remember cursor position in files too.
 
 #+begin_src emacs-lisp
-(recentf-mode 1)
+;;(recentf-mode 1)
 (save-place-mode 1)
 #+end_src
 
