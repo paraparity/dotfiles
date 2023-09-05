@@ -182,6 +182,7 @@ Let's make it a only take a key-chord to pull up my literate configuration.
   :diminish recentf-mode
   :init
   (setq recentf-exclude '("\\.gpg\\'"))
+  (setq recentf-auto-cleanup 'never)
   (recentf-mode t))
 #+end_src
 
