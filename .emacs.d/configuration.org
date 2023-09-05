@@ -58,7 +58,7 @@ can have them.
 
 #+begin_src emacs-lisp
 (use-package gnutls
-  :defer t
+  :demand t
   :if (gnutls-available-p)
   :config
   (setq gnutls-verify-error t))
@@ -72,15 +72,16 @@ Needs to first check =gpg= exists on the system and conditionally loads.
 
 #+begin_src emacs-lisp
 (use-package epg
-  :defer t
-  :custom
-  (epg-gpg-program "gpg")
-  (setq epa-pinentry-mode 'loopback))
+  :demand t
+  :config
+  (setq epg-pinentry-mode 'loopback))
 #+end_src
+
 
 *** TODO Auth Sources
 #+begin_src emacs-lisp
 (use-package auth-source
+  :demand t
   :config (setq auth-sources '("~/.emacs.d/secrets/.authinfo.gpg")))
 #+end_src
 
