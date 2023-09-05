@@ -298,6 +298,8 @@ option for stripping trailing white-space.
 (global-set-key (kbd "C-c w m") 'whitespace-mode)
 (global-set-key (kbd "C-c w t") 'TT/toggle-trailing-whitespace)
 (global-set-key (kbd "<f5>") 'delete-trailing-whitespace)
+
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
 #+end_src
 
 Enable final newline in all files. It's pretty common in software projects, and it's just a habit by now, I'll include it
@@ -305,6 +307,19 @@ everywhere until I find somewhere that bites me because of it.
 
 #+begin_src emacs-lisp
 (setq require-final-newline t)
+#+end_src
+
+
+*** Displaying Line Numbers
+I used to use =linum-mode= globally, but it sometimes caused slowness and also wasn't really necessary outside of code
+repos. Now let's use the newer =display-line-numbers-mode= and set it to work in programming modes or be toggled on
+demand.
+
+#+begin_src emacs-lisp
+(use-package display-line-numbers
+  :hook (prog-mode . display-line-numbers-mode)
+  :bind (:map global-map
+              ("C-c T n" . display-line-numbers-mode)))
 #+end_src
 
 
@@ -347,7 +362,6 @@ I want to quickly get back to files I've recently been working in. Emacs can hel
 take this even further by using =save-place-mode= to remember cursor position in files too.
 
 #+begin_src emacs-lisp
-;;(recentf-mode 1)
 (save-place-mode 1)
 #+end_src
 
