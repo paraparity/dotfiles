@@ -1898,7 +1898,7 @@ to leverage =lsp-mode= as my language server client.
 #+begin_src emacs-lisp
 (use-package lsp-treemacs
   :commands lsp-treemacs-error-list
-  :after lsp-mode
+  :after (lsp-mode treemacs-mode)
   :config
   (setq treemacs-indentation 2
         treemacs-width 32
@@ -1992,13 +1992,7 @@ richer set of programming interactions.
 
 #+begin_src emacs-lisp
 (use-package treemacs
-  :defer t
-  :config
-  (progn
-    (setq treemacs-collapse-dirs 3
-          treemacs-sorting       'alphabetic-desc)
-    (treemacs-follow-mode t)
-    (treemacs-filewatch-mode t))
+  :diminish
   :bind
   (:map global-map
         ("M-0"       . treemacs-select-window)
@@ -2006,7 +2000,17 @@ richer set of programming interactions.
         ("C-x t t"   . treemacs)
         ("C-x t B"   . treemacs-bookmark)
         ("C-x t C-t" . treemacs-find-file)
-        ("C-x t M-t" . treemacs-find-tag)))
+        ("C-x t M-t" . treemacs-find-tag))
+  :config
+  (setq treemacs-collapse-dirs 3
+        treemacs-indentation 2
+        treemacs-indentation-string " "
+        treemacs-litter-directories '("/node_modules" "/.venv" "/.cask")
+        treemacs-sorting 'alphabetic-desc
+        treemacs-wide-toggle-width 64
+        treemacs-width 32)
+  (treemacs-follow-mode t)
+  (treemacs-filewatch-mode t))
 
 (use-package treemacs-projectile
   :after (treemacs projectile)
