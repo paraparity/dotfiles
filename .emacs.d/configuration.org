@@ -2392,16 +2392,34 @@ Emacs comes with it's own Internet Relay Chat client, =erc=. I use this to chat 
 
 #+begin_src emacs-lisp
 (use-package erc
-  :defer t
-  :hook (erc-mode . abbrev-mode)
+  :commands erc-tls
+  :bind (:map erc-mode-map
+              ("RET" . nil)
+              ("C-c RET" . erc-send-current-line)
+              ("C-c C-RET" . erc-send-current-line))
   :config
-  (setq erc-port "6667"
-        erc-nick "paraparity"
-        erc-hide-list '("PART" "QUIT" "JOIN" "NICK")
-        erc-server "irc.libera.chat"
+  (setq erc-nick "paraparity"
+        erc-hide-list '("JOIN" "PART" "QUIT" "NICK")
+        erc-lurker-hide-list '("JOIN" "PART" "QUIT" "NICK")
+        erc-prompt-for-password nil
         erc-kill-buffer-on-part t
-        erc-scrolltobottom-mode t
-        erc-autojoin-channels-alist '(("#emacs" "#erc" "#org-mode"))))
+        erc-kill-queries-on-quit t
+        erc-kill-server-buffer-on-quit t)
+  (add-to-list 'erc-modules 'autojoin)
+  (setq erc-autojoin-timing 'ident
+        erc-autojoin-channels-alist
+        '(("libera.chat"
+           "##rust"
+           "#bash"
+           "#emacs"
+           "#erc"
+           "#javascript"
+           "#node.js"
+           "#org-mode"
+           "#perl"
+           "#python"
+           "#systemcrafters")))
+  (erc-autojoin-mode t))
 #+end_src
 
 
