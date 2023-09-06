@@ -32,6 +32,7 @@ shopt -s checkwinsize
 # Funfact: htps://unix.stackexchange.com/questions/32409/set-and-shopt-why-two
 set -o ignoreeof
 shopt -s extglob # Reg-ex globbing (e.g: 'ls ?(a*|b*)' # list files starting with a or b; Uses '?!*+@'
+shopt -s globstar # enable recursive match in globs with '**'
 
 ################################################################################
 # Configure Additional Package Managers
@@ -52,6 +53,9 @@ export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 export WORKON_HOME=$HOME/.virtualenvs
 export PROJECT_HOME=$HOME/devel/projects
 [ -s "./.local/bin/virtualenvwrapper.sh" ] && \. "./.local/bin/virtualenvwrapper.sh"
+
+# Configure rust if present
+[ -s "$HOME/.cargo/env" ] && \. "$HOME/.cargo/env"
 
 ################################################################################
 # Path updates
