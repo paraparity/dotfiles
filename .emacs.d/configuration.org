@@ -955,9 +955,10 @@ lenient in scheduling than using scheduled days, recurrances, or deadlines in th
 ranges. Most importantly, it visually displays a habit graph useful for seeing how you're keeping up with these habits.
 
 #+begin_src emacs-lisp
-(setq org-habit-preceeding-days 14
+(setq org-habit-preceeding-days 21
       org-habit-following-days 7
-      org-habit-graph-column 96)
+      org-habit-graph-column 96
+      org-habit-show-all-today t)
 #+end_src
 
 
