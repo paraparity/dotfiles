@@ -1121,9 +1121,6 @@ let's define several GTD views for my agenda contents. All of these exist under 
            ((org-ql-block '(and (priority "A")
                                 (not (done)))
                           ((org-ql-block-header "High-Priority Unfinished Tasks:")))
-            (tags "PRIORITY=\"A\""
-                  ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-                   (org-agenda-overriding-header "High-Priority Unfinished Tasks:")))
             (agenda ""
                     ((org-agenda-span 1)))
             (org-ql-block '(and (not (done))
@@ -1143,13 +1140,7 @@ let's define several GTD views for my agenda contents. All of these exist under 
                                 (not (done))
                                 (not (habit))
                                 (not (planning)))
-                          ((org-ql-block-header "C Priority Tasks:")))
-            (org-ql-block '(and (todo)
-                                (not (done))
-                                (not (priority))
-                                (not (habit))
-                                (not (planning)))
-                          ((org-ql-block-header "All Other Tasks:")))))
+                          ((org-ql-block-header "C Priority Tasks:")))))
           ("gw" "Weekly View"
            ((agenda ""
                     ((org-agenda-span 7)))
