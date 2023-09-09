@@ -1945,7 +1945,7 @@ really kick up project navigation.
   (setq projectile-completion-system 'helm
         projectile-switch-project-action 'helm-projectile)
   (setq projectile-enable-caching t
-        projectile-globally-ignored-directories '(".git" "node_modules" "__pycache__" ".vs")
+        projectile-globally-ignored-directories '(".git" "node_modules" "__pycache__" ".vs" ".venv")
         projectile-globally-ignored-file-suffixes '(".swp" ".o" ".so" ".exe" ".dll" ".elc" ".pyc" ".jar" ".cache")
         projectile-globally-ignored-files '("TAGS" "tags"))
   (setq projectile-project-search-path '("~/devel/projects/"))
