@@ -2277,6 +2277,12 @@ just use a =lsp-mode= solution that also supports Typescript.
   :mode "\\.ts\\'")
 #+end_src
 
+**** Svelte with =svelte-mode=
+#+begin_src emacs-lisp
+(use-package svelte-mode
+  :mode "\\.svelte\\'")
+#+end_src
+
 
 *** Perl Customization
 I used to write mostly in Perl for work, and =cperl-mode= was what my Emacs wielding colleagues used at my employer. It was
