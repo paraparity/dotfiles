@@ -1902,6 +1902,32 @@ to leverage =lsp-mode= as my language server client.
   (treemacs-filewatch-mode t))
 #+end_src
 
+*** Installing LSP Implementations
+In addition to the Emacs packages, you'll need to install language servers for the languages you'll be working in. Some
+of these can be installed using the Emacs function =M-x lsp-install-server=, while others will be done via your system's
+package manager.
+
+For more on Emacs LSP support, see [[https://emacs-lsp.github.io/lsp-mode/page/languages/][emacs-lsp languages]].
+
+For me, this involves using =lsp-install-server= for:
+- =css-ls=
+- =dockerfile-ls=
+- =eslint=
+- =json-ls=
+- =marksman=
+- =sql-ls=
+- =svelte-ls=
+- =yamlls=
+
+And using system installation for:
+- =python3-pylsp=
+- =cargo= + texlab
+
+#+begin_src shell :tangle no
+cargo install --locked --git https://github.com/latex-lsp/texlab.git
+#+end_src
+
+
 
 ** Company Completions
 Company-mode, or complete any mode, is an extremely useful tool for text/code completion.
@@ -2240,9 +2266,9 @@ just use a =lsp-mode= solution that also supports Typescript.
 (use-package rjsx-mode)
 #+end_src
 
-**** Pretty Printing with =prettier-js=
 
-#+begin_src emacs-lisp
+**** Pretty Printing with =prettier-js=
+#+Begin_src emacs-lisp
 (use-package prettier-js
   :after (js2-mode web-mode)
   :init
@@ -2251,7 +2277,7 @@ just use a =lsp-mode= solution that also supports Typescript.
     (if (buffer-file-name)
         (if (string-match (car my-pair) buffer-file-name)
             (funcall (cdr my-pair)))))
-  :hook ((js2-mode . prettier-js-mode)
+  :Hook ((js2-mode . prettier-js-mode)
          (web-mode . prettier-js-mode))
   :config
   (setq prettier-js-args
