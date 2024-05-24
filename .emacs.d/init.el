@@ -68,7 +68,8 @@
 
 (use-package exec-path-from-shell
   :ensure t
-  :if (memq window-system '(mac ns x))
+  :if (or (memq window-system '(mac ns x))
+          (daemonp))
   :config
   (exec-path-from-shell-initialize))
 
