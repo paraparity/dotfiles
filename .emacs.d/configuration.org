@@ -4,23 +4,24 @@
 
 * Overview
 I've maintained my Emacs configuration in a number of styles across the years, each having its own strengths and
-weaknesses. I've even declared configuration bankruptcy a few times. Presently I'm experimenting with a literate configuration
-where I hope to better capture the intent and reasons for my configuration settings. My hope is that this improves my experience
-maintaining my configuration, and that it also helps others understand what these configurations do.
+weaknesses. I've even declared configuration bankruptcy a few times. Presently I'm experimenting with a literate
+configuration where I hope to better capture the intent and reasons for my configuration settings. My hope is that this
+improves my experience maintaining my configuration, and that it also helps others understand what these configurations
+do.
 
 I invite your feedback openly. Welcome aboard my ship of Theseus.
 
 ** House Keeping
 
 *** Variable Naming Convention
-As is common among Emacsers, I've opted to adopt a naming scheme that identifies personal contributions and adds a bit of
-individual flare. Considering the name I go by is =Paraparity=, you'll notice a number of names prefixed with =TT/=. This
-represents a so-called =pair of T's= playing off of the =parity= portion of my handle.
+As is common among Emacsers, I've opted to adopt a naming scheme that identifies personal contributions and adds a bit
+of individual flare. Considering the name I go by is =Paraparity=, you'll notice a number of names prefixed with
+=TT/=. This represents a so-called =pair of T's= playing off of the =parity= portion of my handle.
 
 
 *** Add Some Output Commentary
-When tangled, all of these source blocks become an =.el= file. I'd still like that to be more friendly than just a bunch of
-configuration code, so let's keep my old =init.el= header around.
+When tangled, all of these source blocks become an =.el= file. I'd still like that to be more friendly than just a bunch
+of configuration code, so let's keep my old =init.el= header around.
 
 #+begin_src emacs-lisp
 ;;; configuration.el --- paraparity's Emacs configuration file
@@ -90,15 +91,15 @@ Needs to first check =gpg= exists on the system and conditionally loads.
 Let's set up where to load configurations from, where to store saves, and give files homes.
 
 *** Setup Load Paths
-Emacs only includes packages under the =user-emacs-directory= (default =~/.emacs.d/elpa/=), so if we want to load anything else
-up we'll need to tell Emacs where to look.
+Emacs only includes packages under the =user-emacs-directory= (default =~/.emacs.d/elpa/=), so if we want to load
+anything else up we'll need to tell Emacs where to look.
 
 #+begin_src emacs-lisp
 (add-to-list 'load-path "~/.emacs.d/elisp/")
 #+end_src
 
-Load my machine local custom libraries directly, if they exist. My =elfeed= configuration is machine local for now, as my work
-and personal machines all represent different contexts where I pay attention to different things.
+Load my machine local custom libraries directly, if they exist. My =elfeed= configuration is machine local for now, as
+my work and personal machines all represent different contexts where I pay attention to different things.
 
 #+begin_src emacs-lisp
 (if (file-readable-p "~/.emacs.d/elisp/elfeed-conf.el")
@@ -106,12 +107,13 @@ and personal machines all represent different contexts where I pay attention to 
 #+end_src
 
 **** TODO Improve machine local customization loading
-Something could happen between checking and loading a file. Can I just attempt the load and handle an error if it doesn't work?
+Something could happen between checking and loading a file. Can I just attempt the load and handle an error if it
+doesn't work?
 
 
 *** Offload Custom File
-I manage my custom literate configuration, but sometimes use Emacs easy configuration to tweak settings. Until I know I want to
-keep these tweaks, I'll give them their own home.
+I manage my custom literate configuration, but sometimes use Emacs easy configuration to tweak settings. Until I know I
+want to keep these tweaks, I'll give them their own home.
 
 #+begin_src emacs-lisp
 (setq custom-file "~/.emacs.d/custom.el")
@@ -121,9 +123,9 @@ keep these tweaks, I'll give them their own home.
 
 
 *** Separate File Backups and Auto Save
-Emacs can get a bit aggressive with file backups and auto-saves. I dislike how it can pollute my directories and especially
-collaborative projects with tilde files (e.g: =myfile.txt~=). Usually things like =.gitignore= are sufficient to insulate others
-from these, but I'd prefer not to see them myself.
+Emacs can get a bit aggressive with file backups and auto-saves. I dislike how it can pollute my directories and
+especially collaborative projects with tilde files (e.g: =myfile.txt~=). Usually things like =.gitignore= are sufficient
+to insulate others from these, but I'd prefer not to see them myself.
 
 In some places I use directory backups which have a bad habit of replicating Emacs lock files, bloating the remote
 location. I'd rather keep lock behavior while avoiding replication bloat, so I change the default lock file
@@ -205,8 +207,8 @@ Pretty much just set the coding system to UTF-8. Also enable the Japanese langua
 Who doesn't love customizing the look and feel of their workspace?
 
 *** Remove Default Clutter
-Give me back my screen real estate. I don't need your newfangled and fancy GUI features, they just get in the way of more lines
-of sweet, sweet text. I also find the visual bell annoying, so let's take that out.
+Give me back my screen real estate. I don't need your newfangled and fancy GUI features, they just get in the way of
+more lines of sweet, sweet text. I also find the visual bell annoying, so let's take that out.
 
 #+begin_src emacs-lisp
 (setq inhibit-startup-screen t
@@ -222,8 +224,8 @@ of sweet, sweet text. I also find the visual bell annoying, so let's take that o
 
 
 *** Manage Mode Line Modes with =diminish= and =delight=
-=diminish= allows us to hide =mode-line= mode names and =delight= allows us to change their appearance using lisp. We can use these
-to alias, hide, or even programmatically define =mode-line= mode indicators.
+=diminish= allows us to hide =mode-line= mode names and =delight= allows us to change their appearance using lisp. We
+can use these to alias, hide, or even programmatically define =mode-line= mode indicators.
 
 #+begin_src emacs-lisp
 (use-package diminish)
@@ -238,8 +240,8 @@ Let's give Emacs a name, I think Emacs sounds nice.
 (setq frame-title-format "Emacs")
 #+end_src
 
-Let's make sure our buffers have unique names. If we were to open a file of the same name, but a different location we only need
-them to be a little unique, not full file path or even relative file path unique.
+Let's make sure our buffers have unique names. If we were to open a file of the same name, but a different location we
+only need them to be a little unique, not full file path or even relative file path unique.
 
 #+begin_src emacs-lisp
 (use-package uniquify
@@ -268,8 +270,8 @@ Let's also keep track of which column we're on in the buffer.
 (setq column-number-mode t)
 #+end_src
 
-Let's add some transparency. Despite how powerful it is, I don't use Emacs for everything and this lets me read whatever I have
-Emacs opened over. This can also let me see my desktop background which can be really cozy.
+Let's add some transparency. Despite how powerful it is, I don't use Emacs for everything and this lets me read whatever
+I have Emacs opened over. This can also let me see my desktop background which can be really cozy.
 
 #+begin_src emacs-lisp
 (set-frame-parameter (selected-frame) 'alpha '(92 . 90))
@@ -286,9 +288,9 @@ Finally, let's load a theme and bring some style to Emacs.
 
 
 *** Hunt Trailing White-space, Sometimes
-I personally disdain trailing white-space, but also dislike how visually congested =whitespace-mode= can be sometimes. As such,
-lets make things toggle-able so I can inspect white-space on demand with only a key chord. Also, lets give ourselves a nuclear
-option for stripping trailing white-space.
+I personally disdain trailing white-space, but also dislike how visually congested =whitespace-mode= can be
+sometimes. As such, lets make things toggle-able so I can inspect white-space on demand with only a key chord. Also,
+lets give ourselves a nuclear option for stripping trailing white-space.
 
 #+begin_src emacs-lisp
 (defun TT/toggle-trailing-whitespace ()
@@ -303,8 +305,8 @@ option for stripping trailing white-space.
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 #+end_src
 
-Enable final newline in all files. It's pretty common in software projects, and it's just a habit by now, I'll include it
-everywhere until I find somewhere that bites me because of it.
+Enable final newline in all files. It's pretty common in software projects, and it's just a habit by now, I'll include
+it everywhere until I find somewhere that bites me because of it.
 
 #+begin_src emacs-lisp
 (setq require-final-newline t)
@@ -366,15 +368,15 @@ take this even further by using =save-place-mode= to remember cursor position in
 (save-place-mode 1)
 #+end_src
 
-At one point I had some slowness with cursor movement and scrolling. I forget why at this point, but I stumbled upon some answer
-that said disable this, and I've never looked back since.
+At one point I had some slowness with cursor movement and scrolling. I forget why at this point, but I stumbled upon
+some answer that said disable this, and I've never looked back since.
 
 #+begin_src emacs-lisp
 (setq auto-window-vscroll nil)
 #+end_src
 
-In general I use screens that aren't limited to 80 characters width. I'd prefer to take advantage of that width and have a better
-default fill-column.
+In general I use screens that aren't limited to 80 characters width. I'd prefer to take advantage of that width and have
+a better default fill-column.
 
 #+begin_src emacs-lisp
 (setq-default fill-column 120)
@@ -421,8 +423,8 @@ Let's make it easy to see current block parentheses, given they're both on scree
 (show-paren-mode 1)
 #+end_src
 
-Let's display which-function-mode, and do so in the header line instead of mode line. This echoes the current org heading or
-function to the topmost part of a buffer which helps me keep track of what context my cursor is in.
+Let's display which-function-mode, and do so in the header line instead of mode line. This echoes the current org
+heading or function to the topmost part of a buffer which helps me keep track of what context my cursor is in.
 
 #+begin_src emacs-lisp
 (which-function-mode)
@@ -446,9 +448,9 @@ function to the topmost part of a buffer which helps me keep track of what conte
 
 
 ** Auto Revert Buffers
-In the event something has changed on the system, I want to pull in the updated files. =magit= has been good about doing this
-for version controlled files, however I've often noticed some buffer diffs for other files. =autorevert= should help keep things
-in sync.
+In the event something has changed on the system, I want to pull in the updated files. =magit= has been good about doing
+this for version controlled files, however I've often noticed some buffer diffs for other files. =autorevert= should
+help keep things in sync.
 
 #+begin_src emacs-lisp
 (use-package autorevert
@@ -463,8 +465,8 @@ Configuration for bookmarking and returning to buffers.
 
 
 ** Multiple Cursors
-Sometimes one cursor isn't enough. This package lets me spin up multiple cursors across lines or matching patterns which can
-lead to some pretty impressive editing and refactoring feats.
+Sometimes one cursor isn't enough. This package lets me spin up multiple cursors across lines or matching patterns which
+can lead to some pretty impressive editing and refactoring feats.
 
 #+begin_src emacs-lisp
 (use-package multiple-cursors
@@ -534,8 +536,9 @@ For a quick intro to =helm=, see: https://tuhdo.github.io/helm-intro.html
 
 
 ** Buffer Folding with =origami=
-=origami= minor-mode enables text folding across Emacs. It's pretty useful, though sometimes slow and sometimes buggy. With
-=origami-reset= you can always unfold everything and reset the file, which has always been enough to ignore some of the hiccups.
+=origami= minor-mode enables text folding across Emacs. It's pretty useful, though sometimes slow and sometimes
+buggy. With =origami-reset= you can always unfold everything and reset the file, which has always been enough to ignore
+some of the hiccups.
 
 I find this very helpful in collapsing functions in source code and narrowing my focus to the important parts of a file.
 
@@ -554,9 +557,10 @@ I find this very helpful in collapsing functions in source code and narrowing my
 
 
 ** Text Expansion with =abbrev=
-=abbrev= triggers expansion on pressing the space bar after your word, which is incredibly useful for stream of conscious text
-expansion. I use this mainly to expand acronyms and abbreviations, so I can lazily type and still create readable text for those
-not yet familiar with those short-strings. However, this is also extremely useful for creating shortcuts for words I type often.
+=abbrev= triggers expansion on pressing the space bar after your word, which is incredibly useful for stream of
+conscious text expansion. I use this mainly to expand acronyms and abbreviations, so I can lazily type and still create
+readable text for those not yet familiar with those short-strings. However, this is also extremely useful for creating
+shortcuts for words I type often.
 
 #+begin_src emacs-lisp
 (use-package abbrev
@@ -675,8 +679,8 @@ peek behind the scenes. What keys or chords are you entering and what are they t
 
 
 * =org-mode= Configuration
-=org-mode= is probably my biggest anchor to Emacs. I've tried org-like plugins for other editors and IDEs, but nothing compares
-to the real thing.
+=org-mode= is probably my biggest anchor to Emacs. I've tried org-like plugins for other editors and IDEs, but nothing
+compares to the real thing.
 
 Let's load all the things! Well, all the things I use anyway.
 
@@ -729,8 +733,8 @@ Let's also update a few general settings and behavior.
 #+end_src
 
 ** Org Structure
-This section sets up my org-mode file structure. This involves the root of my org directory, the location of my agenda files,
-and the like.
+This section sets up my org-mode file structure. This involves the root of my org directory, the location of my agenda
+files, and the like.
 
 #+begin_src emacs-lisp
 (defvar org-directory            "~/org"                                         "Root \\='org-mode\\=' directory.")
@@ -768,7 +772,8 @@ and the like.
 
 
 ** Org Agenda
-With org-mode to-do items and tags configured, we can start unleashing the real power behind org-mode and configure our agendas.
+With org-mode to-do items and tags configured, we can start unleashing the real power behind org-mode and configure our
+agendas.
 
 Org-mode agendas pull from a list of files which I have mostly tucked away under the =agendas= sub-directory within my
 =org-directory=. The structure of these files is mostly informed by the Getting Things Done framework.
@@ -809,8 +814,8 @@ Let's also modify some other agenda settings.
 
 
 ** Org To-Do
-Org todos help keep track of work I plan to do and how I engaged with completing that work. Let's get a few general things set
-up here.
+Org todos help keep track of work I plan to do and how I engaged with completing that work. Let's get a few general
+things set up here.
 
 #+begin_src emacs-lisp
 (setq org-treat-insert-todo-heading-as-state-change t)
@@ -818,8 +823,8 @@ up here.
 
 
 *** To Do Keywords
-Org-mode has a set of configurable keywords, both sequenced and typed, which can be added to headlines and cycled through to
-track an arbitrary workflow you define. This is where I define my keywords.
+Org-mode has a set of configurable keywords, both sequenced and typed, which can be added to headlines and cycled
+through to track an arbitrary workflow you define. This is where I define my keywords.
 
 The default org-mode sequence is as follows:
 #+begin_example
@@ -849,9 +854,9 @@ However, that's pretty simple and I have something else in mind.
 *** Tags
 Org-mode files and headlines can be tagged to enable searching and correlating information across files and directories.
 
-To support my Emacs implementation of Getting Things Done (GTD), I have a set of tags I use to denote tasks, projects, and
-contexts. For now this is enough, though I think there's still more improvement to make here, especially when it comes to
-searching behavior.
+To support my Emacs implementation of Getting Things Done (GTD), I have a set of tags I use to denote tasks, projects,
+and contexts. For now this is enough, though I think there's still more improvement to make here, especially when it
+comes to searching behavior.
 
 My tags come in three flavors:
 1. '@context' - indicates physical location, head-space, or tool these tasks are associated with, or some other
@@ -859,8 +864,8 @@ My tags come in three flavors:
 2. 'TYPE' - indicates whether the item is a project or task, if it's next up, or if it has some other classification
 3. 'info' - represents informational tags for categorization and search
 
-I try to give each tag a mnemonic hotkey and resolve collisions with capitalization or by choosing another key within the word,
-but it's an imperfect system.
+I try to give each tag a mnemonic hotkey and resolve collisions with capitalization or by choosing another key within
+the word, but it's an imperfect system.
 
 #+begin_src emacs-lisp
 (setq org-tag-alist
@@ -909,8 +914,8 @@ For speedup purposes, I could define tags on every file instead of using inherit
 *** TODO Archiving
 I typically only look back a sprint, about two weeks, for recent time tracking.
 
-Thankfully, John Wiegley shared [[https://orgmode.org/list/m21wc7dz4r.fsf@newartisans.com/][a solution]] for this that I now use. Although, it doesn't quite work yet. Do I have the right
-hooks set?
+Thankfully, John Wiegley shared [[https://orgmode.org/list/m21wc7dz4r.fsf@newartisans.com/][a solution]] for this that I now use. Although, it doesn't quite work yet. Do I have the
+right hooks set?
 
 #+begin_src emacs-lisp
 (defvar org-my-archive-expiry-days 15
@@ -965,8 +970,8 @@ ranges. Most importantly, it visually displays a habit graph useful for seeing h
 
 
 ** Org Clocking
-Org-mode gives us the ability to track time by clocking in and out of headlines. Combined with to-do items and agendas, we can
-really get some value out of this functionality.
+Org-mode gives us the ability to track time by clocking in and out of headlines. Combined with to-do items and agendas,
+we can really get some value out of this functionality.
 
 #+begin_src emacs-lisp
 (setq org-clock-continuously t
@@ -1062,8 +1067,8 @@ look like this will be in =org-ql= until at least v0.8.
 
 
 ** Org Agenda Commands
-Agenda commands are the powerhouse behind org-mode and agendas. These allow you to query across your agenda files and surface
-reports of varying complexity. It's a great way to get exactly the thing you want, with only a few keystrokes.
+Agenda commands are the powerhouse behind org-mode and agendas. These allow you to query across your agenda files and
+surface reports of varying complexity. It's a great way to get exactly the thing you want, with only a few keystrokes.
 
 Agenda commands have the following form:
 #+begin_example
@@ -1079,9 +1084,10 @@ Agenda commands have the following form:
 
 For further reference see the [[https://orgmode.org/worg/org-tutorials/advanced-searching.html][Worg Advanced Searching Tutorial]] or the [[https://orgmode.org/manual/Custom-Agenda-Views.html#Custom-agenda-views][Custom Agenda Views Manual]].
 
-I define these by initializing the commands list with an a weekly preview and append additional templates after. I do this so I
-can split the declarations up and describe them better in my literate configuration. I'll initialize a simple weekly review that
-shows a span of seven days highlighting stuck projects, open projects, and things awaiting something to happen.
+I define these by initializing the commands list with an a weekly preview and append additional templates after. I do
+this so I can split the declarations up and describe them better in my literate configuration. I'll initialize a simple
+weekly review that shows a span of seven days highlighting stuck projects, open projects, and things awaiting something
+to happen.
 
 #+begin_src emacs-lisp
 (defvar TT/org-agenda-custom-commands (list) '())
@@ -1095,12 +1101,13 @@ shows a span of seven days highlighting stuck projects, open projects, and thing
           (todo "WAITING")))))
 #+end_src
 
-Now we can append new search filters to this initialized list which we'll use to initialize the =org-agenda-custom-commands=
-variable after.
+Now we can append new search filters to this initialized list which we'll use to initialize the
+=org-agenda-custom-commands= variable after.
 
 *** GTD Views
-I like to use David Allen's Getting Things Done (GTD) framework for inspiration to my Emacs =org-mode= agenda management. Here
-let's define several GTD views for my agenda contents. All of these exist under the =g= GTD capture group
+I like to use David Allen's Getting Things Done (GTD) framework for inspiration to my Emacs =org-mode= agenda
+management. Here let's define several GTD views for my agenda contents. All of these exist under the =g= GTD capture
+group
 
 1. Inbox - only items captured to the Inbox agenda
 2. Daily Agenda and TODOs - combination view of items scheduled today, with upcoming deadlines, and then everything else
@@ -1177,12 +1184,12 @@ let's define several GTD views for my agenda contents. All of these exist under 
 
 
 *** GTD Contexts
-I use =org-mode= tags starting with an '@' symbol to designate a context. A context is a physical space, head-space, or tool that
-a set of work is associated with.
+I use =org-mode= tags starting with an '@' symbol to designate a context. A context is a physical space, head-space, or
+tool that a set of work is associated with.
 
-These aren't too fancy, namely a bunch of searches for context tags. I reuse the binding from the quick tag for consistency. I
-want to narrow in on unfinished work in a certain context so I can batch tasks in a context together when I'm working in that
-context.
+These aren't too fancy, namely a bunch of searches for context tags. I reuse the binding from the quick tag for
+consistency. I want to narrow in on unfinished work in a certain context so I can batch tasks in a context together when
+I'm working in that context.
 
 #+begin_src emacs-lisp
 (setcdr (last TT/org-agenda-custom-commands)
@@ -1415,11 +1422,11 @@ Specify a non-nil prefix to inhibit inserting the heading"
 
 
 ** Org Capture Templates
-Capture templates allow us to quickly invoke a key-chord and select a template to capture some thought directly to a good home
-for it. Tasks to my organizer or inbox, new journal items to my journal, etc...
+Capture templates allow us to quickly invoke a key-chord and select a template to capture some thought directly to a
+good home for it. Tasks to my organizer or inbox, new journal items to my journal, etc...
 
-I define these by initializing my capture list with an inbox capture and appending additional templates after. I do this so I
-can split the configuration up and describe them better in my literate configuration.
+I define these by initializing my capture list with an inbox capture and appending additional templates after. I do this
+so I can split the configuration up and describe them better in my literate configuration.
 
 #+begin_src emacs-lisp
 ;; Org Capture Configuration
@@ -1461,11 +1468,11 @@ themselves. These help make decisions, generate names, and do anything else I co
 
 
 *** Sprint Work
-Here I define my first capture group for Sprint Work. All templates within capture some work associated directly with the
-current sprint I'm working in.
+Here I define my first capture group for Sprint Work. All templates within capture some work associated directly with
+the current sprint I'm working in.
 
-As a manger I don't presently do the sprint work that my teams execute, so this configuration is not exported. Instead, I keep
-it around for reference.
+As a manger I don't presently do the sprint work that my teams execute, so this configuration is not exported. Instead,
+I keep it around for reference.
 
 #+begin_src emacs-lisp :tangle no
 ;; Capture group for Sprint Work
@@ -1487,8 +1494,9 @@ it around for reference.
 
 
 *** Sprint Retrospective Items
-This second capture group is for capturing information observations and information related to how the sprint is going. Capture
-in the moment, make sense through reflection, synthesize for retrospective and present to the team. That's the general idea.
+This second capture group is for capturing information observations and information related to how the sprint is
+going. Capture in the moment, make sense through reflection, synthesize for retrospective and present to the
+team. That's the general idea.
 
 #+begin_src emacs-lisp
 ;; Capture Group for Retrospective Items
@@ -1506,7 +1514,8 @@ in the moment, make sense through reflection, synthesize for retrospective and p
 
 
 *** TODO Periodic Reflection Capture
-In addition to regular retrospectives, it is useful to do other periodic reflections that support inspection and adaptation.
+In addition to regular retrospectives, it is useful to do other periodic reflections that support inspection and
+adaptation.
 
 I plan to add a few capture templates here for things like:
 - [ ] Adding to a hype-document (capturing wins)
@@ -1516,9 +1525,9 @@ I plan to add a few capture templates here for things like:
 
 
 *** Office Work Capture
-As I made the transition from engineering work to management I found myself overusing the "office" context I originally had for
-non-development in-office work. This capture group helps me better capture tasks I find myself regularly doing as a manager, and
-better categorizes things within sub-groups of the "office" context.
+As I made the transition from engineering work to management I found myself overusing the "office" context I originally
+had for non-development in-office work. This capture group helps me better capture tasks I find myself regularly doing
+as a manager, and better categorizes things within sub-groups of the "office" context.
 
 #+begin_src emacs-lisp
 ;; Capture Group for Office Work
@@ -1542,9 +1551,9 @@ better categorizes things within sub-groups of the "office" context.
 
 
 *** Organizer To Do Items
-This capture group is for non-sprint related tasks, which should each go to their proper group and have a default priority based
-on how I typically file similar tasks. These can easily be adjusted up or down via the agenda view, so it's perfectly fine for
-them to be inaccurate for the task, as long as they're typically correct.
+This capture group is for non-sprint related tasks, which should each go to their proper group and have a default
+priority based on how I typically file similar tasks. These can easily be adjusted up or down via the agenda view, so
+it's perfectly fine for them to be inaccurate for the task, as long as they're typically correct.
 
 Ideally there should be a capture template direct to every single level headline in my organizer. Each headline with
 sub-headings ideally will have it's own capture group
@@ -1575,15 +1584,15 @@ sub-headings ideally will have it's own capture group
 
 
 *** TODO Incubator
-Sometimes I want to capture an idea that I know I cannot take immediate action on. Instead of adding noise to my agenda reports,
-let's file these as someday-maybe under =TT/org-incubate-dir=.
+Sometimes I want to capture an idea that I know I cannot take immediate action on. Instead of adding noise to my agenda
+reports, let's file these as someday-maybe under =TT/org-incubate-dir=.
 
 
 *** Meetings
 This capture group is for meetings tied to the calendar.
 
-I'd prefer to auto-populate the date with today's date and the repeat offset, but haven't found a smooth way to do it yet. So
-for now, I schedule to an arbitrary date and update the date with =C-s= as I fill out the template.
+I'd prefer to auto-populate the date with today's date and the repeat offset, but haven't found a smooth way to do it
+yet. So for now, I schedule to an arbitrary date and update the date with =C-s= as I fill out the template.
 
 #+begin_src emacs-lisp
 ;; Capture Group for Meetings
@@ -1646,8 +1655,8 @@ The remaining capture templates are things that don't fit neatly into any one gr
 
 
 *** Nested Groups Test
-I had a hypothesis that I might be able to progressively define nested capture groups. This is the experiment that showed it was
-possible. I keep it around for reference, but no longer export it into my configuration.
+I had a hypothesis that I might be able to progressively define nested capture groups. This is the experiment that
+showed it was possible. I keep it around for reference, but no longer export it into my configuration.
 
 #+begin_src emacs-lisp :tangle no
 ;; Test capture group - testing nested sub-groups
@@ -1673,15 +1682,14 @@ Because I've split the configuration up, it's time to update the actual =org-cap
 (setq org-capture-templates TT/org-capture-templates)
 #+end_src
 
-If I want to further customize this variable in machine local configurations, like in my employer configuration, I'll have to
-append to =org-capture-templates=. I could wait to set the value at the very end, but right now I think it makes more sense to
-keep local to this section.
-
+If I want to further customize this variable in machine local configurations, like in my employer configuration, I'll
+have to append to =org-capture-templates=. I could wait to set the value at the very end, but right now I think it makes
+more sense to keep local to this section.
 
 
 ** Org Refile
-Despite having some nice capture templates, sometimes things still don't end up in the right place. That, or sometimes I just
-want to move something.
+Despite having some nice capture templates, sometimes things still don't end up in the right place. That, or sometimes I
+just want to move something.
 
 #+begin_src emacs-lisp
 (setq org-refile-targets `((org-agenda-files :maxlevel . 6)
@@ -1832,8 +1840,8 @@ The Language Server Protocol (LSP) sets up a contract for an editor (client) to 
 development burden of supporting language interactions across languages and editors. Instead, the server can worry about
 supporting language interactions and any editor with a client can get the benefit of that abstraction.
 
-Emacs has both the [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]] and [[https://github.com/joaotavora/eglot][eglot]] packages to support client interfaces with various language server backends. I've chosen
-to leverage =lsp-mode= as my language server client.
+Emacs has both the [[https://github.com/emacs-lsp/lsp-mode][lsp-mode]] and [[https://github.com/joaotavora/eglot][eglot]] packages to support client interfaces with various language server backends. I've
+chosen to leverage =lsp-mode= as my language server client.
 
 #+begin_src emacs-lisp
 ;; LSP mode configuration
@@ -1959,8 +1967,8 @@ Company-mode, or complete any mode, is an extremely useful tool for text/code co
 
 
 ** Project Management with =projectile=
-Projectile allows for project interaction from within Emacs. Additionally, it can hook into other powerful search utilities to
-really kick up project navigation.
+Projectile allows for project interaction from within Emacs. Additionally, it can hook into other powerful search
+utilities to really kick up project navigation.
 
 #+begin_src emacs-lisp
 (use-package projectile
@@ -2234,9 +2242,9 @@ And more specifically for CSS
 
 
 *** JavaScript
-From time to time I've developed in JavaScript, both in the Web and in Node. =js2-mode= has been good to me for that. I tried
-=js3-mode=, but found it lacked features and had fallen out of support. I'm somewhat eyeing =indium=, but would likely prefer to
-just use a =lsp-mode= solution that also supports Typescript.
+From time to time I've developed in JavaScript, both in the Web and in Node. =js2-mode= has been good to me for that. I
+tried =js3-mode=, but found it lacked features and had fallen out of support. I'm somewhat eyeing =indium=, but would
+likely prefer to just use a =lsp-mode= solution that also supports Typescript.
 
 #+begin_src emacs-lisp
 (use-package js2-mode
@@ -2270,7 +2278,7 @@ just use a =lsp-mode= solution that also supports Typescript.
 
 
 **** Pretty Printing with =prettier-js=
-#+Begin_src emacs-lisp
+#+begin_src emacs-lisp
 (use-package prettier-js
   :after (js2-mode web-mode)
   :init
@@ -2313,8 +2321,8 @@ just use a =lsp-mode= solution that also supports Typescript.
 
 
 *** Perl Customization
-I used to write mostly in Perl for work, and =cperl-mode= was what my Emacs wielding colleagues used at my employer. It was
-definitely better than the Vanilla Emacs defaults.
+I used to write mostly in Perl for work, and =cperl-mode= was what my Emacs wielding colleagues used at my employer. It
+was definitely better than the Vanilla Emacs defaults.
 
 #+begin_src emacs-lisp
 (use-package cperl-mode
@@ -2470,12 +2478,13 @@ Emacs comes with it's own Internet Relay Chat client, =erc=. I use this to chat 
 
 
 ** PDF-Tools
-PDF-Tools enable PDF viewing within Emacs, so I don't have to have a second application open to read and take notes on PDF
-files. Just one more reason to never leave Emacs.
+PDF-Tools enable PDF viewing within Emacs, so I don't have to have a second application open to read and take notes on
+PDF files. Just one more reason to never leave Emacs.
 
-Unfortunately my current configuration has trouble doing a fresh install as this has a dependency on =pdf-tools= being installed
-on the host running Emacs, which it may not be. On a system with this dependency installed we're up and running no problem
-though. As such, I tell =use-package= not to ensure the package is installed and to leave updating to me as a manual task.
+Unfortunately my current configuration has trouble doing a fresh install as this has a dependency on =pdf-tools= being
+installed on the host running Emacs, which it may not be. On a system with this dependency installed we're up and
+running no problem though. As such, I tell =use-package= not to ensure the package is installed and to leave updating to
+me as a manual task.
 
 #+begin_src emacs-lisp :tangle no
 (use-package pdf-tools
@@ -2494,8 +2503,8 @@ though. As such, I tell =use-package= not to ensure the package is installed and
 
 
 * TODO Helper Functions
-This section contains custom functions I'll sometimes invoke. These should probably live elsewhere, but for now, this is their
-home.
+This section contains custom functions I'll sometimes invoke. These should probably live elsewhere, but for now, this is
+their home.
 
 #+begin_src emacs-lisp
 ;; Regardless of which buffer you're in, jump to the active minibuffer
@@ -2561,8 +2570,8 @@ Saves to a temp file and puts the filename in the kill ring."
 
 
 * Global Keybinding Overrides
-This section contains my global keybinding overrides. There are key-bindings defined elsewhere in my configuration, typically
-within the context they'll be used in. This isn't a hard rule, but is what I lean towards.
+This section contains my global keybinding overrides. There are key-bindings defined elsewhere in my configuration,
+typically within the context they'll be used in. This isn't a hard rule, but is what I lean towards.
 
 #+begin_src emacs-lisp
 ;; Buffer Key Bindings
@@ -2592,8 +2601,8 @@ within the context they'll be used in. This isn't a hard rule, but is what I lea
 #+end_src
 
 ** Disable Problematic Bindings
-Some keybindings are just the bane of my existence. While many are undo-able, some cause more trouble that outweighs the value
-of having the binding.
+Some keybindings are just the bane of my existence. While many are undo-able, some cause more trouble that outweighs the
+value of having the binding.
 
 #+begin_src emacs-lisp
 ;; Kill the bane of my fat-fingers
@@ -2615,7 +2624,8 @@ I want to be able to start interacting with org-mode regardless of what buffer I
 
 
 ** Enable Full Keyboard Number Pad
-Unfortunately I've found Emacs doesn't natively support full size keyboards, however this allows us to get our numpad working.
+Unfortunately I've found Emacs doesn't natively support full size keyboards, however this allows us to get our numpad
+working.
 
 #+begin_src emacs-lisp
 ;; Numpad Key Bindings
@@ -2635,8 +2645,8 @@ Unfortunately I've found Emacs doesn't natively support full size keyboards, how
 
 
 * Completing Configuration
-This section contains the last moment configurations that wrap up my personal customization and Emacs load. Here we'll kill
-mode-line clutter and start up the Emacs server.
+This section contains the last moment configurations that wrap up my personal customization and Emacs load. Here we'll
+kill mode-line clutter and start up the Emacs server.
 
 #+begin_src emacs-lisp
 (delight '((auto-fill-function nil t)
