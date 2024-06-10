@@ -683,7 +683,8 @@ Let's load all the things! Well, all the things I use anyway.
 #+begin_src emacs-lisp
 (use-package org
   :pin gnu
-  :mode ("\\.org$" . org-mode))
+  :mode ("\\.org$" . org-mode)
+  :config (define-key org-mode-map (kbd "C-c C-r") verb-command-map))
 (use-package ob-C :ensure nil)
 (use-package ob-ditaa :ensure nil)
 (use-package ob-dot :ensure nil)
@@ -736,6 +737,7 @@ and the like.
 (defvar TT/org-agenda-dir        (concat org-directory "/agendas")               "Top level org directory for Getting Things Done (GTD) organizer files.")
 (defvar TT/org-calendar          (concat TT/org-agenda-dir "/calendar.org")      "Calendar for scheduled items.")
 (defvar TT/org-habits            (concat TT/org-agenda-dir "/habits.org")        "Habits for periodic TODOs.")
+(defvar TT/org-ideas             (concat TT/org-agenda-dir "/ideas.org")         "Idea capture and ideation.")
 (defvar TT/org-inbox             (concat TT/org-agenda-dir "/inbox.org")         "The collection bin for everything to be refiled.")
 (defvar TT/org-incubate-dir      (concat TT/org-agenda-dir "/incubate")          "Categories of in-actionable things to incubate.")
 (defvar TT/org-emacs-maybe       (concat TT/org-incubate-dir "/emacs-maybe.org") "Someday agenda for Emacs related things.")
@@ -796,7 +798,7 @@ Let's also modify some other agenda settings.
       org-agenda-show-future-repeats t
       org-agenda-dim-blocked-tasks nil ; dimming can slow the agenda  down - a filter could show blocked tasks better
       org-agenda-inhibit-startup t ; speedup agenda loading by ignoring startup options
-      org-tags-column -128
+      org-tags-column -120
       org-agenda-todo-keyword-format "%-12s"
       org-agenda-skip-deadline-prewarning-if-scheduled 'pre-scheduled
       org-agenda-time-grid
