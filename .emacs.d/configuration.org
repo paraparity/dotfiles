@@ -2196,7 +2196,7 @@ Setup eshell.
 **** TODO =helm-eshell= throws error unavailable
 And add some helm integration for =eshell=.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (use-package helm-eshell
   :after (eshell-mode helm)
   :hook eshell-mode
@@ -2287,7 +2287,7 @@ likely prefer to just use a =lsp-mode= solution that also supports Typescript.
     (if (buffer-file-name)
         (if (string-match (car my-pair) buffer-file-name)
             (funcall (cdr my-pair)))))
-  :Hook ((js2-mode . prettier-js-mode)
+  :hook ((js2-mode . prettier-js-mode)
          (web-mode . prettier-js-mode))
   :config
   (setq prettier-js-args
