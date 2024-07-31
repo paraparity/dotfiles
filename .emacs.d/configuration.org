@@ -98,14 +98,6 @@ anything else up we'll need to tell Emacs where to look.
 (add-to-list 'load-path "~/.emacs.d/elisp/")
 #+end_src
 
-Load my machine local custom libraries directly, if they exist. My =elfeed= configuration is machine local for now, as
-my work and personal machines all represent different contexts where I pay attention to different things.
-
-#+begin_src emacs-lisp
-(if (file-readable-p "~/.emacs.d/elisp/elfeed-conf.el")
-    (load-library "elfeed-conf"))
-#+end_src
-
 **** TODO Improve machine local customization loading
 Something could happen between checking and loading a file. Can I just attempt the load and handle an error if it
 doesn't work?
@@ -2502,6 +2494,27 @@ me as a manual task.
 #+end_src
 
 
+** Feed Reading with =elfeed=
+Feeds are great, and reading them in Emacs is better.
+
+#+begin_src emacs-lisp
+(use-package elfeed
+  :defer t
+  :bind ("C-x w" . elfeed)
+  :init (setf url-queue-timeout 30)
+  :config
+  (if (file-readable-p "~/.emacs.d/elisp/elfeed-conf.el")
+      (load-library "elfeed-conf")))
+#+end_src
+
+My =elfeed= configuration is machine local for now, as my work and personal machines all represent different contexts
+where I pay attention to different things.
+
+#+begin_src emacs-lisp
+#+end_src
+
+
+
 * TODO Helper Functions
 This section contains custom functions I'll sometimes invoke. These should probably live elsewhere, but for now, this is
 their home.
@@ -2584,9 +2597,6 @@ typically within the context they'll be used in. This isn't a hard rule, but is 
 (global-set-key (kbd "C-c o") 'switch-to-minibuffer)
 (global-set-key (kbd "<f8>") 'flyspell-buffer)
 (global-set-key (kbd "C-c s") 'flyspell-learn-word-at-point)
-
-;; Elfeed Keybindings
-(global-set-key (kbd "C-x w") 'elfeed)
 
 ;; Misc Keybindings
 (global-set-key (kbd "C-c 1") 'open-config-file)
