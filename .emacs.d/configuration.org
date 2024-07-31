@@ -24,7 +24,7 @@ When tangled, all of these source blocks become an =.el= file. I'd still like th
 of configuration code, so let's keep my old =init.el= header around.
 
 #+begin_src emacs-lisp
-;;; configuration.el --- paraparity's Emacs configuration file
+;;; configuration.el --- Paraparity's Emacs configuration file
 ;;
 ;;; Commentary:
 ;; Customized startup for Emacs
@@ -147,7 +147,7 @@ location. Configuration courtesy of [[https://www.gnu.org/software/emacs/manual/
 
 
 *** Lock Files
-I've never run into a situation where an Emacs lockfile has helped me, and isntead find them to be more like disk litter
+I've never run into a situation where an Emacs lock file has helped me, and instead find them to be more like disk litter
 than anything. Given I predominantly work on single-user environments that sync out to remote systems, let's kill this
 until I need it.
 
@@ -315,8 +315,8 @@ it everywhere until I find somewhere that bites me because of it.
 
 *** Displaying Line Numbers
 I used to use =linum-mode= globally, but it sometimes caused slowness and also wasn't really necessary outside of code
-repos. Now let's use the newer =display-line-numbers-mode= and set it to work in programming modes or be toggled on
-demand.
+repositories. Now let's use the newer =display-line-numbers-mode= and set it to work in programming modes or be toggled
+on demand.
 
 #+begin_src emacs-lisp
 (use-package display-line-numbers
@@ -837,7 +837,7 @@ However, that's pretty simple and I have something else in mind.
 #+begin_src emacs-lisp
 (setq org-todo-keywords
       '((sequence "TODO(t)" "NEXT(n)" "STARTED(s)" "WAITING(w@)" "|" "DONE(d)" "DROP(x@)")
-        (sequence "MEETING(m)" "APPOINTMENT(a)" "|" "FINISHED(f)" "CANCELLED(l)")
+        (sequence "MEETING(m)" "APPOINTMENT(a)" "|" "FINISHED(f)" "CANCELED(l)")
         (sequence "DELEGATED(g@)"               "|" "COMPLETED(p)")
         (sequence "REVIEW(r)" "REWORK(k@)"      "|" "REVIEWED(v)")
         (sequence "OPEN(o)"                     "|" "CLOSED(c@)")))
@@ -846,7 +846,7 @@ However, that's pretty simple and I have something else in mind.
       '(("STARTED" . "cyan")
         ("MAYBE"   . "purple")
         ("WAITING" . (:foreground "yellow" :weight bold))
-        ("CANCELLED" . "DimGray")
+        ("CANCELED" . "DimGray")
         ("DROP"    . "DimGray")))
 #+end_src
 
@@ -958,11 +958,11 @@ This can be 0 for immediate, or a floating point value.")
 
 ** Org Habit
 =org-habit= is helpful for keeping track of periodic todos that are or should be habitual. It's a little bit more
-lenient in scheduling than using scheduled days, recurrances, or deadlines in that you can set min and max repeat
+lenient in scheduling than using scheduled days, recurrences, or deadlines in that you can set min and max repeat
 ranges. Most importantly, it visually displays a habit graph useful for seeing how you're keeping up with these habits.
 
 #+begin_src emacs-lisp
-(setq org-habit-preceeding-days 21
+(setq org-habit-preceding-days 21
       org-habit-following-days 7
       org-habit-graph-column 96
       org-habit-show-all-today t)
@@ -1154,7 +1154,7 @@ group
            ((agenda ""
                     ((org-agenda-span 7)))
             (org-ql-block '(and (ts :from today :to 7))
-                          ((org-ql-block-header "1-Week Lookahead")))
+                          ((org-ql-block-header "1-Week Look Ahead")))
             (org-ql-block '(and (todo)
                                 (not (done))
                                 (tags "PROJECT"))
@@ -1813,7 +1813,7 @@ A few things across languages first.
 
 *** Tabs v. Spaces
 Let the holy wars be resolved by tooling that enables each developer to see things their way in their editor, and
-tooling that converts these to whatever is standard for the codebase we collaborate in.
+tooling that converts these to whatever is standard for the code base we collaborate in.
 
 Set tabbing to spaces, keep things condensed with 2 spaces.
 
@@ -2175,7 +2175,7 @@ Make sure certain files open in certain modes.
 #+end_src
 
 *** Shell with =eshell=
-Setup eshell.
+Setup =eshell=.
 
 #+begin_src emacs-lisp
 (use-package eshell
@@ -2624,7 +2624,7 @@ I want to be able to start interacting with org-mode regardless of what buffer I
 
 
 ** Enable Full Keyboard Number Pad
-Unfortunately I've found Emacs doesn't natively support full size keyboards, however this allows us to get our numpad
+Unfortunately I've found Emacs doesn't natively support full size keyboards, however this allows us to get the numpad
 working.
 
 #+begin_src emacs-lisp
@@ -2678,7 +2678,7 @@ kill mode-line clutter and start up the Emacs server.
 
 * Future Work
 
-** Questions to Anwswer
+** Questions to Answer
 - [ ] When to use =:custom= vs =:config= and others in =use-package=?
 
 
