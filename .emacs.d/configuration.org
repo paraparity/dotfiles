@@ -22,7 +22,7 @@ of individual flare. Considering the name I go by is =Paraparity=, you'll notice
 *** Add Some Output Commentary
 When tangled, all of these source blocks become an =.el= file. I'd still like that to be more friendly than just a bunch
 of configuration code, so let's keep my old =init.el= header around.
-
+n
 #+begin_src emacs-lisp
 ;;; configuration.el --- Paraparity's Emacs configuration file
 ;;
@@ -1903,6 +1903,7 @@ chosen to leverage =lsp-mode= as my language server client.
         treemacs-show-hidden-files t)
   (treemacs-filewatch-mode t))
 #+end_src
+
 
 *** Installing LSP Implementations
 In addition to the Emacs packages, you'll need to install language servers for the languages you'll be working in. Some
