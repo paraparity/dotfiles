@@ -2045,13 +2045,27 @@ richer set of programming interactions.
 #+end_src
 
 
-** HTTP Interactions with =restclient=
+** HTTP Interactions
+
+*** With =restclient=
 Interactively making REST calls of a server. Mode associated with =*.http= files.
 
 #+begin_src emacs-lisp
 (use-package restclient
   :mode ("\\.http$"))
 #+end_src
+
+
+*** With =verb=
+I've recently been experimenting with =verb-mode= as it integrates directly with =org-mode= and has worked pretty much
+as is for me.
+
+#+begin_src emacs-lisp
+(use-package verb)
+#+end_src
+
+This may load after =org-mode= which may cause problems... I may just need to hoist it earlier in the configs or do some
+=use-package= dependency linking.
 
 
 ** On The Fly Checking
