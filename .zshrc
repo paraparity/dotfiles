@@ -104,7 +104,7 @@ if [ -d "/usr/local/go" ] ; then
 fi
 
 # Identify busy commands
-alias freq="aqk 'print $1' ~/.zsh_history | sort | uniq -c | sort -rn | head -n 20"
+alias freq="awk '{print $1}' ~/.zsh_history | sort | uniq -c | sort -rn | head -n 20"
 
 # Fun
 alias pun="curl -H 'accept: text/plain' https://icanhazdadjoke.com/ -w '\n'"
@@ -141,4 +141,3 @@ ex ()
 ################################################################################
 # Load machine specific zsh configurations if any
 [ -s ~/.zshrc_machine ] && . ~/.zshrc_machine
-

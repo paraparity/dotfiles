@@ -72,7 +72,7 @@ alias pipup='pip3 freeze -- local | grep -v "^\-e" | cut -d = -f 1 | xargs -n1 p
 alias cpp14='g++ -std="c++14" -ggdb'
 
 # Identify busy commands
-alias freq="aqk 'print $1' ~/.bash_history | sort | uniq -c | sort -rn | head -n 20"
+alias freq="awk '{print $1}' ~/.bash_history | sort | uniq -c | sort -rn | head -n 20"
 
 # Misc
 alias pun="curl -H 'accept: text/plain' https://icanhazdadjoke.com/ -w '\n'"
