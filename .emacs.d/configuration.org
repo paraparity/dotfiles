@@ -538,10 +538,10 @@ I find this very helpful in collapsing functions in source code and narrowing my
 (use-package origami
   :diminish origami-mode
   :bind (("C-<tab>" . origami-recursively-toggle-node)
-         ("C-c u"   . origami-open-all-nodes)
-         ("C-c f"   . origami-close-all-nodes)
-         ("C-c n"   . origami-show-only-node)
-         ("C-c r"   . origami-reset))
+         ("C-c o u"   . origami-open-all-nodes)
+         ("C-c o f"   . origami-close-all-nodes)
+         ("C-c o n"   . origami-show-only-node)
+         ("C-c o r"   . origami-reset))
   :config
   (global-origami-mode t))
 
@@ -762,6 +762,44 @@ files, and the like.
 (defvar org-default-notes-file TT/org-inbox)
 #+end_src
 
+
+** Org Roam
+
+=org-roam= is a plaintext personal knowledge management (PKM) system. I'm starting to experiment with using it
+vs. Obsidian.
+
+#+begin_src emacs-lisp
+(use-package org-roam
+  :defer t
+  :custom
+  (org-roam-directory "~/org/brain/")
+  (org-roam-completion-everywhere t)
+  :bind (("C-c n l" . org-roam-buffer-toggle)
+         ("C-c n f" . org-roam-node-find)
+         ("C-c n g" . org-roam-graph)
+         ("C-c n i" . org-roam-node-insert)
+         ("C-c n c" . org-roam-capture)
+         :map org-mode-map
+         ("C-M-i"   . completion-at-point))
+  :config
+  (org-roam-db-autosync-mode)
+  (org-roam-setup))
+#+end_src
+
+And maybe org-roam-ui for visualization.
+
+#+begin_src emacs-lisp
+(use-package websocket
+  :after org-roam)
+
+(use-package org-roam-ui
+  :after org-roam
+  :config
+  (setq org-roam-ui-sync-theme t
+        org-roam-ui-follow t
+        org-roam-ui-update-on-save t
+        org-roam-ui-open-on-start nil))
+#+end_src
 
 ** Org Agenda
 With org-mode to-do items and tags configured, we can start unleashing the real power behind org-mode and configure our
