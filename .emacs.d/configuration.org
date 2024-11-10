@@ -781,16 +781,25 @@ vs. Obsidian.
   (org-roam-completion-everywhere t)
   (org-roam-database-connector 'sqlite-builtin)
   :bind (("C-c n l" . org-roam-buffer-toggle)
+         ("C-c n b" . org-roam-buffer-display-dedicated)
          ("C-c n a" . org-id-get-create)
          ("C-c n i" . org-roam-node-insert)
          ("C-c n f" . org-roam-node-find)
          ("C-c n c" . org-roam-capture)
          ("C-c n g" . org-roam-graph)
+         ("C-c n z" . org-roam-alias-add)
+         ("C-c n x" . org-roam-alias-remove)
          :map org-mode-map
          ("C-M-i"   . completion-at-point))
   :config
   (org-roam-db-autosync-mode)
-  (org-roam-setup))
+  (org-roam-setup)
+  (add-to-list 'display-buffer-alist
+               '("\\*org-roam\\*"
+                 (display-buffer-in-direction)
+                 (direction . right)
+                 (window-width . 0.33)
+                 (window-height . fit-window-to-buffer))))
 #+end_src
 
 And maybe org-roam-ui for visualization.
