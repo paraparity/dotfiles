@@ -61,8 +61,9 @@ can have them.
 (use-package gnutls
   :demand t
   :if (gnutls-available-p)
-  :config
-  (setq gnutls-verify-error t))
+  :custom
+  (gnutls-verify-error t))
+
 #+end_src
 
 
@@ -74,8 +75,8 @@ Needs to first check =gpg= exists on the system and conditionally loads.
 #+begin_src emacs-lisp
 (use-package epg
   :demand t
-  :config
-  (setq epg-pinentry-mode 'loopback))
+  :custom
+  (epg-pinentry-mode 'loopback))
 #+end_src
 
 
@@ -83,7 +84,8 @@ Needs to first check =gpg= exists on the system and conditionally loads.
 #+begin_src emacs-lisp
 (use-package auth-source
   :demand t
-  :config (setq auth-sources '("~/.emacs.d/secrets/.authinfo.gpg")))
+  :custom
+  (auth-sources '("~/.emacs.d/secrets/.authinfo.gpg")))
 #+end_src
 
 
@@ -239,9 +241,9 @@ only need them to be a little unique, not full file path or even relative file p
 (use-package uniquify
   :defer t
   :ensure nil
-  :config
-  (setq uniquify-buffer-name-style   'post-forward-angle-brackets
-        uniquify-after-kill-buffer-p t))
+  :custom
+  (uniquify-buffer-name-style   'post-forward-angle-brackets)
+  (uniquify-after-kill-buffer-p t))
 #+end_src
 
 Let's get some more screen real estate by using a small, code friendly font.
@@ -500,26 +502,27 @@ can lead to some pretty impressive editing and refactoring feats.
          ("<tab>" . helm-execute-persistent-action)
          ("C-i" . helm-execute-persistent-action)
          ("C-z" . helm-select-action))
+  :custom
+  (helm-split-window-inside-p        t)
+  (helm-move-to-line-cycle-in-source t)
+  (helm-M-x-fuzzy-match              t)
+  (helm-buffers-fuzzy-matching       t)
+  (helm-recentf-fuzzy-match          t)
+  (helm-semantic-fuzzy-match         t)
+  (helm-imenu-fuzzy-match            t)
+  (helm-apropos-fuzzy-match          t)
+  (helm-candidate-number-limit       100)
+  (helm-autoresize-max-height        20)
+  (helm-autoresize-min-height        0)
+  (helm-idle-delay                   0.01)
+  (helm-input-idle-delay             0.01)
+  (helm-quick-update                 t)
   :config
   (require 'helm-command)
   (require 'helm-for-files)
   (require 'helm-imenu)
   (require 'helm-semantic)
   (require 'helm-misc)
-  (setq helm-split-window-inside-p        t
-        helm-move-to-line-cycle-in-source t
-        helm-M-x-fuzzy-match              t
-        helm-buffers-fuzzy-matching       t
-        helm-recentf-fuzzy-match          t
-        helm-semantic-fuzzy-match         t
-        helm-imenu-fuzzy-match            t
-        helm-apropos-fuzzy-match          t
-        helm-candidate-number-limit       100
-        helm-autoresize-max-height        20
-        helm-autoresize-min-height        0
-        helm-idle-delay                   0.01
-        helm-input-idle-delay             0.01
-        helm-quick-update                 t)
   (add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages)
   (helm-autoresize-mode t))
 #+end_src
@@ -558,10 +561,10 @@ shortcuts for words I type often.
 (use-package abbrev
   :ensure nil
   :diminish abbrev-mode
+  :custom
+  (abbrev-file-name "~/.emacs.d/abbrev_defs")
+  (save-abbrevs t)
   :config
-  (setq abbrev-file-name
-        "~/.emacs.d/abbrev_defs")
-  (setq save-abbrevs t)
   (if (file-exists-p abbrev-file-name)
       (quietly-read-abbrev-file)))
 
@@ -626,8 +629,9 @@ interactively fill out templates.
          ("C-c y l" . yas-load-snippet-buffer-and-close))
   :hook ((prog-mode . yas-minor-mode)
          (text-mode . yas-minor-mode))
+  :custom
+  (yas-verbosity 1)
   :config
-  (setq yas-verbosity 1)
   (yas-global-mode 1))
 #+end_src
 
@@ -639,8 +643,9 @@ Let's change where Tramp saves things, and use SSH as our default method.
 #+begin_src emacs-lisp
 (use-package tramp
   :defer t
+  :custom
+  (tramp-default-method "ssh")
   :config
-  (setq tramp-default-method "ssh")
   (set-default 'tramp-auto-save-directory "~/.saves/tramp/"))
 
 ;; TODO: if windows: use PuTTy PLINK; if *nix: use ssh
@@ -774,11 +779,13 @@ vs. Obsidian.
   :custom
   (org-roam-directory "~/org/brain/")
   (org-roam-completion-everywhere t)
+  (org-roam-database-connector 'sqlite-builtin)
   :bind (("C-c n l" . org-roam-buffer-toggle)
-         ("C-c n f" . org-roam-node-find)
-         ("C-c n g" . org-roam-graph)
+         ("C-c n a" . org-id-get-create)
          ("C-c n i" . org-roam-node-insert)
+         ("C-c n f" . org-roam-node-find)
          ("C-c n c" . org-roam-capture)
+         ("C-c n g" . org-roam-graph)
          :map org-mode-map
          ("C-M-i"   . completion-at-point))
   :config
@@ -794,11 +801,11 @@ And maybe org-roam-ui for visualization.
 
 (use-package org-roam-ui
   :after org-roam
-  :config
-  (setq org-roam-ui-sync-theme t
-        org-roam-ui-follow t
-        org-roam-ui-update-on-save t
-        org-roam-ui-open-on-start nil))
+  :custom
+  (org-roam-ui-sync-theme t)
+  (org-roam-ui-follow t)
+  (org-roam-ui-update-on-save t)
+  (org-roam-ui-open-on-start nil))
 #+end_src
 
 ** Org Agenda
@@ -1426,7 +1433,8 @@ Let's set up where my journal files are stored, and the format of the entries.
   :init (setq org-journal-dir TT/org-journal-dir
               org-journal-file-format "%Y%m%d.org"
               org-journal-date-format "%e %b %Y (%A)")
-  :config (setq org-journal-date-prefix "#+TITLE: Daily Note for "))
+  :custom
+  (org-journal-date-prefix "#+TITLE: Daily Note for "))
 #+end_src
 
 *** Journal Helpers
@@ -1884,13 +1892,13 @@ chosen to leverage =lsp-mode= as my language server client.
          js2-mode
          rust-mode
          python-mode)
-  :config
-  (setq lsp-prefer-flymake nil)
-  (setq gc-cons-threshold (* 100 1024 1024))
-  (setq read-process-output-max (* 1024 1024))
-  (setq lsp-idle-delay 0.200)
-  (setq lsp-log-io nil)
-  (setq lsp-modeline-diagnostics-scope :workspace))
+  :custom
+  (lsp-prefer-flymake nil)
+  (gc-cons-threshold (* 100 1024 1024))
+  (read-process-output-max (* 1024 1024))
+  (lsp-idle-delay 0.200)
+  (lsp-log-io nil)
+  (lsp-modeline-diagnostics-scope :workspace))
 #+end_src
 
 *** Language Server UI Modules with =lsp-ui=
@@ -1934,12 +1942,13 @@ chosen to leverage =lsp-mode= as my language server client.
 (use-package lsp-treemacs
   :commands lsp-treemacs-error-list
   :after (lsp-mode treemacs-mode)
+  :custom
+  (treemacs-indentation 2)
+  (treemacs-width 32)
+  (treemacs-git-integration t)
+  (treemacs-sorting 'alphabetic-desc)
+  (treemacs-show-hidden-files t)
   :config
-  (setq treemacs-indentation 2
-        treemacs-width 32
-        treemacs-git-integration t
-        treemacs-sorting 'alphabetic-desc
-        treemacs-show-hidden-files t)
   (treemacs-filewatch-mode t))
 #+end_src
 
@@ -1986,12 +1995,12 @@ Company-mode, or complete any mode, is an extremely useful tool for text/code co
               ("C-p" . company-select-previous))
   :custom
   (company-idle-delay nil)
+  (company-tooltip-align-annotations t)
+  (company-minimum-prefix-length 2)
+  (company-require-match nil)
+  (company-show-numbers t)
+  (company-tooltip-limit 20)
   :config
-  (setq company-tooltip-align-annotations t)
-  (setq company-minimum-prefix-length 2)
-  (setq company-require-match nil)
-  (setq company-show-numbers t)
-  (setq company-tooltip-limit 20)
   (global-company-mode)
   (with-eval-after-load 'company
     (global-set-key (kbd "C-c SPC") 'company-complete)))
@@ -2009,14 +2018,15 @@ utilities to really kick up project navigation.
   :bind (:map projectile-mode-map
               ("S-p" . projectile-command-map)
               ("C-c p" . projectile-command-map))
+  :custom
+  (projectile-completion-system 'helm)
+  (projectile-switch-project-action 'helm-projectile)
+  (projectile-enable-caching t)
+  (projectile-globally-ignored-directories '(".git" "node_modules" "__pycache__" ".vs" ".venv"))
+  (projectile-globally-ignored-file-suffixes '(".swp" ".o" ".so" ".exe" ".dll" ".elc" ".pyc" ".jar" ".cache"))
+  (projectile-globally-ignored-files '("TAGS" "tags"))
+  (projectile-project-search-path '("~/devel/projects/"))
   :config
-  (setq projectile-completion-system 'helm
-        projectile-switch-project-action 'helm-projectile)
-  (setq projectile-enable-caching t
-        projectile-globally-ignored-directories '(".git" "node_modules" "__pycache__" ".vs" ".venv")
-        projectile-globally-ignored-file-suffixes '(".swp" ".o" ".so" ".exe" ".dll" ".elc" ".pyc" ".jar" ".cache")
-        projectile-globally-ignored-files '("TAGS" "tags"))
-  (setq projectile-project-search-path '("~/devel/projects/"))
   (projectile-mode))
 #+end_src
 
@@ -2063,21 +2073,22 @@ richer set of programming interactions.
         ("C-x t B"   . treemacs-bookmark)
         ("C-x t C-t" . treemacs-find-file)
         ("C-x t M-t" . treemacs-find-tag))
+  :custom
+  (treemacs-collapse-dirs 3)
+  (treemacs-indentation 2)
+  (treemacs-indentation-string " ")
+  (treemacs-litter-directories '("/node_modules" "/.venv" "/.cask"))
+  (treemacs-sorting 'alphabetic-desc)
+  (treemacs-wide-toggle-width 64)
+  (treemacs-width 32)
   :config
-  (setq treemacs-collapse-dirs 3
-        treemacs-indentation 2
-        treemacs-indentation-string " "
-        treemacs-litter-directories '("/node_modules" "/.venv" "/.cask")
-        treemacs-sorting 'alphabetic-desc
-        treemacs-wide-toggle-width 64
-        treemacs-width 32)
   (treemacs-follow-mode t)
   (treemacs-filewatch-mode t))
 
 (use-package treemacs-projectile
   :after (treemacs projectile)
-  :config
-  (setq treemacs-header-function #'treemacs-projectile-create-header))
+  :custom
+  (treemacs-header-function #'treemacs-projectile-create-header))
 
 (use-package treemacs-magit
   :after (treemacs magit))
@@ -2225,12 +2236,13 @@ Setup =eshell=.
 
 #+begin_src emacs-lisp
 (use-package eshell
+  :custom
+  (eshell-scroll-to-bottom-on-input 'all)
+  (eshell-hist-ignoredups t)
+  (eshell-save-history-on-exit t)
+  (eshell-prefer-lisp-functions nil)
+  (eshell-destroy-buffer-when-process-dies t)
   :config
-  (setq eshell-scroll-to-bottom-on-input 'all
-        eshell-hist-ignoredups t
-        eshell-save-history-on-exit t
-        eshell-prefer-lisp-functions nil
-        eshell-destroy-buffer-when-process-dies t)
   (add-hook 'eshell-mode-hook
             (lambda ()
               (add-to-list 'eshell-visual-commands "ssh")
@@ -2270,10 +2282,10 @@ And add some helm integration for =eshell=.
          ("\\.[agj]sp\\'" . web-mode)
          ("\\.mustache\\'" . web-mode))
   :bind ("C-c w n" . web-mode-tag-match)
-  :config
-  (setq web-mode-markup-indent-offset 2)
-  (setq web-mode-code-indent-offset 2)
-  (setq web-mode-enable-auto-pairing t))
+  :custom
+  (web-mode-markup-indent-offset 2)
+  (web-mode-code-indent-offset 2)
+  (web-mode-enable-auto-pairing t))
 #+end_src
 
 And more specifically for CSS
@@ -2297,21 +2309,22 @@ likely prefer to just use a =lsp-mode= solution that also supports Typescript.
   :defer t
   :mode "\\.js$"
   :interpreter "node"
+  :custom
+  (js3-boring-indentation t)
+  (js3-cleanup-whitespace t)
+  (js3-consistent-level-indent-inner-bracket t)
+  (js3-continued-expr-mult 0)
+  (js3-curly-indent-offset 0)
+  (js3-enter-indents-newline t)
+  (js3-indent-level 4)
+  (js3-indent-on-enter-key nil)
+  (js3-indent-tabs-mode t)
   :config
   (require 'js2-refactor)
   (define-key js2-mode-map (kbd "M-.") nil)
   (add-hook 'js2-mode-hook #'js2-refactor-mode)
   (js2r-add-keybindings-with-prefix "C-c C-r")
   (define-key js2-mode-map (kbd "C-k") #'js2r-kill)
-  (setq js3-boring-indentation t
-        js3-cleanup-whitespace t
-        js3-consistent-level-indent-inner-bracket t
-        js3-continued-expr-mult 0
-        js3-curly-indent-offset 0
-        js3-enter-indents-newline t
-        js3-indent-level 4
-        js3-indent-on-enter-key nil
-        js3-indent-tabs-mode t)
   (add-hook 'js2-mode-hook
             (lambda ()
               (add-hook 'xref-backend-functions #'xref-js2-xref-backend nil t)))
@@ -2335,11 +2348,11 @@ likely prefer to just use a =lsp-mode= solution that also supports Typescript.
             (funcall (cdr my-pair)))))
   :hook ((js2-mode . prettier-js-mode)
          (web-mode . prettier-js-mode))
+  :custom
+  (prettier-js-args '("--use-tabs" "false"
+                      "--trailing-comma" "all"
+                      "--bracket-spacing" "false"))
   :config
-  (setq prettier-js-args
-        '("--use-tabs" "false"
-          "--trailing-comma" "all"
-          "--bracket-spacing" "false"))
   (add-hook 'web-mode-hook #'(lambda ()
                                (enable-minor-mode
                                 '("\\.jsx?\\'" . prettier-js-mode)))))
@@ -2372,16 +2385,16 @@ was definitely better than the Vanilla Emacs defaults.
 
 #+begin_src emacs-lisp
 (use-package cperl-mode
+  :custom
+  (cperl-close-paren-offset 0)
+  (cperl-continued-statement-offset 0)
+  (cperl-electric-backspace-untabify nil)
+  (cperl-indent-comment-at-column-0 t)
+  (cperl-indent-parens-as-block t)
+  (cperl-label-offset 0)
+  (cperl-min-label-indent 0)
+  (perl-tab-to-comment t)
   :config
-  (setq cperl-close-paren-offset 0
-        cperl-continued-statement-offset 0
-        cperl-electric-backspace-untabify nil
-        cperl-indent-comment-at-column-0 t
-        cperl-indent-parens-as-block t
-        cperl-label-offset 0
-        cperl-min-label-indent 0
-        perl-tab-to-comment t)
-
   (defalias 'perl-mode 'cperl-mode)
   (defvaralias 'c-basic-offset 'tab-width)
   (defvaralias 'cperl-indent-level 'tab-width)
@@ -2441,9 +2454,9 @@ Initial configuration informed through:
               ("M-?" . lsp-find-references))
   :custom
   (rustic-analyzer-command '("rustup" "run" "stable" "rust-analyzer"))
-  :config
-  (setq rustic-format-on-save t)
-  (setq rustic-indent-offset 2))
+  :custom
+  (rustic-format-on-save t)
+  (rustic-indent-offset 2))
 #+end_src
 
 
@@ -2497,28 +2510,29 @@ Emacs comes with it's own Internet Relay Chat client, =erc=. I use this to chat 
               ("RET" . nil)
               ("C-c RET" . erc-send-current-line)
               ("C-c C-RET" . erc-send-current-line))
+  :custom
+  (erc-nick "paraparity")
+  (erc-hide-list '("JOIN" "PART" "QUIT" "NICK"))
+  (erc-lurker-hide-list '("JOIN" "PART" "QUIT" "NICK"))
+  (erc-prompt-for-password nil)
+  (erc-kill-buffer-on-part t)
+  (erc-kill-queries-on-quit t)
+  (erc-kill-server-buffer-on-quit t)
+  (erc-autojoin-timing 'ident)
+  (erc-autojoin-channels-alist
+   '(("libera.chat"
+      "##rust"
+      "#bash"
+      "#emacs"
+      "#erc"
+      "#javascript"
+      "#node.js"
+      "#org-mode"
+      "#perl"
+      "#python"
+      "#systemcrafters")))
   :config
-  (setq erc-nick "paraparity"
-        erc-hide-list '("JOIN" "PART" "QUIT" "NICK")
-        erc-lurker-hide-list '("JOIN" "PART" "QUIT" "NICK")
-        erc-prompt-for-password nil
-        erc-kill-buffer-on-part t
-        erc-kill-queries-on-quit t
-        erc-kill-server-buffer-on-quit t)
   (add-to-list 'erc-modules 'autojoin)
-  (setq erc-autojoin-timing 'ident
-        erc-autojoin-channels-alist
-        '(("libera.chat"
-           "##rust"
-           "#bash"
-           "#emacs"
-           "#erc"
-           "#javascript"
-           "#node.js"
-           "#org-mode"
-           "#perl"
-           "#python"
-           "#systemcrafters")))
   (erc-autojoin-mode t))
 #+end_src
 
