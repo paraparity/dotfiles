@@ -2270,6 +2270,7 @@ And add some helm integration for =eshell=.
   :bind (:map eshell-mode-map ("C-c C-l" . helm-eshell-history)))
 #+end_src
 
+
 *** Markdown with =markdown-mode=
 
 #+begin_src emacs-lisp
@@ -2281,6 +2282,24 @@ And add some helm integration for =eshell=.
   (require 'lsp-marksman))
 #+end_src
 
+
+*** SQL and DB Interactions
+
+**** sqlite
+
+Let's enhance the =sqlite= experience by extending =sqlite-mode= with =sqlite-mode-extras=.
+
+#+begin_src elisp
+(use-package sqlite-mode-extras
+  :hook ((sqlite-mode . sqlite-extras-minor-mode))
+  :bind (:map
+         sqlite-mode-map
+         ("n" . next-line)
+         ("p" . previous-line)
+         ("<backtab>" . sqlite-mode-extras-backtab-dwim)
+         ("<tab>" . sqlite-mode-extras-tab-dwim)
+         ("RET" . sqlite-mode-extras-ret-dwim)))
+#+end_src
 
 *** Web Development
 
