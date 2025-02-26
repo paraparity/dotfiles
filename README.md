@@ -89,6 +89,8 @@ CC=/usr/bin/gcc-11 CXX=/usr/bin/gcc-11 ./configure \
     CFLAGS="-O3 -march=native -fomit-frame-pointer"
 ```
 
+Optionally include the `--disable-gc-mark-trace` option for a ~5% better GC performance at the trade off of having less details if you run into GC related bugs. YMMV.
+
 ### Building Emacs with Make
 
 ``` shell
