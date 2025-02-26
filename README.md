@@ -46,7 +46,6 @@ sudo apt-get install \
 	libgccjit-11-dev \ # or libgccjit-10-dev - depends on your gcc version
 	libtree-sitter-dev \
 	libsqlite3-dev \
-	libjansson-dev \
 	libcairo2-dev \
 	libgnutls28-dev \
 	libharfbuzz-dev \
