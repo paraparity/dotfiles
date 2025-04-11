@@ -43,13 +43,12 @@ I like to configure Emacs a pretty rich set of features, so there's a lot to ins
 
 ``` shell
 sudo apt-get install \
-	libgccjit-11-dev \ # or libgccjit-10-dev - depends on your gcc version
+	libgccjit-13-dev \ # or libgccjit-*-dev - depends on your gcc version
 	libtree-sitter-dev \
 	libsqlite3-dev \
 	libcairo2-dev \
 	libgnutls28-dev \
 	libharfbuzz-dev \
-	libgtk-3-dev \
 	libmailutils-dev \
 	libxpm-dev \
 	libgif-dev \
@@ -63,8 +62,7 @@ sudo apt-get install \
 	libm17n-dev \
 	libotf-dev \
 	libxft-dev \
-	libsystemd-dev \
-	libwebkit2gtk-4.0-dev
+	libsystemd-dev
 ```
 
 ### Configuring Emacs
@@ -75,7 +73,7 @@ Sometimes despite being installed on the system, the `./configure` script can't 
 ./autogen.sh
 
 # you can also specify a program suffix if building multiple version ie: --program-suffix=30
-CC=/usr/bin/gcc-11 CXX=/usr/bin/gcc-11 ./configure \
+./configure \
     --with-native-compilation \
     --with-file-notification=inotify \
     --with-tree-sitter \
@@ -83,8 +81,6 @@ CC=/usr/bin/gcc-11 CXX=/usr/bin/gcc-11 ./configure \
     --with-cairo \
     --with-gnutls \
     --with-harfbuzz \
-    --with-x-toolkit=gtk3 \
-    --with-xwidgets \
     --with-mailutils \
     CFLAGS="-O3 -march=native -fomit-frame-pointer"
 ```
