@@ -2335,16 +2335,7 @@ Recently I've run into problems with =lsp-mode=, =editorconfig-mode=, and JSON's
 =.editorconfig= values for JS files to read from it, but some combination of the above is winning over those. The below
 configs seem to have fixed it, but I'll keep an eye on it when editing JS and JSON files for a bit.
 
-Override some of the basics in =js-mode= and its =js-json-mode=.
-
-#+begin_src emacs-lisp
-(use-package js-mode
-  :defer t
-  :custom
-  (js-indent-level 2))
-#+end_src
-
-Now we set up =js2-mode= and =js2-refactor= extensions.
+Set up =js2-mode= and =js2-refactor= extensions.
 
 #+begin_src emacs-lisp
 (use-package js2-mode
@@ -2352,6 +2343,7 @@ Now we set up =js2-mode= and =js2-refactor= extensions.
   :mode ("\\.js$" . js2-mode)
   :interpreter "node"
   :custom
+  (js-indent-level 2)
   (js2-basic-offset 2)
   (js2-highlight-level 3)
   :config
@@ -2365,7 +2357,7 @@ Now we set up =js2-mode= and =js2-refactor= extensions.
 
 (use-package js2-refactor
   :after js2-mode
-  :mode (js2-mode . js2-refactor-mode)
+  :hook (js2-mode . js2-refactor-mode)
   :config
   (define-key js2-mode-map (kbd "C-k") #'js2r-kill)
   (js2r-add-keybindings-with-prefix "C-c C-r"))
