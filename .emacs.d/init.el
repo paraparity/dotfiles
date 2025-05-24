@@ -56,6 +56,9 @@
 (setq use-package-always-ensure t
       use-package-always-defer t)
 
+;; Uncomment this to collect statistics on launch, otherwise leave commented
+;;(setq use-package-compute-statistics t)
+
 (if init-file-debug
     (setq use-package-verbose t
           use-package-expand-minimally nil
