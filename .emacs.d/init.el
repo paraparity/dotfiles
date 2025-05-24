@@ -53,7 +53,8 @@
 
 (require 'use-package)
 (require 'use-package-ensure)
-(setq use-package-always-ensure t)
+(setq use-package-always-ensure t
+      use-package-always-defer t)
 
 (if init-file-debug
     (setq use-package-verbose t

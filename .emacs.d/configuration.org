@@ -239,7 +239,6 @@ only need them to be a little unique, not full file path or even relative file p
 
 #+begin_src emacs-lisp
 (use-package uniquify
-  :defer t
   :ensure nil
   :custom
   (uniquify-buffer-name-style   'post-forward-angle-brackets)
@@ -330,7 +329,6 @@ When present Emacs can be configured to support it using the =ligature.el= packa
 
 #+begin_src emacs-lisp
 (use-package ligature
-  :ensure t
   :load-path "~/.emacs.d/elisp/"
   :config
   ;; Enable these ligatures in all major modes
@@ -642,7 +640,6 @@ Emacs comes packaged with a really cool utility I'm desperately under-utilizing.
 Let's change where Tramp saves things, and use SSH as our default method.
 #+begin_src emacs-lisp
 (use-package tramp
-  :defer t
   :custom
   (tramp-default-method "ssh")
   :config
@@ -775,7 +772,6 @@ vs. Obsidian.
 
 #+begin_src emacs-lisp
 (use-package org-roam
-  :defer t
   :custom
   (org-roam-directory "~/org/brain/")
   (org-roam-completion-everywhere t)
@@ -1080,13 +1076,10 @@ block. We can customize this to add a few I commonly use.
 such I use =org-ql= to dig a bit deeper into my Org usage. Let's also make it play nice with Helm.
 
 #+begin_src emacs-lisp :tangle no
-(use-package orq-ql
-  :ensure t)
-
+(use-package orq-ql)
 
 (use-package helm-org-ql
-  :after org-ql
-  :ensure t)
+  :after org-ql)
 #+end_src
 
 I've set =org-ql= to not tangle for the moment. It's failing with:
@@ -2055,7 +2048,6 @@ And integrate with =helm=.
 (setq vc-handled-backends (delq 'Git vc-handled-backends))
 
 (use-package magit
-  :defer t
   :bind ("C-x g" . magit-status))
    #+end_src
 
@@ -2212,7 +2204,6 @@ Some projects I work on use Docker, and Emacs can too!
 
 #+begin_src emacs-lisp
 (use-package docker
-  :defer t
   :diminish
   :bind ("C-c d" . docker))
 #+end_src
@@ -2604,7 +2595,6 @@ Feeds are great, and reading them in Emacs is better.
 
 #+begin_src emacs-lisp
 (use-package elfeed
-  :defer t
   :bind ("C-x w" . elfeed)
   :init (setf url-queue-timeout 30)
   :config
