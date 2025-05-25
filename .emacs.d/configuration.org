@@ -271,14 +271,6 @@ I have Emacs opened over. This can also let me see my desktop background which c
 (add-to-list 'default-frame-alist '(alpha . (92 . 90)))
 #+end_src
 
-Finally, let's load a theme and bring some style to Emacs.
-
-#+begin_src emacs-lisp
-(use-package kaolin-themes
-  :config
-  (load-theme 'kaolin-eclipse t))
-#+end_src
-
 
 *** Hunt Trailing White-space, Sometimes
 I personally disdain trailing white-space, but also dislike how visually congested =whitespace-mode= can be
@@ -481,6 +473,7 @@ can lead to some pretty impressive editing and refactoring feats.
 #+begin_src emacs-lisp
 (use-package helm
   :diminish helm-mode
+  :demand t
   :init (progn
           (helm-mode))
   :bind (("C-c h"   . helm-command-prefix)
@@ -2765,6 +2758,12 @@ kill mode-line clutter and start up the Emacs server.
 ;; Load configuration files local to employer
 ;;(org-babel-load-file "~/.emacs.d/employer.org")
 
+;;Finally, let's load a theme and bring some style to Emacs.
+(use-package kaolin-themes
+  :demand t
+  :init
+  (load-theme 'kaolin-eclipse t))
+
 ;; Start the Emacs server
 (require 'server)
 (unless (server-running-p)
@@ -2785,19 +2784,6 @@ kill mode-line clutter and start up the Emacs server.
 
 ** Questions to Answer
 - [ ] When to use =:custom= vs =:config= and others in =use-package=?
-
-
-** TODO =use-package= statistics report improvements
-#+begin_example
-Package                   Status      ...   Time
-helm                      Configured  ...   8.33
-helm-eshell               Declared    ...   4.15
-org-ql                    Configured  ...   2.68
-rjsx-mode                 Configured  ...   2.33
-ox                        Configured  ...   1.80
-elfeed                    Configured  ...   1.79
-#+end_example
-
 
 ** TODO Configuration Reading [0/8]
 That's mostly it folks. Configuration is done, the rest are future works. This section collects other articles or
