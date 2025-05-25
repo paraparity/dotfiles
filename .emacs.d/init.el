@@ -34,9 +34,9 @@
 ;; Configure package.el to include melpa
 (when (>= emacs-major-version 24)
   (require 'package)
-  (setq package-archives '(("gnu"    . "https://elpa.gnu.org/packages/")
-			   ("melpa"  . "https://melpa.org/packages/")
-                           ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
+  (setopt package-archives '(("gnu"    . "https://elpa.gnu.org/packages/")
+			     ("melpa"  . "https://melpa.org/packages/")
+                             ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
   (package-initialize))
 
 ;; Ensure desired packages are installed, cache package refresh contents
@@ -53,18 +53,17 @@
 
 (require 'use-package)
 (require 'use-package-ensure)
-(setq use-package-always-ensure t
-      use-package-always-defer t)
+(setopt use-package-always-ensure t
+        use-package-always-defer t)
 
 ;; Uncomment this to collect statistics on launch, otherwise leave commented
-;;(setq use-package-compute-statistics t)
+;;(setopt use-package-compute-statistics t)
 
 (if init-file-debug
-    (setq use-package-verbose t
-          use-package-expand-minimally nil
-          use-package-compute-statistics t)
-  (setq use-package-verbose nil
-        use-package-expand-minimally t))
+    (setopt use-package-verbose t
+            use-package-expand-minimally nil)
+  (setopt use-package-verbose nil
+          use-package-expand-minimally t))
 
 ;; Trying to load this early as it's having trouble in my configuration.org
 (use-package org-ql

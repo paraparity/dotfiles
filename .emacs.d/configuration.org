@@ -49,8 +49,8 @@ I don't use directory local variables for Emacs very much if at all. Considering
 potentially without my knowing, lets prevent that from happening.
 
 #+begin_src emacs-lisp
-(setq enable-local-eval nil
-      enable-local-variables nil)
+(setopt enable-local-eval nil
+        enable-local-variables nil)
 #+end_src
 
 *** GnuTLS
@@ -110,7 +110,7 @@ I manage my custom literate configuration, but sometimes use Emacs easy configur
 want to keep these tweaks, I'll give them their own home.
 
 #+begin_src emacs-lisp
-(setq custom-file "~/.emacs.d/custom.el")
+(setopt custom-file "~/.emacs.d/custom.el")
 (when (file-exists-p custom-file)
   (load custom-file 'noerror))
 #+end_src
@@ -127,16 +127,16 @@ location. Configuration courtesy of [[https://www.gnu.org/software/emacs/manual/
 
 #+begin_src emacs-lisp
 ;; File Backup Management
-(setq backup-by-copying t
-      backup-directory-alist `(("." . "~/saves"))
-      delete-old-versions t
-      kept-new-versions 6
-      kept-old-versions 2
-      version-control t)
+(setopt backup-by-copying t
+        backup-directory-alist `(("." . "~/saves"))
+        delete-old-versions t
+        kept-new-versions 6
+        kept-old-versions 2
+        version-control t)
 
 ;; Auto-save File Management
-(setq auto-save-file-name-transforms
-      `((".*" ,temporary-file-directory t)))
+(setopt auto-save-file-name-transforms
+        `((".*" ,temporary-file-directory t)))
 #+end_src
 
 
@@ -153,8 +153,8 @@ This is my old config for lock files which I keep around in case I need to resto
 
 #+begin_src emacs-lisp :tangle no
 ;; Lock File Management
-(setq lock-file-name-transforms
-      '(("\\`/.*/\\([^/]+\\)\\'" "/var/tmp/\\1" t)))
+(setopt lock-file-name-transforms
+        '(("\\`/.*/\\([^/]+\\)\\'" "/var/tmp/\\1" t)))
 #+end_src
 
 
@@ -177,8 +177,8 @@ Let's make it a only take a key-chord to pull up my literate configuration.
   :bind ("C-x C-r" . recentf-open-files)
   :diminish recentf-mode
   :init
-  (setq recentf-exclude '("\\.gpg\\'"))
-  (setq recentf-auto-cleanup 'never)
+  (setopt recentf-exclude '("\\.gpg\\'"))
+  (setopt recentf-auto-cleanup 'never)
   (recentf-mode t))
 #+end_src
 
@@ -205,9 +205,9 @@ Give me back my screen real estate. I don't need your newfangled and fancy GUI f
 more lines of sweet, sweet text. I also find the visual bell annoying, so let's take that out.
 
 #+begin_src emacs-lisp
-(setq inhibit-startup-screen t
-      inhibit-startup-message t
-      initial-scratch-message nil)
+(setopt inhibit-startup-screen t
+        inhibit-startup-message t
+        initial-scratch-message nil)
 
 (tool-bar-mode -1)
 (menu-bar-mode -1)
@@ -294,7 +294,7 @@ Enable final newline in all files. It's pretty common in software projects, and 
 it everywhere until I find somewhere that bites me because of it.
 
 #+begin_src emacs-lisp
-(setq require-final-newline t)
+(setopt require-final-newline t)
 #+end_src
 
 
@@ -369,7 +369,7 @@ a better default fill-column.
 I also find it useful in some languages and environments to have a hard tab stop list to get spacing right.
 
 #+begin_src emacs-lisp
-(setq tab-stop-list
+(setopt tab-stop-list
    '(4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84 88 92 96))
 #+end_src
 
@@ -697,8 +697,8 @@ Let's load all the things! Well, all the things I use anyway.
 ;; This wasn't loading well via use-package...
 (require 'org-tempo)
 
-(setq org-modules
-      '(ol-doi ol-bbdb ol-bibtex ol-docview ol-gnus ol-info ol-eww org-habit org-tempo))
+(setopt org-modules
+        '(ol-doi ol-bbdb ol-bibtex ol-docview ol-gnus ol-info ol-eww org-habit org-tempo))
 #+end_src
 
 Let's also update a few general settings and behavior.
@@ -709,12 +709,12 @@ Let's also update a few general settings and behavior.
 (add-hook 'org-mode-hook
           #'(lambda () (origami-mode nil)))
 
-(setq org-src-fontify-natively t
-      org-src-tab-acts-natively t
-      org-src-preserve-indentation nil
-      org-startup-indented t ; will this end my indentation woes?
-      org-edit-src-content-indentation 0
-      org-ellipsis " [+]")
+(setopt org-src-fontify-natively t
+        org-src-tab-acts-natively t
+        org-src-preserve-indentation nil
+        org-startup-indented t ; will this end my indentation woes?
+        org-edit-src-content-indentation 0
+        org-ellipsis " [+]")
 
 (custom-set-faces '(org-ellipsis ((t (:foreground "gray40" :underline nil)))))
 #+end_src
@@ -806,6 +806,7 @@ And maybe org-roam-ui for visualization.
   (org-roam-ui-open-on-start nil))
 #+end_src
 
+
 ** Org Agenda
 With org-mode to-do items and tags configured, we can start unleashing the real power behind org-mode and configure our
 agendas.
@@ -815,36 +816,36 @@ Org-mode agendas pull from a list of files which I have mostly tucked away under
 
 #+begin_src emacs-lisp
 ;; Agenda Files:
-(setq org-agenda-files
-      (delq nil
-            (mapcar (lambda (x) (and x (file-exists-p x) x))
-                    `(,TT/org-calendar
-                      ,TT/org-habits
-                      ,TT/org-organizer
-                      ,TT/org-projects
-                      ,TT/org-tickler
-                      ,TT/org-waiting))))
+(setopt org-agenda-files
+        (delq nil
+              (mapcar (lambda (x) (and x (file-exists-p x) x))
+                      `(,TT/org-calendar
+                        ,TT/org-habits
+                        ,TT/org-organizer
+                        ,TT/org-projects
+                        ,TT/org-tickler
+                        ,TT/org-waiting))))
 #+end_src
 
 Let's also modify some other agenda settings.
 
 #+begin_src emacs-lisp
-(setq org-agenda-skip-deadline-if-done t
-      org-agenda-skip-scheduled-if-done t
-      org-agenda-skip-scheduled-if-deadline-is-shown t
-      org-agenda-skip-timestamp-if-done t
-      org-agenda-skip-timestamp-if-deadline-is-shown t
-      org-agenda-compact-blocks t
-      org-agenda-show-future-repeats t
-      org-agenda-dim-blocked-tasks nil ; dimming can slow the agenda  down - a filter could show blocked tasks better
-      org-agenda-inhibit-startup t ; speedup agenda loading by ignoring startup options
-      org-tags-column -120
-      org-agenda-todo-keyword-format "%-12s"
-      org-agenda-skip-deadline-prewarning-if-scheduled 'pre-scheduled
-      org-agenda-time-grid
-      '((daily today)
-        (800 1000 1200 1400 1600 1800 2000)
-        " ...... " "----------------"))
+(setopt org-agenda-skip-deadline-if-done t
+        org-agenda-skip-scheduled-if-done t
+        org-agenda-skip-scheduled-if-deadline-is-shown t
+        org-agenda-skip-timestamp-if-done t
+        org-agenda-skip-timestamp-if-deadline-is-shown t
+        org-agenda-compact-blocks t
+        org-agenda-show-future-repeats t
+        org-agenda-dim-blocked-tasks nil ; dimming can slow the agenda  down - a filter could show blocked tasks better
+        org-agenda-inhibit-startup t ; speedup agenda loading by ignoring startup options
+        org-tags-column -120
+        org-agenda-todo-keyword-format "%-12s"
+        org-agenda-skip-deadline-prewarning-if-scheduled 'pre-scheduled
+        org-agenda-time-grid
+        '((daily today)
+          (800 1000 1200 1400 1600 1800 2000)
+          " ...... " "----------------"))
 #+end_src
 
 
@@ -853,7 +854,7 @@ Org todos help keep track of work I plan to do and how I engaged with completing
 things set up here.
 
 #+begin_src emacs-lisp
-(setq org-treat-insert-todo-heading-as-state-change t)
+(setopt org-treat-insert-todo-heading-as-state-change t)
 #+end_src
 
 
@@ -870,19 +871,19 @@ The default org-mode sequence is as follows:
 However, that's pretty simple and I have something else in mind.
 
 #+begin_src emacs-lisp
-(setq org-todo-keywords
-      '((sequence "TODO(t)" "NEXT(n)" "STARTED(s)" "WAITING(w@)" "|" "DONE(d)" "DROP(x@)")
-        (sequence "MEETING(m)" "APPOINTMENT(a)" "|" "FINISHED(f)" "CANCELED(l)")
-        (sequence "DELEGATED(g@)"               "|" "COMPLETED(p)")
-        (sequence "REVIEW(r)" "REWORK(k@)"      "|" "REVIEWED(v)")
-        (sequence "OPEN(o)"                     "|" "CLOSED(c@)")))
+(setopt org-todo-keywords
+        '((sequence "TODO(t)" "NEXT(n)" "STARTED(s)" "WAITING(w@)" "|" "DONE(d)" "DROP(x@)")
+          (sequence "MEETING(m)" "APPOINTMENT(a)" "|" "FINISHED(f)" "CANCELED(l)")
+          (sequence "DELEGATED(g@)"               "|" "COMPLETED(p)")
+          (sequence "REVIEW(r)" "REWORK(k@)"      "|" "REVIEWED(v)")
+          (sequence "OPEN(o)"                     "|" "CLOSED(c@)")))
 
-(setq org-todo-keyword-faces
-      '(("STARTED" . "cyan")
-        ("MAYBE"   . "purple")
-        ("WAITING" . (:foreground "yellow" :weight bold))
-        ("CANCELED" . "DimGray")
-        ("DROP"    . "DimGray")))
+(setopt org-todo-keyword-faces
+        '(("STARTED" . "cyan")
+          ("MAYBE"   . "purple")
+          ("WAITING" . (:foreground "yellow" :weight bold))
+          ("CANCELED" . "DimGray")
+          ("DROP"    . "DimGray")))
 #+end_src
 
 
@@ -903,36 +904,33 @@ I try to give each tag a mnemonic hotkey and resolve collisions with capitalizat
 the word, but it's an imperfect system.
 
 #+begin_src emacs-lisp
-(setq org-tag-alist
-      '(("@administrative" . ?a) ; administrative tasks, paperwork, check-boxes, overhead, etc...
-        ("@career"         . ?c) ; personal professional development (different than learn?)
-        ("@communication"  . ?m) ; messaging, email, outreach, inquiry, and publication work
-        ("@finances"       . ?f) ; banking, budgeting, investing, and most things money related
-        ("@firefights"     . ?F) ; incident response, unexpected/chaotic work, high-urgency (war-room, incident team, etc...)
-        ("@guild"          . ?g) ; involvement in communities of practice
-        ("@health"         . ?h) ; exercise, diet, point-of-care, etc...
-        ("@hiring"         . ?i) ; talent acquisition: outreach, correspondence, and interviewing
-        ("@home"           . ?H) ; apartment related things
-        ("@learn"          . ?l) ; courses, intentional learning, study (different than career?)
-        ("@office"         . ?o) ; general office tasks (un-bucketed)
-        ("@read"           . ?r) ; books and reading nook items
-        ("@review"         . ?R) ; periodic review - timed reminders (tickler)
-        ("@scheduling"     . ?d) ; calendar work, planning, conflict resolution
-        ("@self"           . ?S) ; personal reflection and planning
-        ("@sprint"         . ?s) ; sprint work (primarily development)
-        ("@travel"         . ?t) ; trip planning, packing, and similar
-        ("@workstation"    . ?w) ; home and office hardware, configurations, etc...
-        ("IMPORTANT"       . ?I) ; something of significance or of great value
-        ("NEXT"            . ?N) ; the very next thing to be doing within a project
-        ("PROJECT"         . ?P) ; something that takes significant effort or time, and can be decomposed into individual tasks
-        ("TASK"            . ?T) ; an atomic actionable thing
-        ("URGENT"          . ?U) ; something that demands attention in a short time-span
-        ("braindead"       . ?b) ; things that can be done with little thought
-        ("journal"         . ?j) ; journaling
-        ("noexport"        . ?x)))
-
-(setq org-stuck-projects '("+PROJECT/-WAITING-DONE"
-                           ("TODO" "STARTED") ()))
+(setopt org-tag-alist
+        '(("@administrative" . ?a) ; administrative tasks, paperwork, check-boxes, overhead, etc...
+          ("@career"         . ?c) ; personal professional development (different than learn?)
+          ("@communication"  . ?m) ; messaging, email, outreach, inquiry, and publication work
+          ("@finances"       . ?f) ; banking, budgeting, investing, and most things money related
+          ("@firefights"     . ?F) ; incident response, unexpected/chaotic work, high-urgency (war-room, incident team, etc...)
+          ("@guild"          . ?g) ; involvement in communities of practice
+          ("@health"         . ?h) ; exercise, diet, point-of-care, etc...
+          ("@hiring"         . ?i) ; talent acquisition: outreach, correspondence, and interviewing
+          ("@home"           . ?H) ; apartment related things
+          ("@learn"          . ?l) ; courses, intentional learning, study (different than career?)
+          ("@office"         . ?o) ; general office tasks (un-bucketed)
+          ("@read"           . ?r) ; books and reading nook items
+          ("@review"         . ?R) ; periodic review - timed reminders (tickler)
+          ("@scheduling"     . ?d) ; calendar work, planning, conflict resolution
+          ("@self"           . ?S) ; personal reflection and planning
+          ("@sprint"         . ?s) ; sprint work (primarily development)
+          ("@travel"         . ?t) ; trip planning, packing, and similar
+          ("@workstation"    . ?w) ; home and office hardware, configurations, etc...
+          ("IMPORTANT"       . ?I) ; something of significance or of great value
+          ("NEXT"            . ?N) ; the very next thing to be doing within a project
+          ("PROJECT"         . ?P) ; something that takes significant effort or time, and can be decomposed into individual tasks
+          ("TASK"            . ?T) ; an atomic actionable thing
+          ("URGENT"          . ?U) ; something that demands attention in a short time-span
+          ("braindead"       . ?b) ; things that can be done with little thought
+          ("journal"         . ?j) ; journaling
+          ("noexport"        . ?x)))
 #+end_src
 
 
@@ -941,9 +939,9 @@ For whatever reason my agenda is still showing inherited tags.
 
 For speedup purposes, I could define tags on every file instead of using inheritance.
 #+begin_src emacs-lisp
-(setq org-use-tag-inheritance nil
-      org-agenda-use-tag-inheritance nil
-      org-tags-exclude-from-inheritance '("PROJECT" "NEXT"))
+(setopt org-use-tag-inheritance nil
+        org-agenda-use-tag-inheritance nil
+        org-tags-exclude-from-inheritance '("PROJECT" "NEXT"))
 #+end_src
 
 
@@ -986,7 +984,7 @@ This can be 0 for immediate, or a floating point value.")
             (goto-char end)))))
     (save-buffer)))
 
-(setq safe-local-variable-values (quote ((after-save-hook archive-done-tasks))))
+(setopt safe-local-variable-values (quote ((after-save-hook archive-done-tasks))))
 
 (defalias 'archive-done-tasks 'org-my-archive-done-tasks)
 #+end_src
@@ -998,10 +996,10 @@ lenient in scheduling than using scheduled days, recurrences, or deadlines in th
 ranges. Most importantly, it visually displays a habit graph useful for seeing how you're keeping up with these habits.
 
 #+begin_src emacs-lisp
-(setq org-habit-preceding-days 21
-      org-habit-following-days 7
-      org-habit-graph-column 96
-      org-habit-show-all-today t)
+(setopt org-habit-preceding-days 21
+        org-habit-following-days 7
+        org-habit-graph-column 96
+        org-habit-show-all-today t)
 #+end_src
 
 
@@ -1010,21 +1008,21 @@ Org-mode gives us the ability to track time by clocking in and out of headlines.
 we can really get some value out of this functionality.
 
 #+begin_src emacs-lisp
-(setq org-clock-continuously t
-      org-clock-in-resume t
-      org-clock-into-drawer 1
-      org-clock-out-remove-zero-time-clocks t
-      org-clock-out-when-done t
-      org-clock-persist t
-      org-clock-report-include-clocking-task t
-      org-treat-insert-todo-heading-as-state-change t
-      org-expiry-inactive-timestamps t
-      org-log-done 'time
-      org-log-into-drawer "LOGBOOK"
-      org-clock-in-switch-to-state "STARTED")
+(setopt org-clock-continuously t
+        org-clock-in-resume t
+        org-clock-into-drawer 1
+        org-clock-out-remove-zero-time-clocks t
+        org-clock-out-when-done t
+        org-clock-persist t
+        org-clock-report-include-clocking-task t
+        org-treat-insert-todo-heading-as-state-change t
+        org-expiry-inactive-timestamps t
+        org-log-done 'time
+        org-log-into-drawer "LOGBOOK"
+        org-clock-in-switch-to-state "STARTED")
 
 ;; TODO: Move these somewhere more appropriate
-(setq org-src-window-setup 'current-window)
+(setopt org-src-window-setup 'current-window)
 (setq org-html-postamble nil)
 
 (org-clock-persistence-insinuate); Resume clocking task when emacs is restarted
@@ -1038,20 +1036,19 @@ Let's create some short links for things I might reference often.
 
 #+begin_src emacs-lisp
 ;; Links - use like: cpan:HTML or rfc-txt:7522
-(setq org-link-abbrev-alist
-      '(("rfc-html" . "https://tools.ietf.org/html/rfc%s")
-        ("rfc-txt"  . "https://tools.ietf.org/rfc/rfc%s.txt")
-        ("rfc-pdf"  . "https://tools.ietf.org/pdf/rfc%s.pdf")
-        ("fhir-r4"  . "https://www.hl7.org/fhir/R4/%s")
-        ("us-core"  . "https://www.hl7.org/fhir/us/core/%s")
-        ("cpan"     . "https://metacpan.org/search?q=%s")
-        ("so"       . "https://stackoverflow.com/search?q=%s")
-        ("soq"      . "https://stackoverflow.com/questions/%s")
-        ("ese"      . "https://emacs.stackexchange.com/search?q=%s")
-        ("eseq"     . "https://emacs.stackexchange.com/questions/%s")
-        ("rdit"     . "https://redd.it/%s")))
+(setopt org-link-abbrev-alist
+        '(("rfc-html" . "https://tools.ietf.org/html/rfc%s")
+          ("rfc-txt"  . "https://tools.ietf.org/rfc/rfc%s.txt")
+          ("rfc-pdf"  . "https://tools.ietf.org/pdf/rfc%s.pdf")
+          ("fhir-r4"  . "https://www.hl7.org/fhir/R4/%s")
+          ("us-core"  . "https://www.hl7.org/fhir/us/core/%s")
+          ("cpan"     . "https://metacpan.org/search?q=%s")
+          ("so"       . "https://stackoverflow.com/search?q=%s")
+          ("soq"      . "https://stackoverflow.com/questions/%s")
+          ("ese"      . "https://emacs.stackexchange.com/search?q=%s")
+          ("eseq"     . "https://emacs.stackexchange.com/questions/%s")
+          ("rdit"     . "https://redd.it/%s")))
 #+end_src
-
 
 
 ** Org Templates
@@ -1418,16 +1415,19 @@ Lastly I set =org-agenda-custom-commands= to the value of the list I've built.
 (setq org-agenda-custom-commands TT/org-agenda-custom-commands)
 #+end_src
 
+**** TODO Convert to =setopt=
+- currently getting type warning
+- my agenda is too long to want to debug now, works so far despite warning
 
 
 ** Org Journal
 Let's set up where my journal files are stored, and the format of the entries.
-
+org-jour
 #+begin_src emacs-lisp
 (use-package org-journal
-  :init (setq org-journal-dir TT/org-journal-dir
-              org-journal-file-format "%Y%m%d.org"
-              org-journal-date-format "%e %b %Y (%A)")
+  :init (setopt org-journal-dir TT/org-journal-dir
+                org-journal-file-format "%Y%m%d.org"
+                org-journal-date-format "%e %b %Y (%A)")
   :custom
   (org-journal-date-prefix "#+TITLE: Daily Note for "))
 #+end_src
@@ -1726,12 +1726,12 @@ Despite having some nice capture templates, sometimes things still don't end up 
 just want to move something.
 
 #+begin_src emacs-lisp
-(setq org-refile-targets `((org-agenda-files :maxlevel . 6)
-                           (,TT/org-ideas :maxlevel . 3)
-                           (,TT/org-maybe-projects :maxlevel . 2)
-                           (,TT/org-someday :maxlevel . 4)))
+(setopt org-refile-targets `((org-agenda-files :maxlevel . 6)
+                             (,TT/org-ideas :maxlevel . 3)
+                             (,TT/org-maybe-projects :maxlevel . 2)
+                             (,TT/org-someday :maxlevel . 4)))
 ;;(setq org-outline-path-complete-in-steps nil)
-(setq org-refile-allow-creating-parent-nodes 'confirm)
+(setopt org-refile-allow-creating-parent-nodes 'confirm)
 #+end_src
 
 
@@ -1779,8 +1779,8 @@ I can even use org-mode to publish static content!
 Using org-babel, we can pull in some graphical helper tools to give it some rendering capabilities.
 
 #+begin_src emacs-lisp
-(setq org-ditaa-jar-path "/usr/bin/ditaa.jar")
-(setq org-plantuml-jar-path "/usr/share/plantuml/plantuml.jar")
+(setopt org-ditaa-jar-path "/usr/bin/ditaa.jar")
+(setopt org-plantuml-jar-path "/usr/share/plantuml/plantuml.jar")
 #+end_src
 
 
@@ -2038,7 +2038,7 @@ And integrate with =helm=.
 
 ** Magical Git Interactions with =magit=
 #+begin_src emacs-lisp
-(setq vc-handled-backends (delq 'Git vc-handled-backends))
+(setopt vc-handled-backends (delq 'Git vc-handled-backends))
 
 (use-package magit
   :bind ("C-x g" . magit-status))
@@ -2121,43 +2121,43 @@ immediately. This enforces a tight feedback loop in development.
 
 (add-hook 'after-init-hook #'global-flycheck-mode)
 
-(setq flycheck-checkers
-      (quote (asciidoc
-              c/c++-cppcheck
-              css-csslint
-              emacs-lisp
-              emacs-lisp-checkdoc
-              handlebars
-              html-tidy
-              javascript-eslint
-              json-jsonlint
-              less
-              make
-              perl
-              perl-perlcritic
-              python-flak8
-              python-pylint
-              rust
-              sh-bash
-              sh-zsh
-              sh-spellcheck
-              tex-chktex
-              tex-lacheck
-              texinfo
-              xml-xmlstarlet
-              xml-xmllint
-              yaml-jayaml)))
+(setopt flycheck-checkers
+        (quote (asciidoc
+                c/c++-cppcheck
+                css-csslint
+                emacs-lisp
+                emacs-lisp-checkdoc
+                handlebars
+                html-tidy
+                javascript-eslint
+                json-jsonlint
+                less
+                make
+                perl
+                perl-perlcritic
+                python-flak8
+                python-pylint
+                rust
+                sh-bash
+                sh-zsh
+                sh-spellcheck
+                tex-chktex
+                tex-lacheck
+                texinfo
+                xml-xmlstarlet
+                xml-xmllint
+                yaml-jayaml)))
 ;; Others: cfenging chef-foodcritic coffee coffee-coffeelint d-dmd elixir
 ;;         erlang eruby-erubis go-gofmt go-golint go-vet go-build go-test
 ;;         haml haskell-ghc haskell-hlint lua php php-phpmd php-phpcs
 ;;         puppet-parser puppet-lint racket rst rst-sphinx ruby-rubocop
 ;;         ruby-rubylint ruby ruby-jruby sass scala scss slim verilog-verilator
 
-(setq-default flycheck-disabled-checkers
-              '((javascript-jshint
-                 javascript-jslint
-                 javascript-gjslint
-                 c/c++-clang)))
+(setopt flycheck-disabled-checkers
+        '(javascript-jshint
+           javascript-jslint
+           javascript-gjslint
+           c/c++-clang))
 
 ;; Enable C++14 support for GCC
 (add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++14")))
@@ -2285,6 +2285,7 @@ Let's enhance the =sqlite= experience by extending =sqlite-mode= with =sqlite-mo
          ("RET" . sqlite-mode-extras-ret-dwim)))
 #+end_src
 
+
 *** Web Development
 
 #+begin_src emacs-lisp
@@ -2392,6 +2393,7 @@ more so far.
 (use-package typescript-mode
   :mode "\\.ts\\'")
 #+end_src
+
 
 **** Svelte with =svelte-mode=
 #+begin_src emacs-lisp
@@ -2784,6 +2786,7 @@ kill mode-line clutter and start up the Emacs server.
 
 ** Questions to Answer
 - [ ] When to use =:custom= vs =:config= and others in =use-package=?
+
 
 ** TODO Configuration Reading [0/8]
 That's mostly it folks. Configuration is done, the rest are future works. This section collects other articles or
