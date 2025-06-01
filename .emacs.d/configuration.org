@@ -67,7 +67,7 @@ can have them.
 #+end_src
 
 
-*** TODO GPG
+*** GPG
 Minimal GPG setup that could use some expansion.
 
 Needs to first check =gpg= exists on the system and conditionally loads.
@@ -80,7 +80,7 @@ Needs to first check =gpg= exists on the system and conditionally loads.
 #+end_src
 
 
-*** TODO Auth Sources
+*** Auth Sources
 #+begin_src emacs-lisp
 (use-package auth-source
   :demand t
@@ -946,7 +946,7 @@ For speedup purposes, I could define tags on every file instead of using inherit
 #+end_src
 
 
-*** TODO Archiving
+*** Archiving
 I typically only look back a sprint, about two weeks, for recent time tracking.
 
 Thankfully, John Wiegley shared [[https://orgmode.org/list/m21wc7dz4r.fsf@newartisans.com/][a solution]] for this that I now use. Although, it doesn't quite work yet. Do I have the
@@ -990,6 +990,7 @@ This can be 0 for immediate, or a floating point value.")
 (defalias 'archive-done-tasks 'org-my-archive-done-tasks)
 #+end_src
 
+**** TODO Tweak org-my-archive-done-tasks to make work in my setup
 
 ** Org Habit
 =org-habit= is helpful for keeping track of periodic todos that are or should be habitual. It's a little bit more
@@ -1396,10 +1397,10 @@ I'm working in that context.
 #+end_src
 
 
-*** TODO Archive Queries
-Verify these work. I picked them up from a worg demo or something but haven't used them.
+*** Archive Queries
+Commands for querying agenda archive files.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (setcdr (last TT/org-agenda-custom-commands)
         '(("Q" . "Custom Queries")
           ("Qa" "Archive Search"
@@ -1412,6 +1413,9 @@ Verify these work. I picked them up from a worg demo or something but haven't us
                              (file-expand-wildcards "~/org/archive/*.org"))))))))
 #+end_src
 
+**** TODO Test Archive Queries then Enable
+Verify these work. I picked them up from a worg demo or something but haven't used them.
+
 
 *** Setting Agenda Commands
 Lastly I set =org-agenda-custom-commands= to the value of the list I've built.
@@ -1420,7 +1424,7 @@ Lastly I set =org-agenda-custom-commands= to the value of the list I've built.
 (setq org-agenda-custom-commands TT/org-agenda-custom-commands)
 #+end_src
 
-**** TODO Convert to =setopt=
+**** TODO Convert to setopt for setting agenda custom commands
 - currently getting type warning
 - my agenda is too long to want to debug now, works so far despite the warning
 
@@ -1622,7 +1626,7 @@ sub-headings ideally will have it's own capture group
 #+end_src
 
 
-*** TODO Incubator
+*** TODO Incubation Capture
 Sometimes I want to capture an idea that I know I cannot take immediate action on. Instead of adding noise to my agenda
 reports, let's file these as someday-maybe under =TT/org-incubate-dir=.
 
@@ -1764,7 +1768,7 @@ I can even use org-mode to publish static content!
 ;; TODO: https://github.com/fniessen/org-html-themes or other
 #+end_src
 
-*** TODO Publish Research [0/6]
+*** TODO Research =org-publish= [0/6]
 - [ ] =ox-slimhtml=
 - [ ] https://edwardtufte.github.io/tufte-css/
   - https://edwardtufte.github.io/et-book/
@@ -1774,7 +1778,7 @@ I can even use org-mode to publish static content!
 - [ ] https://orgmode.org/worg/org-blog-articles.html
 
 
-*** TODO Org Presentation Research [0/1]
+*** TODO Research Presentations from Org Files [0/1]
 - [ ] https://github.com/yjwen/org-reveal
 
 
@@ -1835,7 +1839,7 @@ With =org-babel= mostly configured, lets plug it into some other stuff.
 #+end_src
 
 
-** TODO Org References
+** TODO Expand Org Refile
 I want to refile these closer to where their contents are more applicable.
 
 - https://orgmode.org/manual/Template-elements.html
@@ -1874,7 +1878,7 @@ happily using their own editor/IDE.
 #+end_src
 
 
-** TODO Language Server
+** Language Server
 The Language Server Protocol (LSP) sets up a contract for an editor (client) to chat with a language server to reduce
 development burden of supporting language interactions across languages and editors. Instead, the server can worry about
 supporting language interactions and any editor with a client can get the benefit of that abstraction.
@@ -2314,9 +2318,6 @@ And more specifically for CSS
 #+end_src
 
 
-*** TODO C/C++
-
-
 *** JavaScript
 From time to time I've developed in JavaScript, both in the Web and in Node. =js2-mode= has been good to me for
 that.
@@ -2460,7 +2461,7 @@ was definitely better than the Vanilla Emacs defaults.
          ("C-c C-d" . helm-pydoc)))
 #+end_src
 
-**** TODO Formatting with Black
+**** TODO Formatting Python with Black
 
 
 *** Rust
@@ -2598,7 +2599,7 @@ where I pay attention to different things.
 
 
 
-* TODO Helper Functions
+* Helper Functions
 This section contains custom functions I'll sometimes invoke. These should probably live elsewhere, but for now, this is
 their home.
 
@@ -2777,11 +2778,7 @@ kill mode-line clutter and start up the Emacs server.
 
 * Future Work
 
-** Questions to Answer
-- [ ] When to use =:custom= vs =:config= and others in =use-package=?
-
-
-** TODO Configuration Reading [0/8]
+** TODO Explore others' Emacs Configurations [0/7]
 That's mostly it folks. Configuration is done, the rest are future works. This section collects other articles or
 configurations I've stumbled across and bookmarked for eventual reading.
 
@@ -2795,5 +2792,32 @@ Research Topics or Reading Material:
   - [ ] https://gitlab.com/jaor/geiser
 - [ ] email
   - [ ] https://github.com/rougier/emacs-gtd#working-with-mail
-- [ ] [[https://olmon.gitlab.io/org-themes/][org-themes]]
 - [ ] [[https://github.com/rougier/notebook-mode][notebook-mode]]
+
+
+
+* Appendix
+
+** Report of Configuration Org File TODOs
+
+#+BEGIN: org-ql :query (and (todo) (not (done))) :columns (todo (priority "P") heading) :sort (priority)
+| Todo | P | Heading                                                  |
+|------+---+----------------------------------------------------------|
+| TODO |   | [[Improve machine local customization loading][Improve machine local customization loading]]              |
+| TODO |   | [[Bookmarks][Bookmarks]]                                                |
+| TODO |   | [[=docker-tramp=][=docker-tramp=]]                                           |
+| TODO |   | [[Fix inherited tag overrides][Fix inherited tag overrides]]                              |
+| TODO |   | [[Tweak org-my-archive-done-tasks to make work in my setup][Tweak org-my-archive-done-tasks to make work in my setup]] |
+| TODO |   | [[Fix "With Deadline Columns" Filter][Fix "With Deadline Columns" Filter]]                       |
+| TODO |   | [[Test Archive Queries then Enable][Test Archive Queries then Enable]]                         |
+| TODO |   | [[Convert to setopt for setting agenda custom commands][Convert to setopt for setting agenda custom commands]]     |
+| TODO |   | [[Periodic Reflection Capture][Periodic Reflection Capture]]                              |
+| TODO |   | [[Incubation Capture][Incubation Capture]]                                       |
+| TODO |   | [[Needs Work][Needs Work]]                                               |
+| TODO |   | [[Research =org-publish=][Research =org-publish=]]                                   |
+| TODO |   | [[Research Presentations from Org Files][Research Presentations from Org Files]]                    |
+| TODO |   | [[Expand Org Refile][Expand Org Refile]]                                        |
+| TODO |   | [[=helm-eshell= throws error unavailable][=helm-eshell= throws error unavailable]]                   |
+| TODO |   | [[Formatting Python with Black][Formatting Python with Black]]                             |
+| TODO |   | [[Explore others' Emacs Configurations][Explore others' Emacs Configurations]]                     |
+#+END:
