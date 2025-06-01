@@ -872,18 +872,18 @@ However, that's pretty simple and I have something else in mind.
 
 #+begin_src emacs-lisp
 (setopt org-todo-keywords
-        '((sequence "TODO(t)" "NEXT(n)" "STARTED(s)" "WAITING(w@)" "|" "DONE(d)" "DROP(x@)")
-          (sequence "MEETING(m)" "APPOINTMENT(a)" "|" "FINISHED(f)" "CANCELED(l)")
-          (sequence "DELEGATED(g@)"               "|" "COMPLETED(p)")
-          (sequence "REVIEW(r)" "REWORK(k@)"      "|" "REVIEWED(v)")
-          (sequence "OPEN(o)"                     "|" "CLOSED(c@)")))
+        '((sequence "TODO(t)" "STARTED(s!)"      "|" "DONE(d!)")
+          (sequence "REVIEW(r!)" "REVIEWING(i!)" "|" "REVIEWED(v!)")
+          (sequence "DELEGATED(g@!)"             "|" "COMPLETED(p!)")
+          (sequence "MEET(m)" "MEETING(e!)"      "|" "MET(t!)")
+          (sequence "APPOINTMENT(a)"             "|" "FINISHED(f!)")
+          (sequence "|" "DROP(x@!)" "CANCELED(l!)")))
 
 (setopt org-todo-keyword-faces
-        '(("STARTED" . "cyan")
-          ("MAYBE"   . "purple")
-          ("WAITING" . (:foreground "yellow" :weight bold))
+        '(("STARTED"  . "cyan")
+          ("MEETING"  . "cyan")
           ("CANCELED" . "DimGray")
-          ("DROP"    . "DimGray")))
+          ("DROP"     . "DimGray")))
 #+end_src
 
 
@@ -923,11 +923,12 @@ the word, but it's an imperfect system.
           ("@sprint"         . ?s) ; sprint work (primarily development)
           ("@travel"         . ?t) ; trip planning, packing, and similar
           ("@workstation"    . ?w) ; home and office hardware, configurations, etc...
+          ("BLOCKED"         . ?B) ; some pre-requisite exists
           ("IMPORTANT"       . ?I) ; something of significance or of great value
           ("NEXT"            . ?N) ; the very next thing to be doing within a project
           ("PROJECT"         . ?P) ; something that takes significant effort or time, and can be decomposed into individual tasks
-          ("TASK"            . ?T) ; an atomic actionable thing
           ("URGENT"          . ?U) ; something that demands attention in a short time-span
+          ("WAITING"         . ?W) ; pending somebody else's next action (similar to blocked)
           ("braindead"       . ?b) ; things that can be done with little thought
           ("journal"         . ?j) ; journaling
           ("noexport"        . ?x)))
@@ -1158,7 +1159,9 @@ group
                       (org-agenda-overriding-header "Items in my Inbox")))))
           ("gd" "Daily agenda and TODOs"
            ((org-ql-block '(and (priority "A")
-                                (not (done)))
+                                (not
+                                 (or (done)
+                                     (tags "PROJECT"))))
                           ((org-ql-block-header "High-Priority Unfinished Tasks:")))
             (agenda ""
                     ((org-agenda-span 1)))
@@ -1170,28 +1173,43 @@ group
                           ((org-ql-block-header "Open Projects")))
             (org-ql-block '(and (todo)
                                 (priority "B")
-                                (not (done))
-                                (not (habit))
-                                (not (planning)))
+                                (not
+                                 (or (done)
+                                     (tags "PROJECT")
+                                     (habit)
+                                     (planning))))
                           ((org-ql-block-header "B Priority Tasks:")))
             (org-ql-block '(and (todo)
                                 (priority "C")
-                                (not (done))
-                                (not (habit))
-                                (not (planning)))
-                          ((org-ql-block-header "C Priority Tasks:")))))
+                                (not
+                                 (or (done)
+                                     (tags "PROJECT")
+                                     (habit)
+                                     (planning))))
+                          ((org-ql-block-header "C Priority Tasks:")))
+            (org-ql-block '(and (todo)
+                                (not
+                                 (or (done)
+                                     (tags "PROJECT")
+                                     (priority)
+                                     (habit)
+                                     (planning))))
+                          ((org-ql-block-header "Other Tasks:")))))
           ("gw" "Weekly View"
            ((agenda ""
                     ((org-agenda-span 7)))
-            (org-ql-block '(and (ts :from today :to 7))
+            (org-ql-block '(and (not (done))
+                                (ts :from today :to 7))
                           ((org-ql-block-header "1-Week Look Ahead")))
             (org-ql-block '(and (todo)
                                 (not (done))
                                 (tags "PROJECT"))
                           ((org-ql-block-header "Open Projects")))
-            (org-ql-block '(and (todo "WAITING")
-                                (not (closed)))
-                          ((org-ql-block-header "Waiting For")))))
+            (org-ql-block '(and (not (done))
+                                (tags "WAITING"))
+                          ((org-ql-block-header "Waiting For")))
+            (org-ql-block '(todo "DELEGATED")
+                          ((org-ql-block-header "Pending Delegate Completion")))))
           ("gn" "Next Actions"
            ((org-ql-block '(and (not (done))
                                 (tags "NEXT"))
@@ -1201,7 +1219,8 @@ group
                                 (todo "REVIEW"))
                           ((org-ql-block-header "For Review")))))
           ("gp" "Pending"
-           ((org-ql-block '(todo "WAITING")
+           ((org-ql-block '(and (not (done))
+                                (tags "WAITING"))
                           ((org-ql-block-header "Awaiting Response or Action:")))
             (org-ql-block '(todo "DELEGATED")
                           ((org-ql-block-header "Pending Delegate Completion:")))))
@@ -1224,7 +1243,7 @@ I'm working in that context.
 #+begin_src emacs-lisp
 (setcdr (last TT/org-agenda-custom-commands)
         '(("@" . "Context Filters")
-          ("@a" "Administrative Work"
+          ("@a" "Administrative"
            ((org-ql-block '(and (not (done))
 				(tags "@administrative"))
                           ((org-ql-block-header "Open Administrative Tasks:")))))
@@ -1260,7 +1279,7 @@ I'm working in that context.
            ((org-ql-block '(and (not (done))
 				(tags "@learn"))
                           ((org-ql-block-header "Open Learning Agenda Tasks:")))))
-          ("@d" "Scheduling Work"
+          ("@d" "Scheduling"
            ((org-ql-block '(and (not (done))
 				(tags "@scheduling"))
                           ((org-ql-block-header "Open Scheduling Tasks:")))))
@@ -1268,11 +1287,11 @@ I'm working in that context.
            ((org-ql-block '(and (not (done))
 				(tags "@sprint"))
                           ((org-ql-block-header "Open Sprint Tasks:")))))
-          ("@t" "Travel and Planning Work"
+          ("@t" "Travel and Planning"
            ((org-ql-block '(and (not (done))
 				(tags "@travel"))
                           ((org-ql-block-header "Open Travel Tasks:")))))
-          ("@w" "Workstation Work"
+          ("@w" "Workstation"
            ((org-ql-block '(and (not (done))
 				(tags "@workstation"))
                           ((org-ql-block-header "Open Workstation Tasks:")))))))
@@ -1286,8 +1305,7 @@ I'm working in that context.
           ("pq" "Quadrants"
            ((org-ql-block '(and (todo)
                                 (not (done))
-                                (tags "IMPORTANT")
-                                (tags "URGENT"))
+                                (tags "IMPORTANT" "URGENT"))
                           ((org-ql-block-header "Urgent")))
             (org-ql-block '(and (todo)
                                 (not (done))
@@ -1307,8 +1325,7 @@ I'm working in that context.
           ("p1" "Q1"
            ((org-ql-block '(and (todo)
                                 (not (done))
-                                (tags "IMPORTANT")
-                                (tags "URGENT"))
+                                (tags "IMPORTANT" "URGENT"))
                           ((org-ql-block-header "Urgent")))))
           ("p2" "Q2"
            ((org-ql-block '(and (todo)
@@ -1353,7 +1370,7 @@ I'm working in that context.
 #+begin_src emacs-lisp
 (setcdr (last TT/org-agenda-custom-commands)
         '(("H" . "Hygiene Filters")
-          ("Hi" "Incomplete"
+          ("Hi" "Incomplete Sub-Tasks"
            ((org-ql-block '(and (todo)
                                 (not (done))
                                 (ancestors (done)))
@@ -1362,25 +1379,10 @@ I'm working in that context.
            ((org-ql-block '(and (todo)
                                 (not
                                  (or (done)
+                                     (todo "MEET" "MEETING" "APPOINTMENT")
                                      (habit)
                                      (priority))))
                           ((org-ql-block-header "Missing Priority")))))
-          ("Hs" "Stuck Projects"
-           ((org-ql-block '(and (tags "PROJECT")
-                                (not
-                                 (or (done)
-                                     (descendants (todo "NEXT"))
-                                     (descendants (scheduled)))))
-                          ((org-ql-block-header "Stuck Projects")))))
-          ("Ht" "Missing Todo/Project Tags"
-           ((org-ql-block '(and (todo)
-                                (not
-                                 (or
-                                  (done)
-                                  (habit)
-                                  (tags "TASK")
-                                  (tags "PROJECT"))))
-                          ((org-ql-block-header "Missing Task/Project Tags")))))
           ("Hu" "Unscheduled TODOs"
            ((org-ql-block '(and (todo)
                                 (not
@@ -1417,7 +1419,7 @@ Lastly I set =org-agenda-custom-commands= to the value of the list I've built.
 
 **** TODO Convert to =setopt=
 - currently getting type warning
-- my agenda is too long to want to debug now, works so far despite warning
+- my agenda is too long to want to debug now, works so far despite the warning
 
 
 ** Org Journal
@@ -1469,7 +1471,7 @@ so I can split the configuration up and describe them better in my literate conf
 ;; The list needs to be initialized for setcdr to work later
 (setq TT/org-capture-templates
       '(("i" "Inbox" entry  (file+olp TT/org-inbox "Capture" "Todos")
-         "* TODO %? :TASK:\n /Entered on/ %U" :empty-lines 1)))
+         "* TODO %?\n /Entered on/ %U" :empty-lines 1)))
 #+end_src
 
 *** Helper Functions
@@ -1568,19 +1570,19 @@ as a manager, and better categorizes things within sub-groups of the "office" co
 (setcdr (last TT/org-capture-templates)
         '(("o" "Office Capture Group")
           ("oa" "Administrative" entry (file+olp TT/org-organizer "Office" "Administrative")
-           "* TODO [#B] %? :@office:@administrative:TASK:\n")
+           "* TODO [#B] %? :@office:@administrative:\n")
           ("oc" "Communication" entry (file+olp TT/org-organizer "Office" "Communication")
-           "* TODO [#B] %? :@office:@communication:TASK:\n")
+           "* TODO [#B] %? :@office:@communication:\n")
           ("of" "Firefighting" entry (file+olp TT/org-organizer "Office" "Firefighting")
-           "* TODO [#A] %? :@office:@firefights:TASK:URGENT:\n")
+           "* TODO [#A] %? :@office:@firefights:URGENT:\n")
           ("oh" "Hiring" entry (file+olp TT/org-organizer "Office" "Hiring")
-           "* TODO [#B] %? :@office:@hiring:TASK:\n")
+           "* TODO [#B] %? :@office:@hiring:\n")
           ("oi" "Interrupts" entry (file+olp TT/org-organizer "Office" "Interrupts")
-           "* TODO [#B] %? :@office:TASK:\n")
+           "* TODO [#B] %? :@office:\n")
           ("os" "Scheduling" entry (file+olp TT/org-organizer "Office" "Scheduling")
-           "* TODO [#B] %? :@office:@scheduling:TASK:\n")
+           "* TODO [#B] %? :@office:@scheduling:\n")
           ("ot" "Task" entry (file+olp TT/org-organizer "Office" "General")
-           "* TODO [#B] %? :@office:TASK:\n")))
+           "* TODO [#B] %? :@office:\n")))
 #+end_src
 
 
@@ -1597,23 +1599,23 @@ sub-headings ideally will have it's own capture group
 (setcdr (last TT/org-capture-templates)
         '(("t" "General Todo Capture Group")
           ("tc" "Career Task" entry (file+headline TT/org-organizer "Career")
-           "* TODO [#B] %? :@career:TASK:\n")
+           "* TODO [#B] %? :@career:\n")
           ("th" "Health Task" entry (file+headline TT/org-organizer "Health & Wellness")
-           "* TODO [#B] %? :@health:TASK:\n")
+           "* TODO [#B] %? :@health:\n")
           ("to" "Home Task" entry (file+headline TT/org-organizer "Home")
-           "* TODO [#B] %? :@home:TASK:\n")
+           "* TODO [#B] %? :@home:\n")
           ("tf" "Financial Task" entry (file+headline TT/org-organizer "Finances")
-           "* TODO [#B] %? :@finances:TASK:\n")
+           "* TODO [#B] %? :@finances:\n")
           ("tg" "Guild Task" entry (file+headline TT/org-organizer "Guild")
-           "* TODO [#C] %? :@guild:TASK:\n")
+           "* TODO [#C] %? :@guild:\n")
           ("tr" "Reading Task" entry (file+headline TT/org-organizer "Reading")
-           "* TODO [#B] %? :@read:TASK:\n")
+           "* TODO [#B] %? :@read:\n")
           ("tv" "Travel Task" entry (file+headline TT/org-organizer "Travel")
-           "* TODO [#B] %? :@travel:TASK:\n")
+           "* TODO [#B] %? :@travel:\n")
           ("tw" "Workstation Task" entry (file+headline TT/org-organizer "Workstation")
-           "* TODO [#C] %? :@workstation:TASK:\n")
+           "* TODO [#C] %? :@workstation:\n")
           ("tt" "General Task" entry (file+headline TT/org-organizer "Tasks")
-           "\n* TODO [#C] %? :TASK:\n %i\n %a\n\n")))
+           "\n* TODO [#C] %?\n %i\n %a\n\n")))
 #+end_src
 
 
@@ -1633,15 +1635,15 @@ yet. So for now, I schedule to an arbitrary date and update the date with =C-s= 
 (setcdr (last TT/org-capture-templates)
         '(("m" "Meeting Capture Group")
           ("mm" "Pop Up Meetings and One-Offs" entry (file+olp TT/org-calendar "Meetings" "One Offs")
-           "* MEETING %?\nSCHEDULED: %^t")
+           "* MEET %?\nSCHEDULED: %^t")
           ("md" "Daily Meeting" entry (file+olp TT/org-calendar "Meetings" "Daily")
-           "* MEETING %?\nSCHEDULED: <2020-01-01 Sat ++1d>")
+           "* MEET %?\nSCHEDULED: <2020-01-01 Sat ++1d>")
           ("mw" "Weekly Meeting" entry (file+olp TT/org-calendar "Meetings" "Weekly")
-           "* MEETING %?\nSCHEDULED: <2020-01-01 Sat ++1w>")
+           "* MEET %?\nSCHEDULED: <2020-01-01 Sat ++1w>")
           ("m1" "1:1 Meeting" entry (file+olp TT/org-calendar "Meetings" "1:1s")
-           "* MEETING %?\nSCHEDULED: <2000-01-01 Sat ++1w>")
+           "* MEET %?\nSCHEDULED: <2000-01-01 Sat ++1w>")
           ("mb" "Bi-Weekly Meeting" entry (file+olp TT/org-calendar "Meetings" "Bi-Weekly")
-           "* MEETING %?\nSCHEDULED: <2000-01-01 Sat ++2w>")))
+           "* MEET %?\nSCHEDULED: <2000-01-01 Sat ++2w>")))
 #+end_src
 
 
