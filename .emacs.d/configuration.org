@@ -1098,7 +1098,7 @@ look like this will be in =org-ql= until at least v0.8.
 
 
 ** Org Agenda Commands
-Agenda commands are the powerhouse behind org-mode and agendas. These allow you to query across your agenda files and
+Agenda commands are the powerhouse behind =org-mode= and agendas. These allow you to query across your agenda files and
 surface reports of varying complexity. It's a great way to get exactly the thing you want, with only a few keystrokes.
 
 Agenda commands have the following form:
@@ -1127,7 +1127,6 @@ to happen.
       '(("w" "Weekly Review"
          ((agenda ""
                   ((org-agenda-span 7)))
-          (stuck "")
           (tags "PROJECT")
           (todo "WAITING")))))
 #+end_src
@@ -1137,17 +1136,21 @@ Now we can append new search filters to this initialized list which we'll use to
 
 *** GTD Views
 I like to use David Allen's Getting Things Done (GTD) framework for inspiration to my Emacs =org-mode= agenda
-management. Here let's define several GTD views for my agenda contents. All of these exist under the =g= GTD capture
-group
+management. Here let's define several GTD views for my agenda contents. All of these exist under the =g= agenda group.
 
-1. Inbox - only items captured to the Inbox agenda
-2. Daily Agenda and TODOs - combination view of items scheduled today, with upcoming deadlines, and then everything else
-3. Unscheduled - any todo item without a time it's scheduled for
-   - Consider when these items should be done
-   - If it can't be reasonably scheduled, consider moving it to incubate or someday-maybe
+1. Inbox - only items captured to the Inbox agenda which are not otherwise visible - consider for refiling to agendas
+2. Daily View - combination view of:
+   - Priority =A= tasks
+   - Today's agenda view
+   - Tagged =NEXT= actions
+   - A list of open projects
+   - Priority =B= tasks
+   - Priority =C= tasks
+   - All remaining non-prioritized tasks
+3. Weekly View - combination view of items planned this week and outstanding delegated/waiting work
 4. Next Actions - all todos tagged as a =NEXT= action
-5. Work to Review - all todos in the =REVIEW= todo sequence
-6. Delegated or Waiting-On - all todos in the =DELEGATED= todo sequence
+5. Review - all todos in the =REVIEW= todo sequence - things other's asked for or need my input on to complete
+6. Pending - all todos in the =DELEGATED= todo sequence or tagged as =WAITING=
 7. Braindead - all todos tagged with =braindead= - for when you just need to do something without thinking too much
 
 #+begin_src emacs-lisp
@@ -1157,12 +1160,12 @@ group
            ((alltodo ""
                      ((org-agenda-files '(,TT/org-inbox))
                       (org-agenda-overriding-header "Items in my Inbox")))))
-          ("gd" "Daily agenda and TODOs"
+          ("gd" "Daily View"
            ((org-ql-block '(and (priority "A")
                                 (not
                                  (or (done)
                                      (tags "PROJECT"))))
-                          ((org-ql-block-header "High-Priority Unfinished Tasks:")))
+                          ((org-ql-block-header "High-Priority Unfinished Tasks")))
             (agenda ""
                     ((org-agenda-span 1)))
             (org-ql-block '(and (not (done))
@@ -1178,7 +1181,7 @@ group
                                      (tags "PROJECT")
                                      (habit)
                                      (planning))))
-                          ((org-ql-block-header "B Priority Tasks:")))
+                          ((org-ql-block-header "B Priority Tasks")))
             (org-ql-block '(and (todo)
                                 (priority "C")
                                 (not
@@ -1186,15 +1189,7 @@ group
                                      (tags "PROJECT")
                                      (habit)
                                      (planning))))
-                          ((org-ql-block-header "C Priority Tasks:")))
-            (org-ql-block '(and (todo)
-                                (not
-                                 (or (done)
-                                     (tags "PROJECT")
-                                     (priority)
-                                     (habit)
-                                     (planning))))
-                          ((org-ql-block-header "Other Tasks:")))))
+                          ((org-ql-block-header "C Priority Tasks")))))
           ("gw" "Weekly View"
            ((agenda ""
                     ((org-agenda-span 7)))
@@ -1221,9 +1216,12 @@ group
           ("gp" "Pending"
            ((org-ql-block '(and (not (done))
                                 (tags "WAITING"))
-                          ((org-ql-block-header "Awaiting Response or Action:")))
+                          ((org-ql-block-header "Awaiting Response or Action")))
             (org-ql-block '(todo "DELEGATED")
-                          ((org-ql-block-header "Pending Delegate Completion:")))))
+                          ((org-ql-block-header "Pending Delegate Completion")))
+            (org-ql-block '(and (not (done))
+                                (tags "BLOCKED"))
+                          ((org-ql-block-header "Blocked")))))
           ("gb" "Braindead"
            ((org-ql-block '(and (todo)
                                 (not (done))
@@ -1375,6 +1373,18 @@ I'm working in that context.
                                 (not (done))
                                 (ancestors (done)))
                           ((org-ql-block-header "Incomplete Sub-Tasks")))))
+          ("Hd" "Projects without Open Tasks"
+           ((org-ql-block '(and (not (done))
+                                (tags "PROJECT")
+                                (not (children (not (done)))))
+                          ((org-ql-block-header "Projects with Completed Children")))))
+          ("Hn" "Projects without NEXT Tasks"
+           ((org-ql-block '(and (tags "PROJECT")
+                                (not
+                                 (or (done)
+                                     (descendants (and (not (done))
+                                                       (tags "NEXT"))))))
+                          ((org-ql-block-header "Projects without NEXT Action")))))
           ("Hp" "Missing Priority"
            ((org-ql-block '(and (todo)
                                 (not
@@ -1382,14 +1392,7 @@ I'm working in that context.
                                      (todo "MEET" "MEETING" "APPOINTMENT")
                                      (habit)
                                      (priority))))
-                          ((org-ql-block-header "Missing Priority")))))
-          ("Hu" "Unscheduled TODOs"
-           ((org-ql-block '(and (todo)
-                                (not
-                                 (or
-                                  (done)
-                                  (planning)))) ;; Planning is any of (deadline, scheduled, closed)
-                          ((org-ql-block-header "Unscheduled TODOs")))))))
+                          ((org-ql-block-header "Missing Priority")))))))
 #+end_src
 
 
