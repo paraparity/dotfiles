@@ -1392,8 +1392,15 @@ I'm working in that context.
                                      (todo "MEET" "MEETING" "APPOINTMENT")
                                      (habit)
                                      (priority))))
-                          ((org-ql-block-header "Missing Priority")))))))
+                          ((org-ql-block-header "Missing Priority")))))
+          ("Ha" "Maybe Archive"
+           ((org-ql-block '(done)
+                          ((org-ql-block-header "Completed - Consider Archiving")))))))
 #+end_src
+
+**** TODO Make "Maybe Archive" Time Sensitive
+- Don't surface done items until they've been completed >= 30 days
+- See =org-ql= date/time predicates for =closed=
 
 
 *** Archive Queries
@@ -2808,6 +2815,7 @@ Research Topics or Reading Material:
 | TODO |   | [[Fix inherited tag overrides][Fix inherited tag overrides]]                              |
 | TODO |   | [[Tweak org-my-archive-done-tasks to make work in my setup][Tweak org-my-archive-done-tasks to make work in my setup]] |
 | TODO |   | [[Fix "With Deadline Columns" Filter][Fix "With Deadline Columns" Filter]]                       |
+| TODO |   | [[Make "Maybe Archive" Time Sensitive][Make "Maybe Archive" Time Sensitive]]                      |
 | TODO |   | [[Test Archive Queries then Enable][Test Archive Queries then Enable]]                         |
 | TODO |   | [[Convert to setopt for setting agenda custom commands][Convert to setopt for setting agenda custom commands]]     |
 | TODO |   | [[Periodic Reflection Capture][Periodic Reflection Capture]]                              |
