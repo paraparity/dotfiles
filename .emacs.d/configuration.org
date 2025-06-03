@@ -63,7 +63,6 @@ can have them.
   :if (gnutls-available-p)
   :custom
   (gnutls-verify-error t))
-
 #+end_src
 
 
@@ -2751,8 +2750,9 @@ kill mode-line clutter and start up the Emacs server.
 ;; Make it so I can recover old sessions after close or reboot
 (desktop-save-mode 1)
 
-;; Load configuration files local to employer
-;;(org-babel-load-file "~/.emacs.d/employer.org")
+;; Load configuration files local to machine
+(if (file-exists-p "~/.emacs.d/machine.org")
+    (org-babel-load-file "~/.emacs.d/machine.org"))
 
 ;;Finally, let's load a theme and bring some style to Emacs.
 (use-package kaolin-themes
@@ -2793,7 +2793,6 @@ Research Topics or Reading Material:
 - [ ] email
   - [ ] https://github.com/rougier/emacs-gtd#working-with-mail
 - [ ] [[https://github.com/rougier/notebook-mode][notebook-mode]]
-
 
 
 * Appendix
