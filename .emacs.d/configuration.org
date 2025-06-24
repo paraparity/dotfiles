@@ -635,7 +635,10 @@ Let's change where Tramp saves things, and use SSH as our default method.
   :custom
   (tramp-default-method "ssh")
   :config
-  (set-default 'tramp-auto-save-directory "~/.saves/tramp/"))
+  (set-default 'tramp-auto-save-directory "~/.saves/tramp/")
+  (setopt remote-file-name-inhibit-locks t
+          remote-file-name-inhibit-auto-save-visited t
+          tramp-copy-size-limit (* 1024 1024)))
 
 ;; TODO: if windows: use PuTTy PLINK; if *nix: use ssh
 #+end_src
