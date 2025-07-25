@@ -67,12 +67,24 @@ sudo apt-get install \
 
 ### Configuring Emacs
 
-Sometimes despite being installed on the system, the `./configure` script can't find which GCC compiler or version of `libgccjit` is installed. To tell it, provide the following flags in your environment or preceeding the invocation of `./configure`.
+When building from source, you'll need to set up for config and adjust build parameters based on your system.
 
 ``` shell
 ./autogen.sh
 
 # you can also specify a program suffix if building multiple version ie: --program-suffix=30
+./configure \
+    \ # --with-* config settings
+    CFLAGS="-O3 -march=native -fomit-frame-pointer"
+```
+
+Sometimes despite being installed on the system, the `./configure` script can't find which GCC compiler or version of `libgccjit` is installed. To tell it, provide the following flags in your environment or preceeding the invocation of `./configure`.
+
+Optionally include the `--disable-gc-mark-trace` option for a ~5% better GC performance at the trade off of having less details if you run into GC related bugs. YMMV.
+
+#### Linux Settings
+
+``` shell
 ./configure \
     --with-native-compilation \
     --with-file-notification=inotify \
@@ -85,7 +97,20 @@ Sometimes despite being installed on the system, the `./configure` script can't 
     CFLAGS="-O3 -march=native -fomit-frame-pointer"
 ```
 
-Optionally include the `--disable-gc-mark-trace` option for a ~5% better GC performance at the trade off of having less details if you run into GC related bugs. YMMV.
+#### MacOS Settings
+
+``` shell
+./configure \
+    --with-native-compilation \
+    --with-file-notification=kqueue \
+    --with-tree-sitter \
+    --with-sqlite3 \
+    --with-cairo \
+    --with-gnutls \
+    --with-harfbuzz \
+    --with-mailutils \
+    CFLAGS="-O3 -march=native -fomit-frame-pointer"
+```
 
 ### Building Emacs with Make
 
@@ -97,6 +122,41 @@ sudo make install
 emacs --version
 ```
 
+#### MacOS Errata
+
+First you'll need to move the Nextstep directory into Mac's Applications folder.
+
+``` shell
+mv nextstep/Emacs.app /Applications
+```
+
+While I don't recall having to do this in the past, recently I've found `make install` isn't setting Emacs up in a way that puts `emacs` or `emacsclient` on the `$PATH`. Instead I've had to set up wrapper scripts into the app package.
+
+First define the following wrapper files.
+
+`/usr/local/bin/emacs`: https://apple.stackexchange.com/questions/178689
+
+``` shell
+#!/bin/sh
+/Applications/Emacs.app/Contents/MacOS/Emacs $@
+```
+
+`/usr/local/bin/emacsclient`: https://stackoverflow.com/questions/23148787
+
+``` shell
+#!/bin/sh
+socket_file=$(lsof -c Emacs | grep server | tr -s " " | cut -d' ' -f8)
+
+if [[ $socket_file = "" ]]; then
+  # Just run Emacs + args
+  /Applications/Emacs.app/Contents/MacOS/Emacs $@ &
+else
+  /Applications/Emacs.app/Contents/MacOS/bin/emacsclient $@ -n -s $socket_file
+fi
+```
+
+Then make these executable with: `chmod 755 /usr/local/bin/emacs*`
+
 ### Within Emacs
 
 Once the dotfiles are in the right place on the machine, launch Emacs then complete integration with:
@@ -105,3 +165,8 @@ Once the dotfiles are in the right place on the machine, launch Emacs then compl
 M-x package-list-packages # install pdf-tools
 M-x pdf-tools-install
 ```
+
+## References
+
+- https://www.emacswiki.org/emacs/BuildingEmacs
+- https://mgmarlow.com/words/2022-09-08-building-emacs-mac-os/
