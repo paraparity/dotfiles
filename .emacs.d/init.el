@@ -70,10 +70,12 @@
   :ensure t)
 
 (use-package exec-path-from-shell
-  :ensure t
+  :demand t
   :if (or (memq window-system '(mac ns x))
           (daemonp))
   :config
+  (if init-file-debug
+      (setq exec-path-from-shell-debug t))
   (exec-path-from-shell-initialize))
 
 ;; Broken in [feature/native-comp]
