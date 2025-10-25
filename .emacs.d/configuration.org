@@ -882,10 +882,12 @@ However, that's pretty simple and I have something else in mind.
           (sequence "|" "DROP(x@!)" "CANCELED(l!)")))
 
 (setopt org-todo-keyword-faces
-        '(("STARTED"  . "cyan")
-          ("MEETING"  . "cyan")
-          ("CANCELED" . "DimGray")
-          ("DROP"     . "DimGray")))
+        '(("STARTED"   . "cyan")
+          ("REVIEWING" . "cyan")
+          ("MEETING"   . "cyan")
+          ("DELEGATED" . "yellow")
+          ("CANCELED"  . "DimGray")
+          ("DROP"      . "DimGray")))
 #+end_src
 
 
@@ -925,7 +927,8 @@ the word, but it's an imperfect system.
           ("@sprint"         . ?s) ; sprint work (primarily development)
           ("@travel"         . ?t) ; trip planning, packing, and similar
           ("@workstation"    . ?w) ; home and office hardware, configurations, etc...
-          ("BLOCKED"         . ?B) ; some pre-requisite exists
+          ("BLOCKED"         . ?B) ; some pre-requisite exists that needs to be completed first
+          ("HOLD"            . ?D) ; a pause or hold of some kind. Indicates work shouldn't proceed for now
           ("IMPORTANT"       . ?I) ; something of significance or of great value
           ("NEXT"            . ?N) ; the very next thing to be doing within a project
           ("PROJECT"         . ?P) ; something that takes significant effort or time, and can be decomposed into individual tasks
@@ -993,6 +996,7 @@ This can be 0 for immediate, or a floating point value.")
 #+end_src
 
 **** TODO Tweak org-my-archive-done-tasks to make work in my setup
+
 
 ** Org Habit
 =org-habit= is helpful for keeping track of periodic todos that are or should be habitual. It's a little bit more
@@ -1167,7 +1171,7 @@ management. Here let's define several GTD views for my agenda contents. All of t
            ((org-ql-block '(and (priority "A")
                                 (not
                                  (or (done)
-                                     (tags "PROJECT"))))
+                                     (tags "PROJECT" "HOLD" "WAITING" "BLOCKED"))))
                           ((org-ql-block-header "High-Priority Unfinished Tasks")))
             (agenda ""
                     ((org-agenda-span 1)))
@@ -1175,13 +1179,14 @@ management. Here let's define several GTD views for my agenda contents. All of t
                                 (tags "NEXT"))
                           ((org-ql-block-header "Next Actions")))
             (org-ql-block '(and (not (done))
-                                (tags "PROJECT"))
+                                (tags "PROJECT")
+                                (not (tags "HOLD")))
                           ((org-ql-block-header "Open Projects")))
             (org-ql-block '(and (todo)
                                 (priority "B")
                                 (not
                                  (or (done)
-                                     (tags "PROJECT")
+                                     (tags "PROJECT" "NEXT" "HOLD" "WAITING" "BLOCKED")
                                      (habit)
                                      (planning))))
                           ((org-ql-block-header "B Priority Tasks")))
@@ -1189,19 +1194,27 @@ management. Here let's define several GTD views for my agenda contents. All of t
                                 (priority "C")
                                 (not
                                  (or (done)
-                                     (tags "PROJECT")
+                                     (tags "PROJECT" "NEXT" "HOLD" "WAITING" "BLOCKED")
                                      (habit)
                                      (planning))))
                           ((org-ql-block-header "C Priority Tasks")))))
           ("gw" "Weekly View"
-           ((agenda ""
+           ((org-ql-block '(and (priority "A")
+                                (not
+                                 (or (done)
+                                     (tags "PROJECT" "HOLD" "WAITING" "BLOCKED"))))
+                          ((org-ql-block-header "High-Priority Unfinished Tasks")))
+            (agenda ""
                     ((org-agenda-span 7)))
             (org-ql-block '(and (not (done))
                                 (ts :from today :to 7))
                           ((org-ql-block-header "1-Week Look Ahead")))
-            (org-ql-block '(and (todo)
-                                (not (done))
-                                (tags "PROJECT"))
+            (org-ql-block '(and (not (done))
+                                (tags "NEXT"))
+                          ((org-ql-block-header "Next Actions")))
+            (org-ql-block '(and (not (done))
+                                (tags "PROJECT")
+                                (not (tags "HOLD")))
                           ((org-ql-block-header "Open Projects")))
             (org-ql-block '(and (not (done))
                                 (tags "WAITING"))
@@ -1214,23 +1227,55 @@ management. Here let's define several GTD views for my agenda contents. All of t
                           ((org-ql-block-header "Next Actions")))))
           ("gr" "Review"
            ((org-ql-block '(and (not (done))
-                                (todo "REVIEW"))
+                                (todo "REVIEW")
+                                (not (tags "HOLD" "WAITING" "BLOCKED")))
                           ((org-ql-block-header "For Review")))))
           ("gp" "Pending"
            ((org-ql-block '(and (not (done))
                                 (tags "WAITING"))
-                          ((org-ql-block-header "Awaiting Response or Action")))
+                          ((org-ql-block-header "Waiting For")))
             (org-ql-block '(todo "DELEGATED")
                           ((org-ql-block-header "Pending Delegate Completion")))
             (org-ql-block '(and (not (done))
                                 (tags "BLOCKED"))
-                          ((org-ql-block-header "Blocked")))))
+                          ((org-ql-block-header "Blocked")))
+            (org-ql-block '(and (not (done))
+                                (tags "HOLD"))
+                          ((org-ql-block-header "On Hold")))))
           ("gb" "Braindead"
            ((org-ql-block '(and (todo)
                                 (not (done))
                                 (tags "braindead"))
-                          ((org-ql-block-header "Braindead")))))))
+                          ((org-ql-block-header "Braindead")))))
+          ("gc" "Recently Completed"
+           ((org-ql-block '(and (done)
+                                (tags "PROJECT")
+                                (closed 7))
+                          ((org-ql-block-header "Completed Projects")))
+            (org-ql-block '(and (priority "A")
+                                (done)
+                                (not (tags "PROJECT"))
+                                (closed 7))
+                          ((org-ql-block-header "A Prio Completed")))
+            (org-ql-block '(and (priority "B")
+                                (done)
+                                (not (tags "PROJECT"))
+                                (closed 7))
+                          ((org-ql-block-header "B Prio Completed")))
+            (org-ql-block '(and (priority "C")
+                                (done)
+                                (not (tags "PROJECT"))
+                                (closed 7))
+                          ((org-ql-block-header "C Priority Tasks")))
+            (org-ql-block '(and (done)
+                                (not (priority "A" "B" "C"))
+                                (closed 7))
+                          ((org-ql-block-header "Regular Prio Completed")))))))
 #+end_src
+
+**** TODO DRY up these blocks
+Some blocks like A prio open, open projects, and next actions are repeated on different reports. Should be able to
+parameterize either whole blocks or common clauses...
 
 
 *** GTD Contexts
