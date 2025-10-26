@@ -99,10 +99,6 @@ anything else up we'll need to tell Emacs where to look.
 (add-to-list 'load-path "~/.emacs.d/elisp/")
 #+end_src
 
-**** TODO Improve machine local customization loading
-Something could happen between checking and loading a file. Can I just attempt the load and handle an error if it
-doesn't work?
-
 
 *** Offload Custom File
 I manage my custom literate configuration, but sometimes use Emacs easy configuration to tweak settings. Until I know I
@@ -2863,11 +2859,12 @@ Research Topics or Reading Material:
 #+BEGIN: org-ql :query (and (todo) (not (done))) :columns (todo (priority "P") heading) :sort (priority)
 | Todo | P | Heading                                                  |
 |------+---+----------------------------------------------------------|
-| TODO |   | [[Improve machine local customization loading][Improve machine local customization loading]]              |
 | TODO |   | [[Bookmarks][Bookmarks]]                                                |
 | TODO |   | [[=docker-tramp=][=docker-tramp=]]                                           |
+| TODO |   | [[Consider customizing =org-agenda-sorting-strategy=][Consider customizing =org-agenda-sorting-strategy=]]       |
 | TODO |   | [[Fix inherited tag overrides][Fix inherited tag overrides]]                              |
 | TODO |   | [[Tweak org-my-archive-done-tasks to make work in my setup][Tweak org-my-archive-done-tasks to make work in my setup]] |
+| TODO |   | [[DRY up these blocks][DRY up these blocks]]                                      |
 | TODO |   | [[Fix "With Deadline Columns" Filter][Fix "With Deadline Columns" Filter]]                       |
 | TODO |   | [[Make "Maybe Archive" Time Sensitive][Make "Maybe Archive" Time Sensitive]]                      |
 | TODO |   | [[Test Archive Queries then Enable][Test Archive Queries then Enable]]                         |
