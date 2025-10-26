@@ -841,14 +841,20 @@ Let's also modify some other agenda settings.
         org-agenda-show-future-repeats t
         org-agenda-dim-blocked-tasks nil ; dimming can slow the agenda  down - a filter could show blocked tasks better
         org-agenda-inhibit-startup t ; speedup agenda loading by ignoring startup options
+        org-agenda-skip-deadline-prewarning-if-scheduled 'pre-scheduled
         org-tags-column -120
         org-agenda-todo-keyword-format "%-12s"
-        org-agenda-skip-deadline-prewarning-if-scheduled 'pre-scheduled
-        org-agenda-time-grid
-        '((daily today)
-          (800 1000 1200 1400 1600 1800 2000)
-          " ...... " "----------------"))
+        org-columns-default-format "%TODO(Status) %1PRIORITY(P) %64ITEM(Work) %6Effort(Est){:} %6CLOCKSUM(Clock) %TAGS"
+        org-agenda-prefix-format '((agenda . " %i %-12:c%?-12t%-6e% s")
+                                   (todo   . " %i %-12:c %-6e")
+                                   (tags   . " %i %-12:c %-6e")
+                                   (search . " %i %-12:c %-6e"))
+        org-agenda-time-grid '((daily today)
+                               (800 1000 1200 1400 1600 1800 2000)
+                               " ...... " "----------------"))
 #+end_src
+
+*** TODO Consider customizing =org-agenda-sorting-strategy=
 
 
 ** Org To-Do
