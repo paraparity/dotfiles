@@ -439,10 +439,6 @@ help keep things in sync.
 #+end_src
 
 
-** TODO Bookmarks
-Configuration for bookmarking and returning to buffers.
-
-
 ** Multiple Cursors
 Sometimes one cursor isn't enough. This package lets me spin up multiple cursors across lines or matching patterns which
 can lead to some pretty impressive editing and refactoring feats.
@@ -998,6 +994,9 @@ This can be 0 for immediate, or a floating point value.")
 #+end_src
 
 **** TODO Tweak org-my-archive-done-tasks to make work in my setup
+
+What I want is to have the same hierarchy in the org file and it's archive file. Then when archiving a regular TODO, it
+moves to the same place in the arhcive file.
 
 
 ** Org Habit
