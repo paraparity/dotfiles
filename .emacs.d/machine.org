@@ -1,0 +1,6 @@
+#+TITLE: Machine Local Configs
+
+* Overview
+
+This file acts as a template for specifying machine local overrides to my configuration. This is useful for tweaking the
+configuration in ways I don't want to be shared across all machines. Say for example, work machine specific configs.
