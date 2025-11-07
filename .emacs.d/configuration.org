@@ -674,6 +674,8 @@ Let's load all the things! Well, all the things I use anyway.
 (use-package ob-ditaa :ensure nil)
 (use-package ob-dot :ensure nil)
 (use-package ob-js :ensure nil)
+(use-package ob-mermaid :ensure nil
+  :config (setopt ob-mermaid-cli-path "mmdc"))
 (use-package ob-perl :ensure nil)
 (use-package ob-plantuml :ensure nil)
 (use-package ob-sql-mode)
@@ -1876,6 +1878,7 @@ I'm only going to configure the subset of languages I use, but there are way mor
    (js         . t)
    (latex      . t)
    (ledger     . t)
+   (mermaid    . t)
    (org        . t)
    (perl       . t)
    (plantuml   . t)
@@ -1884,6 +1887,26 @@ I'm only going to configure the subset of languages I use, but there are way mor
    (sql        . t)
    (sqlite     . t)))
 #+end_src
+
+**** Special Notes
+
+***** Mermaid
+
+As I use NVM to manage node versions the install directory of mermaid-cli's =mmdc= can exist in some challenging to
+address spaces, especially across different machines with different operating systems.
+
+For now I've resolved to specify an explicit path for =ob-mermaid-cli-path= in my =machine.org= local config until I
+spend more time generalizing it.
+
+Additionally, on Ubuntu there is another hurdle to overcome with AppArmor sandboxing.
+
+Here's a sample of the config I have working on at least one machine now:
+
+#+begin_example
+(setopt ob-mermaid-cli-path "aa-exec -p chrome ~/.nvm/versions/node/v22.21.1/bin/mmdc")
+#+end_example
+
+Much appreciation to Sacha Chua for the PR and [[https://sachachua.com/blog/2025/01/org-babel-mermaid-js-and-fixing-failed-to-launch-the-browser-process-on-ubuntu-24/][blog post]] about this.
 
 
 *** Final Things
