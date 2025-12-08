@@ -2568,6 +2568,50 @@ Initial configuration informed through:
 #+end_src
 
 
+*** TeX
+
+For TeX editing, I'm going to try using AUCTeX.
+
+Refs:
+- https://emacsdocs.org/docs/auctex/Top
+- https://michaelneuper.com/posts/efficient-latex-editing-with-emacs/
+
+#+begin_src emacs-lisp
+(use-package auctex
+  :mode ("\\.tex$" . LaTeX-mode)
+  :init
+  (load "auctex.el" nil t t)
+  :config
+  (setopt TeX-auto-save t
+          TeX-parse-self t
+          TeX-master nil))
+#+end_src
+
+**** RefTeX
+
+Helpful with managing references in TeX documents.
+
+#+begin_src emacs-lisp
+(use-package reftex
+  :hook (LaTeX-mode-hook . turn-on-reftex)
+  :config
+  (setopt reftex-plug-into-AUCTeX t
+          reftex-enable-partial-scans t
+          reftex-save-parse-info t
+          reftex-use-multiple-selection-buffers t
+          reftex-toc-split-windows-horizontally t
+          reftex-toc-split-windows-fraction 0.2))
+#+end_src
+
+
+**** CDLaTeX Helpers
+
+#+begin_src emacs-lisp
+(use-package cdlatex
+  :hook (LaTeX-mode . turn-on-cdlatex))
+#+end_src
+
+
 * More Emacs Modes
 
 ** Ledger - Command Line Accounting
