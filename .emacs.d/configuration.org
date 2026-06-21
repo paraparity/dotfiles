@@ -1107,6 +1107,112 @@ look like this will be in =org-ql= until at least v0.8.
 #+end_example
 
 
+*** Agenda/Capture Builders
+Small helpers that expand data alists into =org-agenda-custom-commands= and =org-capture-templates= entries,
+reducing repeated =org-ql-block= and capture boilerplate while keeping literate section boundaries.
+
+#+begin_src emacs-lisp
+;;; BEGIN Agenda/Capture Builders
+
+(defun TT/org-ql-view-block (header query &rest extra-settings)
+  "Return an org-ql-block form for QUERY with HEADER."
+  `(org-ql-block ',query
+                 ((org-ql-block-header ,header)
+                  ,@extra-settings)))
+
+(defvar TT/org-agenda-custom-commands nil)
+
+(defun TT/org-agenda-extend (commands)
+  "Append top-level agenda commands/groups to TT/org-agenda-custom-commands."
+  (setq TT/org-agenda-custom-commands
+        (append TT/org-agenda-custom-commands commands)))
+
+(defun TT/org-ql-blocks-from-alist (specs)
+  "SPECS is ((HEADER QUERY) ...).  Return a list of org-ql-block forms."
+  (mapcar (lambda (spec)
+            (TT/org-ql-view-block (car spec) (cadr spec)))
+          specs))
+
+(defvar TT/org-ql-gtd-block-specs nil
+  "Alist of (SYMBOL HEADER QUERY) for reusable GTD agenda blocks.")
+
+(defun TT/org-ql-gtd-block (symbol)
+  "Return a one-element list containing the GTD block form for SYMBOL."
+  (let ((spec (assoc symbol TT/org-ql-gtd-block-specs)))
+    (list (TT/org-ql-view-block (nth 1 spec) (nth 2 spec)))))
+
+(defun TT/org-ql-gtd-blocks (symbols)
+  "Return a flat list of org-ql-block forms for SYMBOLS."
+  (apply #'append (mapcar #'TT/org-ql-gtd-block symbols)))
+
+(defun TT/org-context-commands (contexts)
+  "CONTEXTS is ((KEY LABEL TAG) ...).  Return full @-group agenda entries."
+  (mapcar (lambda (ctx)
+            (list (concat "@" (nth 0 ctx))
+                  (nth 1 ctx)
+                  (list (TT/org-ql-view-block
+                         (format "Open %s Tasks:" (nth 1 ctx))
+                         `(and (not (done)) (tags ,(nth 2 ctx)))))))
+          contexts))
+
+(defvar TT/org-priority-quadrants
+  '((q1 "Urgent"
+        (and (todo) (not (done)) (tags "IMPORTANT" "URGENT")))
+    (q2 "Important"
+        (and (todo) (not (done)) (tags "IMPORTANT") (not (tags "URGENT"))))
+    (q3 "Delegate"
+        (and (todo) (not (done)) (tags "URGENT") (not (tags "IMPORTANT"))))
+    (q4 "Decline"
+        (and (todo) (not (done)) (not (habit)) (not (tags "URGENT" "IMPORTANT"))))))
+
+(defun TT/org-priority-quadrant-blocks ()
+  "Return org-ql-block forms for all Eisenhower quadrants."
+  (mapcar (lambda (q)
+            (TT/org-ql-view-block (nth 1 q) (nth 2 q)))
+          TT/org-priority-quadrants))
+
+(defun TT/org-priority-quadrant-command (suffix label qsym)
+  "Return a single-quadrant priority-matrix agenda command."
+  (let ((q (assoc qsym TT/org-priority-quadrants)))
+    (list (concat "p" suffix) label
+          (list (TT/org-ql-view-block (nth 1 q) (nth 2 q))))))
+
+(defvar TT/org-capture-templates nil)
+
+(defun TT/org-capture-extend (templates)
+  "Append capture templates/groups to TT/org-capture-templates."
+  (setq TT/org-capture-templates
+        (append TT/org-capture-templates templates)))
+
+(defun TT/org-capture-todo (key desc file headline priority tags
+                            &optional target-type subheadings prefix)
+  "Return a capture template for a TODO entry.
+TARGET-TYPE is nil for file+headline or 'olp for file+olp with SUBHEADINGS.
+Optional PREFIX is inserted before the %? placeholder in the entry template."
+  (let* ((target (if (eq target-type 'olp)
+                     `(file+olp ,file ,@subheadings)
+                   `(file+headline ,file ,headline)))
+         (tag-list (if (listp tags) tags (list tags)))
+         (tag-str (concat ":" (mapconcat #'identity tag-list ":") ":")))
+    (list key desc 'entry target
+          (format "* TODO [#%s] %s%%? %s\n" priority (or prefix "") tag-str))))
+
+(defun TT/org-capture-retro-item (key label section)
+  "Return a retrospective capture item template."
+  (list key label 'item
+        `(file+olp ,TT/org-retrospective "Capture" ,section)
+        "- %?"))
+
+(defun TT/org-capture-meeting (key desc section schedule)
+  "Return a meeting capture entry template."
+  (list key desc 'entry
+        `(file+olp ,TT/org-calendar "Meetings" ,section)
+        (format "* MEET %%?\nSCHEDULED: %s" schedule)))
+
+;;; END Agenda/Capture Builders
+#+end_src
+
+
 ** Org Agenda Commands
 Agenda commands are the powerhouse behind =org-mode= and agendas. These allow you to query across your agenda files and
 surface reports of varying complexity. It's a great way to get exactly the thing you want, with only a few keystrokes.
@@ -1125,20 +1231,18 @@ Agenda commands have the following form:
 
 For further reference see the [[https://orgmode.org/worg/org-tutorials/advanced-searching.html][Worg Advanced Searching Tutorial]] or the [[https://orgmode.org/manual/Custom-Agenda-Views.html#Custom-agenda-views][Custom Agenda Views Manual]].
 
-I define these by initializing the commands list with an a weekly preview and append additional templates after. I do
-this so I can split the declarations up and describe them better in my literate configuration. I'll initialize a simple
-weekly review that shows a span of seven days highlighting stuck projects, open projects, and things awaiting something
-to happen.
+I define these by initializing the commands list with a weekly preview and appending additional groups with
+=TT/org-agenda-extend=. I do this so I can split the declarations up and describe them better in my literate
+configuration. I'll initialize a simple weekly review that shows a span of seven days highlighting stuck projects,
+open projects, and things awaiting something to happen.
 
 #+begin_src emacs-lisp
-(defvar TT/org-agenda-custom-commands (list) '())
-
-(setq TT/org-agenda-custom-commands
-      '(("w" "Weekly Review"
-         ((agenda ""
-                  ((org-agenda-span 7)))
-          (tags "PROJECT")
-          (todo "WAITING")))))
+(TT/org-agenda-extend
+  '(("w" "Weekly Review"
+     ((agenda ""
+              ((org-agenda-span 7)))
+      (tags "PROJECT")
+      (todo "WAITING")))))
 #+end_src
 
 Now we can append new search filters to this initialized list which we'll use to initialize the
@@ -1164,124 +1268,80 @@ management. Here let's define several GTD views for my agenda contents. All of t
 7. Braindead - all todos tagged with =braindead= - for when you just need to do something without thinking too much
 
 #+begin_src emacs-lisp
-(setcdr (last TT/org-agenda-custom-commands)
-        `(("g" . "GTD Views")
-          ("gi" "Inbox"
-           ((alltodo ""
-                     ((org-agenda-files '(,TT/org-inbox))
-                      (org-agenda-overriding-header "Items in my Inbox")))))
-          ("gd" "Daily View"
-           ((org-ql-block '(and (priority "A")
-                                (not
-                                 (or (done)
-                                     (tags "PROJECT" "HOLD" "WAITING" "BLOCKED"))))
-                          ((org-ql-block-header "High-Priority Unfinished Tasks")))
-            (agenda ""
-                    ((org-agenda-span 1)))
-            (org-ql-block '(and (not (done))
-                                (tags "NEXT"))
-                          ((org-ql-block-header "Next Actions")))
-            (org-ql-block '(and (not (done))
-                                (tags "PROJECT")
-                                (not (tags "HOLD")))
-                          ((org-ql-block-header "Open Projects")))
-            (org-ql-block '(and (todo)
-                                (priority "B")
-                                (not
-                                 (or (done)
-                                     (tags "PROJECT" "NEXT" "HOLD" "WAITING" "BLOCKED")
-                                     (habit)
-                                     (planning))))
-                          ((org-ql-block-header "B Priority Tasks")))
-            (org-ql-block '(and (todo)
-                                (priority "C")
-                                (not
-                                 (or (done)
-                                     (tags "PROJECT" "NEXT" "HOLD" "WAITING" "BLOCKED")
-                                     (habit)
-                                     (planning))))
-                          ((org-ql-block-header "C Priority Tasks")))))
-          ("gw" "Weekly View"
-           ((org-ql-block '(and (priority "A")
-                                (not
-                                 (or (done)
-                                     (tags "PROJECT" "HOLD" "WAITING" "BLOCKED"))))
-                          ((org-ql-block-header "High-Priority Unfinished Tasks")))
-            (agenda ""
-                    ((org-agenda-span 7)))
-            (org-ql-block '(and (not (done))
-                                (ts :from today :to 7))
-                          ((org-ql-block-header "1-Week Look Ahead")))
-            (org-ql-block '(and (not (done))
-                                (tags "NEXT"))
-                          ((org-ql-block-header "Next Actions")))
-            (org-ql-block '(and (not (done))
-                                (tags "PROJECT")
-                                (not (tags "HOLD")))
-                          ((org-ql-block-header "Open Projects")))
-            (org-ql-block '(and (not (done))
-                                (tags "WAITING"))
-                          ((org-ql-block-header "Waiting For")))
-            (org-ql-block '(todo "DELEGATED")
-                          ((org-ql-block-header "Pending Delegate Completion")))))
-          ("gn" "Next Actions"
-           ((org-ql-block '(and (not (done))
-                                (tags "NEXT"))
-                          ((org-ql-block-header "Next Actions")))))
-          ("gr" "Review"
-           ((org-ql-block '(and (not (done))
-                                (todo "REVIEW")
-                                (not (tags "HOLD" "WAITING" "BLOCKED")))
-                          ((org-ql-block-header "For Review")))))
-          ("gp" "Pending"
-           ((org-ql-block '(and (not (done))
-                                (tags "WAITING"))
-                          ((org-ql-block-header "Waiting For")))
-            (org-ql-block '(todo "DELEGATED")
-                          ((org-ql-block-header "Pending Delegate Completion")))
-            (org-ql-block '(and (not (done))
-                                (tags "BLOCKED"))
-                          ((org-ql-block-header "Blocked")))
-            (org-ql-block '(and (not (done))
-                                (tags "HOLD"))
-                          ((org-ql-block-header "On Hold")))))
-          ("gb" "Braindead"
-           ((org-ql-block '(and (todo)
-                                (not (done))
-                                (tags "braindead"))
-                          ((org-ql-block-header "Braindead")))))
-          ("gc" "Recently Completed"
-           ((org-ql-block '(and (done)
-                                (tags "PROJECT")
-                                (closed 7))
-                          ((org-ql-block-header "Completed Projects")))
-            (org-ql-block '(and (priority "A")
-                                (done)
-                                (not (tags "PROJECT"))
-                                (closed 7))
-                          ((org-ql-block-header "A Prio Completed")))
-            (org-ql-block '(and (priority "B")
-                                (done)
-                                (not (tags "PROJECT"))
-                                (closed 7))
-                          ((org-ql-block-header "B Prio Completed")))
-            (org-ql-block '(and (priority "C")
-                                (done)
-                                (not (tags "PROJECT"))
-                                (closed 7))
-                          ((org-ql-block-header "C Priority Tasks")))
-            (org-ql-block '(and (done)
-                                (not (priority "A" "B" "C"))
-                                (closed 7))
-                          ((org-ql-block-header "Regular Prio Completed")))))))
+(setq TT/org-ql-gtd-block-specs
+      '((a-prio-open "High-Priority Unfinished Tasks"
+         (and (priority "A")
+              (not (or (done)
+                       (tags "PROJECT" "HOLD" "WAITING" "BLOCKED")))))
+        (next-actions "Next Actions"
+         (and (not (done)) (tags "NEXT")))
+        (open-projects "Open Projects"
+         (and (not (done)) (tags "PROJECT") (not (tags "HOLD"))))
+        (b-prio "B Priority Tasks"
+         (and (todo) (priority "B")
+              (not (or (done)
+                       (tags "PROJECT" "NEXT" "HOLD" "WAITING" "BLOCKED")
+                       (habit)
+                       (planning)))))
+        (c-prio "C Priority Tasks"
+         (and (todo) (priority "C")
+              (not (or (done)
+                       (tags "PROJECT" "NEXT" "HOLD" "WAITING" "BLOCKED")
+                       (habit)
+                       (planning)))))
+        (week-lookahead "1-Week Look Ahead"
+         (and (not (done)) (ts :from today :to 7)))
+        (waiting-for "Waiting For"
+         (and (not (done)) (tags "WAITING")))
+        (delegated "Pending Delegate Completion"
+         (todo "DELEGATED"))
+        (blocked "Blocked"
+         (and (not (done)) (tags "BLOCKED")))
+        (on-hold "On Hold"
+         (and (not (done)) (tags "HOLD")))
+        (braindead "Braindead"
+         (and (todo) (not (done)) (tags "braindead")))
+        (for-review "For Review"
+         (and (not (done)) (todo "REVIEW")
+              (not (tags "HOLD" "WAITING" "BLOCKED"))))
+        (completed-projects "Completed Projects"
+         (and (done) (tags "PROJECT") (closed 7)))
+        (a-prio-completed "A Prio Completed"
+         (and (priority "A") (done) (not (tags "PROJECT")) (closed 7)))
+        (b-prio-completed "B Prio Completed"
+         (and (priority "B") (done) (not (tags "PROJECT")) (closed 7)))
+        (c-prio-completed "C Priority Tasks"
+         (and (priority "C") (done) (not (tags "PROJECT")) (closed 7)))
+        (regular-prio-completed "Regular Prio Completed"
+         (and (done) (not (priority "A" "B" "C")) (closed 7)))))
+
+(TT/org-agenda-extend
+  `(("g" . "GTD Views")
+    ("gi" "Inbox"
+     ((alltodo ""
+               ((org-agenda-files '(,TT/org-inbox))
+                (org-agenda-overriding-header "Items in my Inbox")))))
+    ("gd" "Daily View"
+     ,(append (TT/org-ql-gtd-blocks '(a-prio-open))
+              '((agenda "" ((org-agenda-span 1))))
+              (TT/org-ql-gtd-blocks '(next-actions open-projects b-prio c-prio))))
+    ("gw" "Weekly View"
+     ,(append (TT/org-ql-gtd-blocks '(a-prio-open))
+              '((agenda "" ((org-agenda-span 7))))
+              (TT/org-ql-gtd-blocks '(week-lookahead next-actions open-projects
+                                                    waiting-for delegated))))
+    ("gn" "Next Actions"
+     ,(TT/org-ql-gtd-blocks '(next-actions)))
+    ("gr" "Review"
+     ,(TT/org-ql-gtd-blocks '(for-review)))
+    ("gp" "Pending"
+     ,(TT/org-ql-gtd-blocks '(waiting-for delegated blocked on-hold)))
+    ("gb" "Braindead"
+     ,(TT/org-ql-gtd-blocks '(braindead)))
+    ("gc" "Recently Completed"
+     ,(TT/org-ql-gtd-blocks '(completed-projects a-prio-completed b-prio-completed
+                                                  c-prio-completed regular-prio-completed)))))
 #+end_src
-
-**** TODO DRY up these blocks
-Some blocks like A prio open, open projects, and next actions are repeated on different reports. Should be able to
-parameterize either whole blocks or common clauses...
-
-
-*** GTD Contexts
 I use =org-mode= tags starting with an '@' symbol to designate a context. A context is a physical space, head-space, or
 tool that a set of work is associated with.
 
@@ -1290,126 +1350,52 @@ consistency. I want to narrow in on unfinished work in a certain context so I ca
 I'm working in that context.
 
 #+begin_src emacs-lisp
-(setcdr (last TT/org-agenda-custom-commands)
-        '(("@" . "Context Filters")
-          ("@a" "Administrative"
-           ((org-ql-block '(and (not (done))
-				(tags "@administrative"))
-                          ((org-ql-block-header "Open Administrative Tasks:")))))
-          ("@c" "Career"
-           ((org-ql-block '(and (not (done))
-				(tags "@career"))
-                          ((org-ql-block-header "Open Career Tasks:")))))
-          ("@m" "Communication"
-           ((org-ql-block '(and (not (done))
-				(tags "@communication"))
-                          ((org-ql-block-header "Open Communication Tasks:")))))
-          ("@f" "Finance"
-           ((org-ql-block '(and (not (done))
-				(tags "@finances"))
-                          ((org-ql-block-header "Open Financial Tasks:")))))
-          ("@g" "Guild and Community of Practice"
-           ((org-ql-block '(and (not (done))
-				(tags "@guild"))
-                          ((org-ql-block-header "Open Guild Tasks:")))))
-          ("@h" "Health and Wellness"
-           ((org-ql-block '(and (not (done))
-				(tags "@health"))
-                          ((org-ql-block-header "Open Health and Wellness Tasks:")))))
-          ("@i" "Hiring"
-           ((org-ql-block '(and (not (done))
-				(tags "@hiring"))
-                          ((org-ql-block-header "Open Hiring Tasks:")))))
-          ("@H" "Home"
-           ((org-ql-block '(and (not (done))
-				(tags "@home"))
-                          ((org-ql-block-header "Open Home Tasks:")))))
-          ("@l" "Learning Agenda"
-           ((org-ql-block '(and (not (done))
-				(tags "@learn"))
-                          ((org-ql-block-header "Open Learning Agenda Tasks:")))))
-          ("@d" "Scheduling"
-           ((org-ql-block '(and (not (done))
-				(tags "@scheduling"))
-                          ((org-ql-block-header "Open Scheduling Tasks:")))))
-          ("@s" "Sprint Work"
-           ((org-ql-block '(and (not (done))
-				(tags "@sprint"))
-                          ((org-ql-block-header "Open Sprint Tasks:")))))
-          ("@t" "Travel and Planning"
-           ((org-ql-block '(and (not (done))
-				(tags "@travel"))
-                          ((org-ql-block-header "Open Travel Tasks:")))))
-          ("@w" "Workstation"
-           ((org-ql-block '(and (not (done))
-				(tags "@workstation"))
-                          ((org-ql-block-header "Open Workstation Tasks:")))))))
+(defvar TT/org-contexts
+  '(("a" "Administrative" "@administrative")
+    ("c" "Career" "@career")
+    ("m" "Communication" "@communication")
+    ("f" "Finance" "@finances")
+    ("g" "Guild and Community of Practice" "@guild")
+    ("h" "Health and Wellness" "@health")
+    ("i" "Hiring" "@hiring")
+    ("H" "Home" "@home")
+    ("l" "Learning Agenda" "@learn")
+    ("d" "Scheduling" "@scheduling")
+    ("s" "Sprint Work" "@sprint")
+    ("t" "Travel and Planning" "@travel")
+    ("w" "Workstation" "@workstation")))
+
+(TT/org-agenda-extend
+  (cons '("@" . "Context Filters")
+        (TT/org-context-commands TT/org-contexts)))
 #+end_src
 
 
 *** Priority Matrix Commands
 #+begin_src emacs-lisp
-(setcdr (last TT/org-agenda-custom-commands)
-        '(("p" . "Priority Matrix")
-          ("pq" "Quadrants"
-           ((org-ql-block '(and (todo)
-                                (not (done))
-                                (tags "IMPORTANT" "URGENT"))
-                          ((org-ql-block-header "Urgent")))
-            (org-ql-block '(and (todo)
-                                (not (done))
-                                (tags "IMPORTANT")
-                                (not (tags "URGENT")))
-                          ((org-ql-block-header "Important")))
-            (org-ql-block '(and (todo)
-                                (not (done))
-                                (tags "URGENT")
-                                (not (tags "IMPORTANT")))
-                          ((org-ql-block-header "Delegate")))
-            (org-ql-block '(and (todo)
-                                (not (done))
-                                (not (habit))
-                                (not (tags "URGENT" "IMPORTANT")))
-                          ((org-ql-block-header "Decline")))))
-          ("p1" "Q1"
-           ((org-ql-block '(and (todo)
-                                (not (done))
-                                (tags "IMPORTANT" "URGENT"))
-                          ((org-ql-block-header "Urgent")))))
-          ("p2" "Q2"
-           ((org-ql-block '(and (todo)
-                                (not (done))
-                                (tags "IMPORTANT")
-                                (not (tags "URGENT")))
-                          ((org-ql-block-header "Important")))))
-          ("p3" "Q3"
-           ((org-ql-block '(and (todo)
-                                (not (done))
-                                (tags "URGENT")
-                                (not (tags "IMPORTANT")))
-                          ((org-ql-block-header "Delegate")))))
-          ("p4" "Q4"
-           ((org-ql-block '(and (todo)
-                                (not (done))
-                                (not (habit))
-                                (not (tags "URGENT" "IMPORTANT")))
-                          ((org-ql-block-header "Decline")))))))
+(TT/org-agenda-extend
+  `(("p" . "Priority Matrix")
+    ("pq" "Quadrants" ,(TT/org-priority-quadrant-blocks))
+    ,(TT/org-priority-quadrant-command "1" "Q1" 'q1)
+    ,(TT/org-priority-quadrant-command "2" "Q2" 'q2)
+    ,(TT/org-priority-quadrant-command "3" "Q3" 'q3)
+    ,(TT/org-priority-quadrant-command "4" "Q4" 'q4)))
 #+end_src
 
 
 *** Deadline Review
 #+begin_src emacs-lisp
-(setcdr (last TT/org-agenda-custom-commands)
-        '(("x" "With Deadline Columns"
-           ((alltodo ""
-                     ((org-agenda-overriding-columns-format "%20ITEM %DEADLINE")
-                      (org-agenda-view-columns-initially t)))))
-          ("X" "Upcoming Deadlines"
-           ((agenda ""
-                    ((org-agenda-entry-types '(:deadline))
-                     (org-agenda-span 1)
-                     (org-deadline-warning-days 60)
-                     (org-agenda-time-grid nil)))))))
+(TT/org-agenda-extend
+  '(("x" "With Deadline Columns"
+     ((alltodo ""
+               ((org-agenda-overriding-columns-format "%20ITEM %DEADLINE")
+                (org-agenda-view-columns-initially t)))))
+    ("X" "Upcoming Deadlines"
+     ((agenda ""
+              ((org-agenda-entry-types '(:deadline))
+               (org-agenda-span 1)
+               (org-deadline-warning-days 60)
+               (org-agenda-time-grid nil)))))))
 #+end_src
 
 **** TODO Fix "With Deadline Columns" Filter
@@ -1417,36 +1403,31 @@ I'm working in that context.
 
 *** Hygiene Queries
 #+begin_src emacs-lisp
-(setcdr (last TT/org-agenda-custom-commands)
-        '(("H" . "Hygiene Filters")
-          ("Hi" "Incomplete Sub-Tasks"
-           ((org-ql-block '(and (todo)
-                                (not (done))
-                                (ancestors (done)))
-                          ((org-ql-block-header "Incomplete Sub-Tasks")))))
-          ("Hd" "Projects without Open Tasks"
-           ((org-ql-block '(and (not (done))
-                                (tags "PROJECT")
-                                (not (children (not (done)))))
-                          ((org-ql-block-header "Projects with Completed Children")))))
-          ("Hn" "Projects without NEXT Tasks"
-           ((org-ql-block '(and (tags "PROJECT")
-                                (not
-                                 (or (done)
-                                     (descendants (and (not (done))
-                                                       (tags "NEXT"))))))
-                          ((org-ql-block-header "Projects without NEXT Action")))))
-          ("Hp" "Missing Priority"
-           ((org-ql-block '(and (todo)
-                                (not
-                                 (or (done)
-                                     (todo "MEET" "MEETING" "APPOINTMENT")
-                                     (habit)
-                                     (priority))))
-                          ((org-ql-block-header "Missing Priority")))))
-          ("Ha" "Maybe Archive"
-           ((org-ql-block '(done)
-                          ((org-ql-block-header "Completed - Consider Archiving")))))))
+(TT/org-agenda-extend
+  `(("H" . "Hygiene Filters")
+    ("Hi" "Incomplete Sub-Tasks"
+     (,(TT/org-ql-view-block "Incomplete Sub-Tasks"
+                             '(and (todo) (not (done)) (ancestors (done))))))
+    ("Hd" "Projects without Open Tasks"
+     (,(TT/org-ql-view-block "Projects with Completed Children"
+                             '(and (not (done))
+                                   (tags "PROJECT")
+                                   (not (children (not (done))))))))
+    ("Hn" "Projects without NEXT Tasks"
+     (,(TT/org-ql-view-block "Projects without NEXT Action"
+                             '(and (tags "PROJECT")
+                                   (not (or (done)
+                                            (descendants (and (not (done))
+                                                              (tags "NEXT")))))))))
+    ("Hp" "Missing Priority"
+     (,(TT/org-ql-view-block "Missing Priority"
+                             '(and (todo)
+                                   (not (or (done)
+                                            (todo "MEET" "MEETING" "APPOINTMENT")
+                                            (habit)
+                                            (priority)))))))
+    ("Ha" "Maybe Archive"
+     (,(TT/org-ql-view-block "Completed - Consider Archiving" '(done))))))
 #+end_src
 
 **** TODO Make "Maybe Archive" Time Sensitive
@@ -1458,16 +1439,16 @@ I'm working in that context.
 Commands for querying agenda archive files.
 
 #+begin_src emacs-lisp :tangle no
-(setcdr (last TT/org-agenda-custom-commands)
-        '(("Q" . "Custom Queries")
-          ("Qa" "Archive Search"
-           ((search ""
-                    ((org-agenda-files
-                      (file-expand-wildcards "~/org/archive/*.org"))))))
-          ("QA" "Archive Tags Search"
-           ((org-tags-view ""
-                           ((org-agenda-files
-                             (file-expand-wildcards "~/org/archive/*.org"))))))))
+(TT/org-agenda-extend
+  '(("Q" . "Custom Queries")
+    ("Qa" "Archive Search"
+     ((search ""
+              ((org-agenda-files
+                (file-expand-wildcards "~/org/archive/*.org"))))))
+    ("QA" "Archive Tags Search"
+     ((org-tags-view ""
+                     ((org-agenda-files
+                       (file-expand-wildcards "~/org/archive/*.org"))))))))
 #+end_src
 
 **** TODO Test Archive Queries then Enable
@@ -1475,15 +1456,13 @@ Verify these work. I picked them up from a worg demo or something but haven't us
 
 
 *** Setting Agenda Commands
-Lastly I set =org-agenda-custom-commands= to the value of the list I've built.
+Lastly I set =org-agenda-custom-commands= to the value of the list I've built. I use =setq= rather than
+=setopt= because =org-ql-block= query sexps do not match Org's Custom type for this variable (see startup
+warning if you try =setopt=).
 
 #+begin_src emacs-lisp
 (setq org-agenda-custom-commands TT/org-agenda-custom-commands)
 #+end_src
-
-**** TODO Convert to setopt for setting agenda custom commands
-- currently getting type warning
-- my agenda is too long to want to debug now, works so far despite the warning
 
 
 ** Org Journal
@@ -1525,17 +1504,15 @@ Specify a non-nil prefix to inhibit inserting the heading"
 Capture templates allow us to quickly invoke a key-chord and select a template to capture some thought directly to a
 good home for it. Tasks to my organizer or inbox, new journal items to my journal, etc...
 
-I define these by initializing my capture list with an inbox capture and appending additional templates after. I do this
-so I can split the configuration up and describe them better in my literate configuration.
+I define these by initializing my capture list with an inbox capture and appending additional templates with
+=TT/org-capture-extend=. I do this so I can split the configuration up and describe them better in my literate
+configuration.
 
 #+begin_src emacs-lisp
 ;; Org Capture Configuration
-(defvar TT/org-capture-templates (list) '())
-
-;; The list needs to be initialized for setcdr to work later
-(setq TT/org-capture-templates
-      '(("i" "Inbox" entry  (file+olp TT/org-inbox "Capture" "Todos")
-         "* TODO %?\n /Entered on/ %U" :empty-lines 1)))
+(TT/org-capture-extend
+  '(("i" "Inbox" entry (file+olp TT/org-inbox "Capture" "Todos")
+     "* TODO %?\n /Entered on/ %U" :empty-lines 1)))
 #+end_src
 
 *** Helper Functions
@@ -1576,20 +1553,22 @@ I keep it around for reference.
 
 #+begin_src emacs-lisp :tangle no
 ;; Capture group for Sprint Work
-(setcdr (last TT/org-capture-templates)
-        '(("s" "Sprint Capture Group")
-          ("sd" "Development Task" entry (file+olp TT/org-organizer "Current Sprint" "Development")
-           "* TODO [#B] %? :@sprint:TASK:\n")
-          ("sv" "Review Task" entry (file+olp TT/org-organizer "Current Sprint" "Review")
-           "* TODO [#B] %? :@sprint:TASK:\n")
-          ("sr" "Research Task" entry (file+olp TT/org-organizer "Current Sprint" "Research")
-           "* TODO [#B] RESEARCH: %? :@sprint:TASK:\n")
-          ("ss" "Spike Task" entry (file+olp TT/org-organizer "Current Sprint" "Research")
-           "* TODO [#B] SPIKE: %? :@sprint:TASK:\n")
-          ("si" "Interrupt" entry (file+olp TT/org-organizer "Current Sprint" "Other")
-           "* TODO [#A] %? :@sprint:TASK:URGENT:\n")
-          ("st" "Other Task" entry (file+olp TT/org-organizer "Current Sprint" "Other")
-           "* TODO [#B] %? :@sprint:TASK:\n")))
+(defvar TT/org-sprint-captures
+  '(("sd" "Development Task" "Development" "B" ("@sprint" "TASK") nil)
+    ("sv" "Review Task" "Review" "B" ("@sprint" "TASK") nil)
+    ("sr" "Research Task" "Research" "B" ("@sprint" "TASK") "RESEARCH: ")
+    ("ss" "Spike Task" "Research" "B" ("@sprint" "TASK") "SPIKE: ")
+    ("si" "Interrupt" "Other" "A" ("@sprint" "TASK" "URGENT") nil)
+    ("st" "Other Task" "Other" "B" ("@sprint" "TASK") nil)))
+
+(TT/org-capture-extend
+  (cons '("s" "Sprint Capture Group")
+        (mapcar (lambda (spec)
+                  (TT/org-capture-todo (nth 0 spec) (nth 1 spec) TT/org-organizer nil
+                                       (nth 3 spec) (nth 4 spec) 'olp
+                                       (list "Current Sprint" (nth 2 spec))
+                                       (nth 5 spec)))
+                TT/org-sprint-captures)))
 #+end_src
 
 
@@ -1600,16 +1579,17 @@ team. That's the general idea.
 
 #+begin_src emacs-lisp
 ;; Capture Group for Retrospective Items
-(setcdr (last TT/org-capture-templates)
-        '(("r" "Retrospective Capture Group")
-          ("rk" "Kudos" item (file+olp TT/org-retrospective "Capture" "Kudos")
-           "- %?")
-          ("rg" "Goodness" item (file+olp TT/org-retrospective "Capture" "Goodness")
-           "- %?")
-          ("rb" "Badness" item (file+olp TT/org-retrospective "Capture" "Badness")
-           "- %?")
-          ("rz" "Kaizen" item (file+olp TT/org-retrospective "Capture" "Kaizen")
-           "- %?")))
+(defvar TT/org-retro-captures
+  '(("rk" "Kudos" "Kudos")
+    ("rg" "Goodness" "Goodness")
+    ("rb" "Badness" "Badness")
+    ("rz" "Kaizen" "Kaizen")))
+
+(TT/org-capture-extend
+  (cons '("r" "Retrospective Capture Group")
+        (mapcar (lambda (spec)
+                  (apply #'TT/org-capture-retro-item spec))
+                TT/org-retro-captures)))
 #+end_src
 
 
@@ -1631,22 +1611,22 @@ as a manager, and better categorizes things within sub-groups of the "office" co
 
 #+begin_src emacs-lisp
 ;; Capture Group for Office Work
-(setcdr (last TT/org-capture-templates)
-        '(("o" "Office Capture Group")
-          ("oa" "Administrative" entry (file+olp TT/org-organizer "Office" "Administrative")
-           "* TODO [#B] %? :@office:@administrative:\n")
-          ("oc" "Communication" entry (file+olp TT/org-organizer "Office" "Communication")
-           "* TODO [#B] %? :@office:@communication:\n")
-          ("of" "Firefighting" entry (file+olp TT/org-organizer "Office" "Firefighting")
-           "* TODO [#A] %? :@office:@firefights:URGENT:\n")
-          ("oh" "Hiring" entry (file+olp TT/org-organizer "Office" "Hiring")
-           "* TODO [#B] %? :@office:@hiring:\n")
-          ("oi" "Interrupts" entry (file+olp TT/org-organizer "Office" "Interrupts")
-           "* TODO [#B] %? :@office:\n")
-          ("os" "Scheduling" entry (file+olp TT/org-organizer "Office" "Scheduling")
-           "* TODO [#B] %? :@office:@scheduling:\n")
-          ("ot" "Task" entry (file+olp TT/org-organizer "Office" "General")
-           "* TODO [#B] %? :@office:\n")))
+(defvar TT/org-office-captures
+  '(("oa" "Administrative" "Administrative" "B" ("@office" "@administrative"))
+    ("oc" "Communication" "Communication" "B" ("@office" "@communication"))
+    ("of" "Firefighting" "Firefighting" "A" ("@office" "@firefights" "URGENT"))
+    ("oh" "Hiring" "Hiring" "B" ("@office" "@hiring"))
+    ("oi" "Interrupts" "Interrupts" "B" ("@office"))
+    ("os" "Scheduling" "Scheduling" "B" ("@office" "@scheduling"))
+    ("ot" "Task" "General" "B" ("@office"))))
+
+(TT/org-capture-extend
+  (cons '("o" "Office Capture Group")
+        (mapcar (lambda (spec)
+                  (TT/org-capture-todo (nth 0 spec) (nth 1 spec) TT/org-organizer nil
+                                       (nth 3 spec) (nth 4 spec) 'olp
+                                       (list "Office" (nth 2 spec))))
+                TT/org-office-captures)))
 #+end_src
 
 
@@ -1660,26 +1640,25 @@ sub-headings ideally will have it's own capture group
 
 #+begin_src emacs-lisp
 ;; Non-Sprint Todo Capture Group
-(setcdr (last TT/org-capture-templates)
-        '(("t" "General Todo Capture Group")
-          ("tc" "Career Task" entry (file+headline TT/org-organizer "Career")
-           "* TODO [#B] %? :@career:\n")
-          ("th" "Health Task" entry (file+headline TT/org-organizer "Health & Wellness")
-           "* TODO [#B] %? :@health:\n")
-          ("to" "Home Task" entry (file+headline TT/org-organizer "Home")
-           "* TODO [#B] %? :@home:\n")
-          ("tf" "Financial Task" entry (file+headline TT/org-organizer "Finances")
-           "* TODO [#B] %? :@finances:\n")
-          ("tg" "Guild Task" entry (file+headline TT/org-organizer "Guild")
-           "* TODO [#C] %? :@guild:\n")
-          ("tr" "Reading Task" entry (file+headline TT/org-organizer "Reading")
-           "* TODO [#B] %? :@read:\n")
-          ("tv" "Travel Task" entry (file+headline TT/org-organizer "Travel")
-           "* TODO [#B] %? :@travel:\n")
-          ("tw" "Workstation Task" entry (file+headline TT/org-organizer "Workstation")
-           "* TODO [#C] %? :@workstation:\n")
-          ("tt" "General Task" entry (file+headline TT/org-organizer "Tasks")
-           "\n* TODO [#C] %?\n %i\n %a\n\n")))
+(defvar TT/org-organizer-captures
+  '(("tc" "Career Task" "Career" "B" ("@career"))
+    ("th" "Health Task" "Health & Wellness" "B" ("@health"))
+    ("to" "Home Task" "Home" "B" ("@home"))
+    ("tf" "Financial Task" "Finances" "B" ("@finances"))
+    ("tg" "Guild Task" "Guild" "C" ("@guild"))
+    ("tr" "Reading Task" "Reading" "B" ("@read"))
+    ("tv" "Travel Task" "Travel" "B" ("@travel"))
+    ("tw" "Workstation Task" "Workstation" "C" ("@workstation"))))
+
+(TT/org-capture-extend
+  (cons '("t" "General Todo Capture Group")
+        (append
+         (mapcar (lambda (spec)
+                   (TT/org-capture-todo (nth 0 spec) (nth 1 spec) TT/org-organizer
+                                        (nth 2 spec) (nth 3 spec) (nth 4 spec)))
+                 TT/org-organizer-captures)
+         '(("tt" "General Task" entry (file+headline TT/org-organizer "Tasks")
+            "\n* TODO [#C] %?\n %i\n %a\n\n")))))
 #+end_src
 
 
@@ -1696,18 +1675,18 @@ yet. So for now, I schedule to an arbitrary date and update the date with =C-s= 
 
 #+begin_src emacs-lisp
 ;; Capture Group for Meetings
-(setcdr (last TT/org-capture-templates)
-        '(("m" "Meeting Capture Group")
-          ("mm" "Pop Up Meetings and One-Offs" entry (file+olp TT/org-calendar "Meetings" "One Offs")
-           "* MEET %?\nSCHEDULED: %^t")
-          ("md" "Daily Meeting" entry (file+olp TT/org-calendar "Meetings" "Daily")
-           "* MEET %?\nSCHEDULED: <2020-01-01 Sat ++1d>")
-          ("mw" "Weekly Meeting" entry (file+olp TT/org-calendar "Meetings" "Weekly")
-           "* MEET %?\nSCHEDULED: <2020-01-01 Sat ++1w>")
-          ("m1" "1:1 Meeting" entry (file+olp TT/org-calendar "Meetings" "1:1s")
-           "* MEET %?\nSCHEDULED: <2000-01-01 Sat ++1w>")
-          ("mb" "Bi-Weekly Meeting" entry (file+olp TT/org-calendar "Meetings" "Bi-Weekly")
-           "* MEET %?\nSCHEDULED: <2000-01-01 Sat ++2w>")))
+(defvar TT/org-meeting-captures
+  '(("mm" "Pop Up Meetings and One-Offs" "One Offs" "%^t")
+    ("md" "Daily Meeting" "Daily" "<2020-01-01 Sat ++1d>")
+    ("mw" "Weekly Meeting" "Weekly" "<2020-01-01 Sat ++1w>")
+    ("m1" "1:1 Meeting" "1:1s" "<2000-01-01 Sat ++1w>")
+    ("mb" "Bi-Weekly Meeting" "Bi-Weekly" "<2000-01-01 Sat ++2w>")))
+
+(TT/org-capture-extend
+  (cons '("m" "Meeting Capture Group")
+        (mapcar (lambda (spec)
+                  (apply #'TT/org-capture-meeting spec))
+                TT/org-meeting-captures)))
 #+end_src
 
 
@@ -1715,13 +1694,13 @@ yet. So for now, I schedule to an arbitrary date and update the date with =C-s= 
 Capture templates for journaling. Contains a basic capture, and a few templates for structured entries.
 
 #+begin_src emacs-lisp
-(setcdr (last TT/org-capture-templates)
-        `(("j" "Journal Capture Group")
-          ("jd" "Daily Goals" entry (function org-journal-find-location)
-           (file ,(concat TT/org-cap-templates-dir "/daily-goals.org"))
-           :empty-lines 1)
-          ("jj" "Journal" entry (function org-journal-find-location)
-           "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?")))
+(TT/org-capture-extend
+  `(("j" "Journal Capture Group")
+    ("jd" "Daily Goals" entry (function org-journal-find-location)
+     (file ,(concat TT/org-cap-templates-dir "/daily-goals.org"))
+     :empty-lines 1)
+    ("jj" "Journal" entry (function org-journal-find-location)
+     "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?")))
 #+end_src
 
 
@@ -1730,21 +1709,21 @@ The remaining capture templates are things that don't fit neatly into any one gr
 
 #+begin_src emacs-lisp
 ;; Other Capture Templates (un-grouped)
-(setcdr (last TT/org-capture-templates)
-        `(("n" "Note" entry (file+olp TT/org-inbox "Capture" "Notes")
-           "* %?\n:PROPERTIES:\n:CREATED:%U\n:END:\n\n%i\n\nFrom: %a"
-           :empty-lines 1)
-          ("m" "Manager Notes" item (file+olp TT/org-manager "1:1 Prep" "Capture")
-           "- %?" :empty-lines 1)
-          ("x" "Incident Notes" entry (file (capture-incident-response-file "~/org/incidents"))
-           (file ,(concat TT/org-cap-templates-dir "/incident.org"))
-           :clock-in t)
-          ("X" "Item to Current Clock" item
-           (clock)
-           "%i%?" :empty-lines 1)
-          ("C" "Region to Current Clock" plain
-           (clock)
-           "%i" :immediate-finish t :empty-lines 1)))
+(TT/org-capture-extend
+  `(("n" "Note" entry (file+olp TT/org-inbox "Capture" "Notes")
+     "* %?\n:PROPERTIES:\n:CREATED:%U\n:END:\n\n%i\n\nFrom: %a"
+     :empty-lines 1)
+    ("m" "Manager Notes" item (file+olp TT/org-manager "1:1 Prep" "Capture")
+     "- %?" :empty-lines 1)
+    ("x" "Incident Notes" entry (file (capture-incident-response-file "~/org/incidents"))
+     (file ,(concat TT/org-cap-templates-dir "/incident.org"))
+     :clock-in t)
+    ("X" "Item to Current Clock" item
+     (clock)
+     "%i%?" :empty-lines 1)
+    ("C" "Region to Current Clock" plain
+     (clock)
+     "%i" :immediate-finish t :empty-lines 1)))
 #+end_src
 
 **** TODO Needs Work [0/1]
@@ -1760,18 +1739,18 @@ showed it was possible. I keep it around for reference, but no longer export it 
 
 #+begin_src emacs-lisp :tangle no
 ;; Test capture group - testing nested sub-groups
-(setcdr (last TT/org-capture-templates)
-        '(("q" "Test Capture Group")
-          ("qa" "Test Capture Sub-Group A")
-          ("qaa" "AA Template" entry (file+olp TT/org-inbox "Test" "A" "AA")
-           "* TODO [#A] %? :TASK:\n" :empty-lines 1)
-          ("qaa" "AB Template" entry (file+olp TT/org-inbox "Test" "A" "AB")
-           "* TODO [#B] %? :TASK:\n" :empty-lines 1)
-          ("qb" "Test Capture Sub-Group B")
-          ("qba" "BA Template" entry (file+olp TT/org-inbox "Test" "B" "BA")
-           "* TODO [#A] %? :TASK:\n" :empty-lines 1)
-          ("qbb" "BB Template" entry (file+olp TT/org-inbox "Test" "B" "BB")
-           "* TODO [#B] %? :TASK:\n" :empty-lines 1)))
+(TT/org-capture-extend
+  '(("q" "Test Capture Group")
+    ("qa" "Test Capture Sub-Group A")
+    ("qaa" "AA Template" entry (file+olp TT/org-inbox "Test" "A" "AA")
+     "* TODO [#A] %? :TASK:\n" :empty-lines 1)
+    ("qaa" "AB Template" entry (file+olp TT/org-inbox "Test" "A" "AB")
+     "* TODO [#B] %? :TASK:\n" :empty-lines 1)
+    ("qb" "Test Capture Sub-Group B")
+    ("qba" "BA Template" entry (file+olp TT/org-inbox "Test" "B" "BA")
+     "* TODO [#A] %? :TASK:\n" :empty-lines 1)
+    ("qbb" "BB Template" entry (file+olp TT/org-inbox "Test" "B" "BB")
+     "* TODO [#B] %? :TASK:\n" :empty-lines 1)))
 #+end_src
 
 
@@ -1779,7 +1758,7 @@ showed it was possible. I keep it around for reference, but no longer export it 
 Because I've split the configuration up, it's time to update the actual =org-capture-templates= variable.
 
 #+begin_src emacs-lisp
-(setq org-capture-templates TT/org-capture-templates)
+(setopt org-capture-templates TT/org-capture-templates)
 #+end_src
 
 If I want to further customize this variable in machine local configurations, like in my employer configuration, I'll
@@ -2934,7 +2913,6 @@ Research Topics or Reading Material:
 | TODO |   | [[Fix "With Deadline Columns" Filter][Fix "With Deadline Columns" Filter]]                       |
 | TODO |   | [[Make "Maybe Archive" Time Sensitive][Make "Maybe Archive" Time Sensitive]]                      |
 | TODO |   | [[Test Archive Queries then Enable][Test Archive Queries then Enable]]                         |
-| TODO |   | [[Convert to setopt for setting agenda custom commands][Convert to setopt for setting agenda custom commands]]     |
 | TODO |   | [[Periodic Reflection Capture][Periodic Reflection Capture]]                              |
 | TODO |   | [[Incubation Capture][Incubation Capture]]                                       |
 | TODO |   | [[Needs Work][Needs Work]]                                               |

@@ -7,3 +7,6 @@
 
 # Ignore magit generated files
 *.rej
+
+# Ignore temp files
+temp/**
