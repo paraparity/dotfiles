@@ -16,7 +16,7 @@ I invite your feedback openly. Welcome aboard my ship of Theseus.
 *** Variable Naming Convention
 As is common among Emacsers, I've opted to adopt a naming scheme that identifies personal contributions and adds a bit
 of individual flare. Considering the name I go by is =Paraparity=, you'll notice a number of names prefixed with
-=TT/=. This represents a so-called =pair of T's= playing off of the =parity= portion of my handle.
+=para/=. This draws on the =para= portion of my handle.
 
 
 *** Add Some Output Commentary
@@ -157,12 +157,12 @@ This is my old config for lock files which I keep around in case I need to resto
 Let's make it a only take a key-chord to pull up my literate configuration.
 
 #+begin_src emacs-lisp
-(defun TT/locate-literate-config ()
+(defun para/locate-literate-config ()
   "Locate and load my literate configuration file."
   (interactive)
   (find-file "~/.emacs.d/configuration.org"))
 
-(global-set-key (kbd "C-c I") 'TT/locate-literate-config)
+(global-set-key (kbd "C-c I") 'para/locate-literate-config)
 #+end_src
 
 
@@ -273,13 +273,13 @@ sometimes. As such, lets make things toggle-able so I can inspect white-space on
 lets give ourselves a nuclear option for stripping trailing white-space.
 
 #+begin_src emacs-lisp
-(defun TT/toggle-trailing-whitespace ()
+(defun para/toggle-trailing-whitespace ()
   "Toggle 'show-trailing-whitespace' between t and nil."
   (interactive)
   (setq show-trailing-whitespace (not show-trailing-whitespace)))
 
 (global-set-key (kbd "C-c w m") 'whitespace-mode)
-(global-set-key (kbd "C-c w t") 'TT/toggle-trailing-whitespace)
+(global-set-key (kbd "C-c w t") 'para/toggle-trailing-whitespace)
 (global-set-key (kbd "<f5>") 'delete-trailing-whitespace)
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
@@ -721,36 +721,36 @@ files, and the like.
 
 #+begin_src emacs-lisp
 (defvar org-directory            "~/org"                                         "Root \\='org-mode\\=' directory.")
-(defvar TT/org-agenda-dir        (concat org-directory "/agendas")               "Top level org directory for Getting Things Done (GTD) organizer files.")
-(defvar TT/org-calendar          (concat TT/org-agenda-dir "/calendar.org")      "Calendar for scheduled items.")
-(defvar TT/org-habits            (concat TT/org-agenda-dir "/habits.org")        "Habits for periodic TODOs.")
-(defvar TT/org-ideas             (concat TT/org-agenda-dir "/ideas.org")         "Idea capture and ideation.")
-(defvar TT/org-inbox             (concat TT/org-agenda-dir "/inbox.org")         "The collection bin for everything to be refiled.")
-(defvar TT/org-incubate-dir      (concat TT/org-agenda-dir "/incubate")          "Categories of in-actionable things to incubate.")
-(defvar TT/org-emacs-maybe       (concat TT/org-incubate-dir "/emacs-maybe.org") "Someday agenda for Emacs related things.")
-(defvar TT/org-maybe-projects    (concat TT/org-incubate-dir "/projects.org")    "Someday agenda for project ideas.")
-(defvar TT/org-someday           (concat TT/org-incubate-dir "/someday.org")     "Someday agenda for things I may want to revisit.")
-(defvar TT/org-travel            (concat TT/org-incubate-dir "/travel.org")      "Someday agenda for travel related things.")
-(defvar TT/org-learning          (concat TT/org-agenda-dir "/learning.org")      "Agenda for structured learning.")
-(defvar TT/org-organizer         (concat TT/org-agenda-dir "/organizer.org")     "Core organizer tracking prioritized actionable work.")
-(defvar TT/org-people-dir        (concat TT/org-agenda-dir "/people")            "Org files specific to people.")
-(defvar TT/org-projects          (concat TT/org-agenda-dir "/projects.org")      "")
-(defvar TT/org-manager           (concat TT/org-people-dir "/manager.org")       "Actionable captures for 1:1s with my manager.")
-(defvar TT/org-retrospective     (concat TT/org-agenda-dir "/retro.org")         "Capture target for retro related info or actionable items.")
-(defvar TT/org-review            (concat TT/org-agenda-dir "/review.org")        "Reference on and journal for reflection.")
-(defvar TT/org-tickler           (concat TT/org-agenda-dir "/tickler.org")       "Time relevant reminders for \\='decide to do later\\=' items.")
-(defvar TT/org-waiting           (concat TT/org-agenda-dir "/waiting.org")       "Delegated or blocked items awaiting external action.")
-(defvar TT/org-blog              (concat org-directory "/blog")                  "Top level org directory for blog posts.")
-(defvar TT/org-brain-dir         (concat org-directory "/brain")                 "Top level org directory for \\='org-brain\\=' reference material.")
-(defvar TT/org-checklist-dir     (concat org-directory "/checklists")            "Top level org directory for action oriented reference; do/certify.")
-(defvar TT/org-commonplace-dir   (concat org-directory "/commonplace")           "Top level org directory for \\='commonplace book\\=' material.")
-(defvar TT/org-journal-dir       (concat org-directory "/journal")               "Top level org directory for journal entries.")
-(defvar TT/org-ledger-dir        (concat org-directory "/ledger")                "Top level org directory for accounting/budgeting ledgers.")
-(defvar TT/org-projects-dir      (concat org-directory "/projects")              "Top level org directory for projects.")
-(defvar TT/org-templates-dir     (concat org-directory "/templates")             "Top level org directory for templates.")
-(defvar TT/org-cap-templates-dir (concat TT/org-templates-dir "/org-capture")    "Directory for \\='org-capture\\=' template files.")
+(defvar para/org-agenda-dir        (concat org-directory "/agendas")               "Top level org directory for Getting Things Done (GTD) organizer files.")
+(defvar para/org-calendar          (concat para/org-agenda-dir "/calendar.org")      "Calendar for scheduled items.")
+(defvar para/org-habits            (concat para/org-agenda-dir "/habits.org")        "Habits for periodic TODOs.")
+(defvar para/org-ideas             (concat para/org-agenda-dir "/ideas.org")         "Idea capture and ideation.")
+(defvar para/org-inbox             (concat para/org-agenda-dir "/inbox.org")         "The collection bin for everything to be refiled.")
+(defvar para/org-incubate-dir      (concat para/org-agenda-dir "/incubate")          "Categories of in-actionable things to incubate.")
+(defvar para/org-emacs-maybe       (concat para/org-incubate-dir "/emacs-maybe.org") "Someday agenda for Emacs related things.")
+(defvar para/org-maybe-projects    (concat para/org-incubate-dir "/projects.org")    "Someday agenda for project ideas.")
+(defvar para/org-someday           (concat para/org-incubate-dir "/someday.org")     "Someday agenda for things I may want to revisit.")
+(defvar para/org-travel            (concat para/org-incubate-dir "/travel.org")      "Someday agenda for travel related things.")
+(defvar para/org-learning          (concat para/org-agenda-dir "/learning.org")      "Agenda for structured learning.")
+(defvar para/org-organizer         (concat para/org-agenda-dir "/organizer.org")     "Core organizer tracking prioritized actionable work.")
+(defvar para/org-people-dir        (concat para/org-agenda-dir "/people")            "Org files specific to people.")
+(defvar para/org-projects          (concat para/org-agenda-dir "/projects.org")      "")
+(defvar para/org-manager           (concat para/org-people-dir "/manager.org")       "Actionable captures for 1:1s with my manager.")
+(defvar para/org-retrospective     (concat para/org-agenda-dir "/retro.org")         "Capture target for retro related info or actionable items.")
+(defvar para/org-review            (concat para/org-agenda-dir "/review.org")        "Reference on and journal for reflection.")
+(defvar para/org-tickler           (concat para/org-agenda-dir "/tickler.org")       "Time relevant reminders for \\='decide to do later\\=' items.")
+(defvar para/org-waiting           (concat para/org-agenda-dir "/waiting.org")       "Delegated or blocked items awaiting external action.")
+(defvar para/org-blog              (concat org-directory "/blog")                  "Top level org directory for blog posts.")
+(defvar para/org-brain-dir         (concat org-directory "/brain")                 "Top level org directory for \\='org-brain\\=' reference material.")
+(defvar para/org-checklist-dir     (concat org-directory "/checklists")            "Top level org directory for action oriented reference; do/certify.")
+(defvar para/org-commonplace-dir   (concat org-directory "/commonplace")           "Top level org directory for \\='commonplace book\\=' material.")
+(defvar para/org-journal-dir       (concat org-directory "/journal")               "Top level org directory for journal entries.")
+(defvar para/org-ledger-dir        (concat org-directory "/ledger")                "Top level org directory for accounting/budgeting ledgers.")
+(defvar para/org-projects-dir      (concat org-directory "/projects")              "Top level org directory for projects.")
+(defvar para/org-templates-dir     (concat org-directory "/templates")             "Top level org directory for templates.")
+(defvar para/org-cap-templates-dir (concat para/org-templates-dir "/org-capture")    "Directory for \\='org-capture\\=' template files.")
 
-(defvar org-default-notes-file TT/org-inbox)
+(defvar org-default-notes-file para/org-inbox)
 #+end_src
 
 
@@ -815,12 +815,12 @@ Org-mode agendas pull from a list of files which I have mostly tucked away under
 (setopt org-agenda-files
         (delq nil
               (mapcar (lambda (x) (and x (file-exists-p x) x))
-                      `(,TT/org-calendar
-                        ,TT/org-habits
-                        ,TT/org-organizer
-                        ,TT/org-projects
-                        ,TT/org-tickler
-                        ,TT/org-waiting))))
+                      `(,para/org-calendar
+                        ,para/org-habits
+                        ,para/org-organizer
+                        ,para/org-projects
+                        ,para/org-tickler
+                        ,para/org-waiting))))
 #+end_src
 
 Let's also modify some other agenda settings.
@@ -1114,48 +1114,48 @@ reducing repeated =org-ql-block= and capture boilerplate while keeping literate 
 #+begin_src emacs-lisp
 ;;; BEGIN Agenda/Capture Builders
 
-(defun TT/org-ql-view-block (header query &rest extra-settings)
+(defun para/org-ql-view-block (header query &rest extra-settings)
   "Return an org-ql-block form for QUERY with HEADER."
   `(org-ql-block ',query
                  ((org-ql-block-header ,header)
                   ,@extra-settings)))
 
-(defvar TT/org-agenda-custom-commands nil)
+(defvar para/org-agenda-custom-commands nil)
 
-(defun TT/org-agenda-extend (commands)
-  "Append top-level agenda commands/groups to TT/org-agenda-custom-commands."
-  (setq TT/org-agenda-custom-commands
-        (append TT/org-agenda-custom-commands commands)))
+(defun para/org-agenda-extend (commands)
+  "Append top-level agenda commands/groups to para/org-agenda-custom-commands."
+  (setq para/org-agenda-custom-commands
+        (append para/org-agenda-custom-commands commands)))
 
-(defun TT/org-ql-blocks-from-alist (specs)
+(defun para/org-ql-blocks-from-alist (specs)
   "SPECS is ((HEADER QUERY) ...).  Return a list of org-ql-block forms."
   (mapcar (lambda (spec)
-            (TT/org-ql-view-block (car spec) (cadr spec)))
+            (para/org-ql-view-block (car spec) (cadr spec)))
           specs))
 
-(defvar TT/org-ql-gtd-block-specs nil
+(defvar para/org-ql-gtd-block-specs nil
   "Alist of (SYMBOL HEADER QUERY) for reusable GTD agenda blocks.")
 
-(defun TT/org-ql-gtd-block (symbol)
+(defun para/org-ql-gtd-block (symbol)
   "Return a one-element list containing the GTD block form for SYMBOL."
-  (let ((spec (assoc symbol TT/org-ql-gtd-block-specs)))
-    (list (TT/org-ql-view-block (nth 1 spec) (nth 2 spec)))))
+  (let ((spec (assoc symbol para/org-ql-gtd-block-specs)))
+    (list (para/org-ql-view-block (nth 1 spec) (nth 2 spec)))))
 
-(defun TT/org-ql-gtd-blocks (symbols)
+(defun para/org-ql-gtd-blocks (symbols)
   "Return a flat list of org-ql-block forms for SYMBOLS."
-  (apply #'append (mapcar #'TT/org-ql-gtd-block symbols)))
+  (apply #'append (mapcar #'para/org-ql-gtd-block symbols)))
 
-(defun TT/org-context-commands (contexts)
+(defun para/org-context-commands (contexts)
   "CONTEXTS is ((KEY LABEL TAG) ...).  Return full @-group agenda entries."
   (mapcar (lambda (ctx)
             (list (concat "@" (nth 0 ctx))
                   (nth 1 ctx)
-                  (list (TT/org-ql-view-block
+                  (list (para/org-ql-view-block
                          (format "Open %s Tasks:" (nth 1 ctx))
                          `(and (not (done)) (tags ,(nth 2 ctx)))))))
           contexts))
 
-(defvar TT/org-priority-quadrants
+(defvar para/org-priority-quadrants
   '((q1 "Urgent"
         (and (todo) (not (done)) (tags "IMPORTANT" "URGENT")))
     (q2 "Important"
@@ -1165,26 +1165,26 @@ reducing repeated =org-ql-block= and capture boilerplate while keeping literate 
     (q4 "Decline"
         (and (todo) (not (done)) (not (habit)) (not (tags "URGENT" "IMPORTANT"))))))
 
-(defun TT/org-priority-quadrant-blocks ()
+(defun para/org-priority-quadrant-blocks ()
   "Return org-ql-block forms for all Eisenhower quadrants."
   (mapcar (lambda (q)
-            (TT/org-ql-view-block (nth 1 q) (nth 2 q)))
-          TT/org-priority-quadrants))
+            (para/org-ql-view-block (nth 1 q) (nth 2 q)))
+          para/org-priority-quadrants))
 
-(defun TT/org-priority-quadrant-command (suffix label qsym)
+(defun para/org-priority-quadrant-command (suffix label qsym)
   "Return a single-quadrant priority-matrix agenda command."
-  (let ((q (assoc qsym TT/org-priority-quadrants)))
+  (let ((q (assoc qsym para/org-priority-quadrants)))
     (list (concat "p" suffix) label
-          (list (TT/org-ql-view-block (nth 1 q) (nth 2 q))))))
+          (list (para/org-ql-view-block (nth 1 q) (nth 2 q))))))
 
-(defvar TT/org-capture-templates nil)
+(defvar para/org-capture-templates nil)
 
-(defun TT/org-capture-extend (templates)
-  "Append capture templates/groups to TT/org-capture-templates."
-  (setq TT/org-capture-templates
-        (append TT/org-capture-templates templates)))
+(defun para/org-capture-extend (templates)
+  "Append capture templates/groups to para/org-capture-templates."
+  (setq para/org-capture-templates
+        (append para/org-capture-templates templates)))
 
-(defun TT/org-capture-todo (key desc file headline priority tags
+(defun para/org-capture-todo (key desc file headline priority tags
                             &optional target-type subheadings prefix)
   "Return a capture template for a TODO entry.
 TARGET-TYPE is nil for file+headline or 'olp for file+olp with SUBHEADINGS.
@@ -1197,16 +1197,16 @@ Optional PREFIX is inserted before the %? placeholder in the entry template."
     (list key desc 'entry target
           (format "* TODO [#%s] %s%%? %s\n" priority (or prefix "") tag-str))))
 
-(defun TT/org-capture-retro-item (key label section)
+(defun para/org-capture-retro-item (key label section)
   "Return a retrospective capture item template."
   (list key label 'item
-        `(file+olp ,TT/org-retrospective "Capture" ,section)
+        `(file+olp ,para/org-retrospective "Capture" ,section)
         "- %?"))
 
-(defun TT/org-capture-meeting (key desc section schedule)
+(defun para/org-capture-meeting (key desc section schedule)
   "Return a meeting capture entry template."
   (list key desc 'entry
-        `(file+olp ,TT/org-calendar "Meetings" ,section)
+        `(file+olp ,para/org-calendar "Meetings" ,section)
         (format "* MEET %%?\nSCHEDULED: %s" schedule)))
 
 ;;; END Agenda/Capture Builders
@@ -1232,12 +1232,12 @@ Agenda commands have the following form:
 For further reference see the [[https://orgmode.org/worg/org-tutorials/advanced-searching.html][Worg Advanced Searching Tutorial]] or the [[https://orgmode.org/manual/Custom-Agenda-Views.html#Custom-agenda-views][Custom Agenda Views Manual]].
 
 I define these by initializing the commands list with a weekly preview and appending additional groups with
-=TT/org-agenda-extend=. I do this so I can split the declarations up and describe them better in my literate
+=para/org-agenda-extend=. I do this so I can split the declarations up and describe them better in my literate
 configuration. I'll initialize a simple weekly review that shows a span of seven days highlighting stuck projects,
 open projects, and things awaiting something to happen.
 
 #+begin_src emacs-lisp
-(TT/org-agenda-extend
+(para/org-agenda-extend
   '(("w" "Weekly Review"
      ((agenda ""
               ((org-agenda-span 7)))
@@ -1268,7 +1268,7 @@ management. Here let's define several GTD views for my agenda contents. All of t
 7. Braindead - all todos tagged with =braindead= - for when you just need to do something without thinking too much
 
 #+begin_src emacs-lisp
-(setq TT/org-ql-gtd-block-specs
+(setq para/org-ql-gtd-block-specs
       '((a-prio-open "High-Priority Unfinished Tasks"
          (and (priority "A")
               (not (or (done)
@@ -1315,31 +1315,31 @@ management. Here let's define several GTD views for my agenda contents. All of t
         (regular-prio-completed "Regular Prio Completed"
          (and (done) (not (priority "A" "B" "C")) (closed 7)))))
 
-(TT/org-agenda-extend
+(para/org-agenda-extend
   `(("g" . "GTD Views")
     ("gi" "Inbox"
      ((alltodo ""
-               ((org-agenda-files '(,TT/org-inbox))
+               ((org-agenda-files '(,para/org-inbox))
                 (org-agenda-overriding-header "Items in my Inbox")))))
     ("gd" "Daily View"
-     ,(append (TT/org-ql-gtd-blocks '(a-prio-open))
+     ,(append (para/org-ql-gtd-blocks '(a-prio-open))
               '((agenda "" ((org-agenda-span 1))))
-              (TT/org-ql-gtd-blocks '(next-actions open-projects b-prio c-prio))))
+              (para/org-ql-gtd-blocks '(next-actions open-projects b-prio c-prio))))
     ("gw" "Weekly View"
-     ,(append (TT/org-ql-gtd-blocks '(a-prio-open))
+     ,(append (para/org-ql-gtd-blocks '(a-prio-open))
               '((agenda "" ((org-agenda-span 7))))
-              (TT/org-ql-gtd-blocks '(week-lookahead next-actions open-projects
+              (para/org-ql-gtd-blocks '(week-lookahead next-actions open-projects
                                                     waiting-for delegated))))
     ("gn" "Next Actions"
-     ,(TT/org-ql-gtd-blocks '(next-actions)))
+     ,(para/org-ql-gtd-blocks '(next-actions)))
     ("gr" "Review"
-     ,(TT/org-ql-gtd-blocks '(for-review)))
+     ,(para/org-ql-gtd-blocks '(for-review)))
     ("gp" "Pending"
-     ,(TT/org-ql-gtd-blocks '(waiting-for delegated blocked on-hold)))
+     ,(para/org-ql-gtd-blocks '(waiting-for delegated blocked on-hold)))
     ("gb" "Braindead"
-     ,(TT/org-ql-gtd-blocks '(braindead)))
+     ,(para/org-ql-gtd-blocks '(braindead)))
     ("gc" "Recently Completed"
-     ,(TT/org-ql-gtd-blocks '(completed-projects a-prio-completed b-prio-completed
+     ,(para/org-ql-gtd-blocks '(completed-projects a-prio-completed b-prio-completed
                                                   c-prio-completed regular-prio-completed)))))
 #+end_src
 I use =org-mode= tags starting with an '@' symbol to designate a context. A context is a physical space, head-space, or
@@ -1350,7 +1350,7 @@ consistency. I want to narrow in on unfinished work in a certain context so I ca
 I'm working in that context.
 
 #+begin_src emacs-lisp
-(defvar TT/org-contexts
+(defvar para/org-contexts
   '(("a" "Administrative" "@administrative")
     ("c" "Career" "@career")
     ("m" "Communication" "@communication")
@@ -1365,27 +1365,27 @@ I'm working in that context.
     ("t" "Travel and Planning" "@travel")
     ("w" "Workstation" "@workstation")))
 
-(TT/org-agenda-extend
+(para/org-agenda-extend
   (cons '("@" . "Context Filters")
-        (TT/org-context-commands TT/org-contexts)))
+        (para/org-context-commands para/org-contexts)))
 #+end_src
 
 
 *** Priority Matrix Commands
 #+begin_src emacs-lisp
-(TT/org-agenda-extend
+(para/org-agenda-extend
   `(("p" . "Priority Matrix")
-    ("pq" "Quadrants" ,(TT/org-priority-quadrant-blocks))
-    ,(TT/org-priority-quadrant-command "1" "Q1" 'q1)
-    ,(TT/org-priority-quadrant-command "2" "Q2" 'q2)
-    ,(TT/org-priority-quadrant-command "3" "Q3" 'q3)
-    ,(TT/org-priority-quadrant-command "4" "Q4" 'q4)))
+    ("pq" "Quadrants" ,(para/org-priority-quadrant-blocks))
+    ,(para/org-priority-quadrant-command "1" "Q1" 'q1)
+    ,(para/org-priority-quadrant-command "2" "Q2" 'q2)
+    ,(para/org-priority-quadrant-command "3" "Q3" 'q3)
+    ,(para/org-priority-quadrant-command "4" "Q4" 'q4)))
 #+end_src
 
 
 *** Deadline Review
 #+begin_src emacs-lisp
-(TT/org-agenda-extend
+(para/org-agenda-extend
   '(("x" "With Deadline Columns"
      ((alltodo ""
                ((org-agenda-overriding-columns-format "%20ITEM %DEADLINE")
@@ -1403,31 +1403,31 @@ I'm working in that context.
 
 *** Hygiene Queries
 #+begin_src emacs-lisp
-(TT/org-agenda-extend
+(para/org-agenda-extend
   `(("H" . "Hygiene Filters")
     ("Hi" "Incomplete Sub-Tasks"
-     (,(TT/org-ql-view-block "Incomplete Sub-Tasks"
+     (,(para/org-ql-view-block "Incomplete Sub-Tasks"
                              '(and (todo) (not (done)) (ancestors (done))))))
     ("Hd" "Projects without Open Tasks"
-     (,(TT/org-ql-view-block "Projects with Completed Children"
+     (,(para/org-ql-view-block "Projects with Completed Children"
                              '(and (not (done))
                                    (tags "PROJECT")
                                    (not (children (not (done))))))))
     ("Hn" "Projects without NEXT Tasks"
-     (,(TT/org-ql-view-block "Projects without NEXT Action"
+     (,(para/org-ql-view-block "Projects without NEXT Action"
                              '(and (tags "PROJECT")
                                    (not (or (done)
                                             (descendants (and (not (done))
                                                               (tags "NEXT")))))))))
     ("Hp" "Missing Priority"
-     (,(TT/org-ql-view-block "Missing Priority"
+     (,(para/org-ql-view-block "Missing Priority"
                              '(and (todo)
                                    (not (or (done)
                                             (todo "MEET" "MEETING" "APPOINTMENT")
                                             (habit)
                                             (priority)))))))
     ("Ha" "Maybe Archive"
-     (,(TT/org-ql-view-block "Completed - Consider Archiving" '(done))))))
+     (,(para/org-ql-view-block "Completed - Consider Archiving" '(done))))))
 #+end_src
 
 **** TODO Make "Maybe Archive" Time Sensitive
@@ -1439,7 +1439,7 @@ I'm working in that context.
 Commands for querying agenda archive files.
 
 #+begin_src emacs-lisp :tangle no
-(TT/org-agenda-extend
+(para/org-agenda-extend
   '(("Q" . "Custom Queries")
     ("Qa" "Archive Search"
      ((search ""
@@ -1461,7 +1461,7 @@ Lastly I set =org-agenda-custom-commands= to the value of the list I've built. I
 warning if you try =setopt=).
 
 #+begin_src emacs-lisp
-(setq org-agenda-custom-commands TT/org-agenda-custom-commands)
+(setq org-agenda-custom-commands para/org-agenda-custom-commands)
 #+end_src
 
 
@@ -1470,7 +1470,7 @@ Let's set up where my journal files are stored, and the format of the entries.
 org-jour
 #+begin_src emacs-lisp
 (use-package org-journal
-  :init (setopt org-journal-dir TT/org-journal-dir
+  :init (setopt org-journal-dir para/org-journal-dir
                 org-journal-file-format "%Y%m%d.org"
                 org-journal-date-format "%e %b %Y (%A)")
   :custom
@@ -1505,13 +1505,13 @@ Capture templates allow us to quickly invoke a key-chord and select a template t
 good home for it. Tasks to my organizer or inbox, new journal items to my journal, etc...
 
 I define these by initializing my capture list with an inbox capture and appending additional templates with
-=TT/org-capture-extend=. I do this so I can split the configuration up and describe them better in my literate
+=para/org-capture-extend=. I do this so I can split the configuration up and describe them better in my literate
 configuration.
 
 #+begin_src emacs-lisp
 ;; Org Capture Configuration
-(TT/org-capture-extend
-  '(("i" "Inbox" entry (file+olp TT/org-inbox "Capture" "Todos")
+(para/org-capture-extend
+  '(("i" "Inbox" entry (file+olp para/org-inbox "Capture" "Todos")
      "* TODO %?\n /Entered on/ %U" :empty-lines 1)))
 #+end_src
 
@@ -1553,7 +1553,7 @@ I keep it around for reference.
 
 #+begin_src emacs-lisp :tangle no
 ;; Capture group for Sprint Work
-(defvar TT/org-sprint-captures
+(defvar para/org-sprint-captures
   '(("sd" "Development Task" "Development" "B" ("@sprint" "TASK") nil)
     ("sv" "Review Task" "Review" "B" ("@sprint" "TASK") nil)
     ("sr" "Research Task" "Research" "B" ("@sprint" "TASK") "RESEARCH: ")
@@ -1561,14 +1561,14 @@ I keep it around for reference.
     ("si" "Interrupt" "Other" "A" ("@sprint" "TASK" "URGENT") nil)
     ("st" "Other Task" "Other" "B" ("@sprint" "TASK") nil)))
 
-(TT/org-capture-extend
+(para/org-capture-extend
   (cons '("s" "Sprint Capture Group")
         (mapcar (lambda (spec)
-                  (TT/org-capture-todo (nth 0 spec) (nth 1 spec) TT/org-organizer nil
+                  (para/org-capture-todo (nth 0 spec) (nth 1 spec) para/org-organizer nil
                                        (nth 3 spec) (nth 4 spec) 'olp
                                        (list "Current Sprint" (nth 2 spec))
                                        (nth 5 spec)))
-                TT/org-sprint-captures)))
+                para/org-sprint-captures)))
 #+end_src
 
 
@@ -1579,17 +1579,17 @@ team. That's the general idea.
 
 #+begin_src emacs-lisp
 ;; Capture Group for Retrospective Items
-(defvar TT/org-retro-captures
+(defvar para/org-retro-captures
   '(("rk" "Kudos" "Kudos")
     ("rg" "Goodness" "Goodness")
     ("rb" "Badness" "Badness")
     ("rz" "Kaizen" "Kaizen")))
 
-(TT/org-capture-extend
+(para/org-capture-extend
   (cons '("r" "Retrospective Capture Group")
         (mapcar (lambda (spec)
-                  (apply #'TT/org-capture-retro-item spec))
-                TT/org-retro-captures)))
+                  (apply #'para/org-capture-retro-item spec))
+                para/org-retro-captures)))
 #+end_src
 
 
@@ -1611,7 +1611,7 @@ as a manager, and better categorizes things within sub-groups of the "office" co
 
 #+begin_src emacs-lisp
 ;; Capture Group for Office Work
-(defvar TT/org-office-captures
+(defvar para/org-office-captures
   '(("oa" "Administrative" "Administrative" "B" ("@office" "@administrative"))
     ("oc" "Communication" "Communication" "B" ("@office" "@communication"))
     ("of" "Firefighting" "Firefighting" "A" ("@office" "@firefights" "URGENT"))
@@ -1620,13 +1620,13 @@ as a manager, and better categorizes things within sub-groups of the "office" co
     ("os" "Scheduling" "Scheduling" "B" ("@office" "@scheduling"))
     ("ot" "Task" "General" "B" ("@office"))))
 
-(TT/org-capture-extend
+(para/org-capture-extend
   (cons '("o" "Office Capture Group")
         (mapcar (lambda (spec)
-                  (TT/org-capture-todo (nth 0 spec) (nth 1 spec) TT/org-organizer nil
+                  (para/org-capture-todo (nth 0 spec) (nth 1 spec) para/org-organizer nil
                                        (nth 3 spec) (nth 4 spec) 'olp
                                        (list "Office" (nth 2 spec))))
-                TT/org-office-captures)))
+                para/org-office-captures)))
 #+end_src
 
 
@@ -1640,7 +1640,7 @@ sub-headings ideally will have it's own capture group
 
 #+begin_src emacs-lisp
 ;; Non-Sprint Todo Capture Group
-(defvar TT/org-organizer-captures
+(defvar para/org-organizer-captures
   '(("tc" "Career Task" "Career" "B" ("@career"))
     ("th" "Health Task" "Health & Wellness" "B" ("@health"))
     ("to" "Home Task" "Home" "B" ("@home"))
@@ -1650,21 +1650,21 @@ sub-headings ideally will have it's own capture group
     ("tv" "Travel Task" "Travel" "B" ("@travel"))
     ("tw" "Workstation Task" "Workstation" "C" ("@workstation"))))
 
-(TT/org-capture-extend
+(para/org-capture-extend
   (cons '("t" "General Todo Capture Group")
         (append
          (mapcar (lambda (spec)
-                   (TT/org-capture-todo (nth 0 spec) (nth 1 spec) TT/org-organizer
+                   (para/org-capture-todo (nth 0 spec) (nth 1 spec) para/org-organizer
                                         (nth 2 spec) (nth 3 spec) (nth 4 spec)))
-                 TT/org-organizer-captures)
-         '(("tt" "General Task" entry (file+headline TT/org-organizer "Tasks")
+                 para/org-organizer-captures)
+         '(("tt" "General Task" entry (file+headline para/org-organizer "Tasks")
             "\n* TODO [#C] %?\n %i\n %a\n\n")))))
 #+end_src
 
 
 *** TODO Incubation Capture
 Sometimes I want to capture an idea that I know I cannot take immediate action on. Instead of adding noise to my agenda
-reports, let's file these as someday-maybe under =TT/org-incubate-dir=.
+reports, let's file these as someday-maybe under =para/org-incubate-dir=.
 
 
 *** Meetings
@@ -1675,18 +1675,18 @@ yet. So for now, I schedule to an arbitrary date and update the date with =C-s= 
 
 #+begin_src emacs-lisp
 ;; Capture Group for Meetings
-(defvar TT/org-meeting-captures
+(defvar para/org-meeting-captures
   '(("mm" "Pop Up Meetings and One-Offs" "One Offs" "%^t")
     ("md" "Daily Meeting" "Daily" "<2020-01-01 Sat ++1d>")
     ("mw" "Weekly Meeting" "Weekly" "<2020-01-01 Sat ++1w>")
     ("m1" "1:1 Meeting" "1:1s" "<2000-01-01 Sat ++1w>")
     ("mb" "Bi-Weekly Meeting" "Bi-Weekly" "<2000-01-01 Sat ++2w>")))
 
-(TT/org-capture-extend
+(para/org-capture-extend
   (cons '("m" "Meeting Capture Group")
         (mapcar (lambda (spec)
-                  (apply #'TT/org-capture-meeting spec))
-                TT/org-meeting-captures)))
+                  (apply #'para/org-capture-meeting spec))
+                para/org-meeting-captures)))
 #+end_src
 
 
@@ -1694,10 +1694,10 @@ yet. So for now, I schedule to an arbitrary date and update the date with =C-s= 
 Capture templates for journaling. Contains a basic capture, and a few templates for structured entries.
 
 #+begin_src emacs-lisp
-(TT/org-capture-extend
+(para/org-capture-extend
   `(("j" "Journal Capture Group")
     ("jd" "Daily Goals" entry (function org-journal-find-location)
-     (file ,(concat TT/org-cap-templates-dir "/daily-goals.org"))
+     (file ,(concat para/org-cap-templates-dir "/daily-goals.org"))
      :empty-lines 1)
     ("jj" "Journal" entry (function org-journal-find-location)
      "* %(format-time-string org-journal-time-format)%^{Title}\n%i%?")))
@@ -1709,14 +1709,14 @@ The remaining capture templates are things that don't fit neatly into any one gr
 
 #+begin_src emacs-lisp
 ;; Other Capture Templates (un-grouped)
-(TT/org-capture-extend
-  `(("n" "Note" entry (file+olp TT/org-inbox "Capture" "Notes")
+(para/org-capture-extend
+  `(("n" "Note" entry (file+olp para/org-inbox "Capture" "Notes")
      "* %?\n:PROPERTIES:\n:CREATED:%U\n:END:\n\n%i\n\nFrom: %a"
      :empty-lines 1)
-    ("m" "Manager Notes" item (file+olp TT/org-manager "1:1 Prep" "Capture")
+    ("m" "Manager Notes" item (file+olp para/org-manager "1:1 Prep" "Capture")
      "- %?" :empty-lines 1)
     ("x" "Incident Notes" entry (file (capture-incident-response-file "~/org/incidents"))
-     (file ,(concat TT/org-cap-templates-dir "/incident.org"))
+     (file ,(concat para/org-cap-templates-dir "/incident.org"))
      :clock-in t)
     ("X" "Item to Current Clock" item
      (clock)
@@ -1739,17 +1739,17 @@ showed it was possible. I keep it around for reference, but no longer export it 
 
 #+begin_src emacs-lisp :tangle no
 ;; Test capture group - testing nested sub-groups
-(TT/org-capture-extend
+(para/org-capture-extend
   '(("q" "Test Capture Group")
     ("qa" "Test Capture Sub-Group A")
-    ("qaa" "AA Template" entry (file+olp TT/org-inbox "Test" "A" "AA")
+    ("qaa" "AA Template" entry (file+olp para/org-inbox "Test" "A" "AA")
      "* TODO [#A] %? :TASK:\n" :empty-lines 1)
-    ("qaa" "AB Template" entry (file+olp TT/org-inbox "Test" "A" "AB")
+    ("qaa" "AB Template" entry (file+olp para/org-inbox "Test" "A" "AB")
      "* TODO [#B] %? :TASK:\n" :empty-lines 1)
     ("qb" "Test Capture Sub-Group B")
-    ("qba" "BA Template" entry (file+olp TT/org-inbox "Test" "B" "BA")
+    ("qba" "BA Template" entry (file+olp para/org-inbox "Test" "B" "BA")
      "* TODO [#A] %? :TASK:\n" :empty-lines 1)
-    ("qbb" "BB Template" entry (file+olp TT/org-inbox "Test" "B" "BB")
+    ("qbb" "BB Template" entry (file+olp para/org-inbox "Test" "B" "BB")
      "* TODO [#B] %? :TASK:\n" :empty-lines 1)))
 #+end_src
 
@@ -1758,7 +1758,7 @@ showed it was possible. I keep it around for reference, but no longer export it 
 Because I've split the configuration up, it's time to update the actual =org-capture-templates= variable.
 
 #+begin_src emacs-lisp
-(setopt org-capture-templates TT/org-capture-templates)
+(setopt org-capture-templates para/org-capture-templates)
 #+end_src
 
 If I want to further customize this variable in machine local configurations, like in my employer configuration, I'll
@@ -1772,9 +1772,9 @@ just want to move something.
 
 #+begin_src emacs-lisp
 (setopt org-refile-targets `((org-agenda-files :maxlevel . 6)
-                             (,TT/org-ideas :maxlevel . 3)
-                             (,TT/org-maybe-projects :maxlevel . 2)
-                             (,TT/org-someday :maxlevel . 4)))
+                             (,para/org-ideas :maxlevel . 3)
+                             (,para/org-maybe-projects :maxlevel . 2)
+                             (,para/org-someday :maxlevel . 4)))
 ;;(setq org-outline-path-complete-in-steps nil)
 (setopt org-refile-allow-creating-parent-nodes 'confirm)
 #+end_src
@@ -2229,7 +2229,7 @@ immediately. This enforces a tight feedback loop in development.
 (add-hook 'c++-mode-hook (lambda () (setq flycheck-gcc-language-standard "c++14")))
 
 ;; Use project relative eslint; see https://emacs.stackexchange.com/questions/21205
-(defun TT/use-eslint-from-node-modules ()
+(defun para/use-eslint-from-node-modules ()
   "Use project local eslint node modules."
   (let* ((root (locate-dominating-file
                 (or (buffer-file-name) default-directory)
@@ -2240,7 +2240,7 @@ immediately. This enforces a tight feedback loop in development.
     (when (and eslint (file-executable-p eslint))
       (setq-local flycheck-javascript-eslint-executable eslint))))
 
-(add-hook 'flycheck-mode-hook #'TT/use-eslint-from-node-modules)
+(add-hook 'flycheck-mode-hook #'para/use-eslint-from-node-modules)
 
 ;; Enable flycheck globally:
 (add-hook 'after-init-hook #'global-flycheck-mode)
@@ -2601,9 +2601,9 @@ Ledger, the command line double booking entry system. A geeky way to track your 
 (use-package ledger-mode
   :mode ("\\.ledger$")
   :bind (:map ledger-mode-map
-              ("C-x C-s" . TT/ledger-save))
+              ("C-x C-s" . para/ledger-save))
   :preface
-  (defun TT/ledger-save ()
+  (defun para/ledger-save ()
     "Automatically clean the ledger buffer at each save."
     (interactive)
     (save-excursion
@@ -2744,7 +2744,7 @@ Ideal for when I've edited my configuration and want to re-load my configuration
 literate config, so we'll just invoke that again.
 
 #+begin_src emacs-lisp
-(defun TT/reload-emacs-configuration ()
+(defun para/reload-emacs-configuration ()
   (interactive)
   (load-file "~/.emacs.d/init.el"))
 #+end_src
