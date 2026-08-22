@@ -720,8 +720,8 @@ This section sets up my org-mode file structure. This involves the root of my or
 files, and the like.
 
 #+begin_src emacs-lisp
-(defvar org-directory            "~/org"                                         "Root \\='org-mode\\=' directory.")
-(defvar para/org-agenda-dir        (concat org-directory "/agendas")               "Top level org directory for Getting Things Done (GTD) organizer files.")
+(defvar org-directory              "~/org"                                           "Root \\='org-mode\\=' directory.")
+(defvar para/org-agenda-dir        (concat org-directory "/agendas")                 "Top level org directory for Getting Things Done (GTD) organizer files.")
 (defvar para/org-calendar          (concat para/org-agenda-dir "/calendar.org")      "Calendar for scheduled items.")
 (defvar para/org-habits            (concat para/org-agenda-dir "/habits.org")        "Habits for periodic TODOs.")
 (defvar para/org-ideas             (concat para/org-agenda-dir "/ideas.org")         "Idea capture and ideation.")
@@ -734,21 +734,22 @@ files, and the like.
 (defvar para/org-learning          (concat para/org-agenda-dir "/learning.org")      "Agenda for structured learning.")
 (defvar para/org-organizer         (concat para/org-agenda-dir "/organizer.org")     "Core organizer tracking prioritized actionable work.")
 (defvar para/org-people-dir        (concat para/org-agenda-dir "/people")            "Org files specific to people.")
-(defvar para/org-projects          (concat para/org-agenda-dir "/projects.org")      "")
+(defvar para/org-projects          (concat para/org-agenda-dir "/projects.org")      "Org projects index and tasks.")
 (defvar para/org-manager           (concat para/org-people-dir "/manager.org")       "Actionable captures for 1:1s with my manager.")
 (defvar para/org-retrospective     (concat para/org-agenda-dir "/retro.org")         "Capture target for retro related info or actionable items.")
 (defvar para/org-review            (concat para/org-agenda-dir "/review.org")        "Reference on and journal for reflection.")
 (defvar para/org-tickler           (concat para/org-agenda-dir "/tickler.org")       "Time relevant reminders for \\='decide to do later\\=' items.")
 (defvar para/org-waiting           (concat para/org-agenda-dir "/waiting.org")       "Delegated or blocked items awaiting external action.")
-(defvar para/org-blog              (concat org-directory "/blog")                  "Top level org directory for blog posts.")
-(defvar para/org-brain-dir         (concat org-directory "/brain")                 "Top level org directory for \\='org-brain\\=' reference material.")
-(defvar para/org-checklist-dir     (concat org-directory "/checklists")            "Top level org directory for action oriented reference; do/certify.")
-(defvar para/org-commonplace-dir   (concat org-directory "/commonplace")           "Top level org directory for \\='commonplace book\\=' material.")
-(defvar para/org-journal-dir       (concat org-directory "/journal")               "Top level org directory for journal entries.")
-(defvar para/org-ledger-dir        (concat org-directory "/ledger")                "Top level org directory for accounting/budgeting ledgers.")
-(defvar para/org-projects-dir      (concat org-directory "/projects")              "Top level org directory for projects.")
-(defvar para/org-templates-dir     (concat org-directory "/templates")             "Top level org directory for templates.")
+(defvar para/org-blog              (concat org-directory "/blog")                    "Top level org directory for blog posts.")
+(defvar para/org-brain-dir         (concat org-directory "/brain")                   "Top level org directory for \\='org-brain\\=' reference material.")
+(defvar para/org-checklist-dir     (concat org-directory "/checklists")              "Top level org directory for action oriented reference; do/certify.")
+(defvar para/org-commonplace-dir   (concat org-directory "/commonplace")             "Top level org directory for \\='commonplace book\\=' material.")
+(defvar para/org-journal-dir       (concat org-directory "/journal")                 "Top level org directory for journal entries.")
+(defvar para/org-ledger-dir        (concat org-directory "/ledger")                  "Top level org directory for accounting/budgeting ledgers.")
+(defvar para/org-projects-dir      (concat org-directory "/projects")                "Top level org directory for projects.")
+(defvar para/org-templates-dir     (concat org-directory "/templates")               "Top level org directory for templates.")
 (defvar para/org-cap-templates-dir (concat para/org-templates-dir "/org-capture")    "Directory for \\='org-capture\\=' template files.")
+(defvar para/org-incidents-dir     (concat org-directory "/incidents")               "Directory for incident response capture files.")
 
 (defvar org-default-notes-file para/org-inbox)
 #+end_src
@@ -1527,13 +1528,13 @@ themselves. These help make decisions, generate names, and do anything else I co
   (org-capture-string (buffer-substring-no-properties-start end) "C"))
 (global-set-key (kbd "C-<F1>") 'region-to-clocked-task)
 
-(defun capture-incident-response-file (path)
-  "Generate dated file at capture PATH using interactively provided description."
-  (interactive)
+(defun capture-incident-response-file ()
+  "Generate dated file under `para/org-incidents-dir' using an interactively provided name.
+Called by \\='org-capture\\=' with no arguments, per the (file FUNCTION) target spec."
   (let ((name (read-string "Alert Name: ")))
     (expand-file-name
      (format "%s_%s.org" (format-time-string "%Y%m%d") name)
-     path)))
+     para/org-incidents-dir)))
 
 (defun org-capture-inbox ()
   "Capture to inbox."
@@ -1713,9 +1714,9 @@ The remaining capture templates are things that don't fit neatly into any one gr
   `(("n" "Note" entry (file+olp para/org-inbox "Capture" "Notes")
      "* %?\n:PROPERTIES:\n:CREATED:%U\n:END:\n\n%i\n\nFrom: %a"
      :empty-lines 1)
-    ("m" "Manager Notes" item (file+olp para/org-manager "1:1 Prep" "Capture")
+    ("M" "Manager Notes" item (file+olp para/org-manager "1:1 Prep" "Capture")
      "- %?" :empty-lines 1)
-    ("x" "Incident Notes" entry (file (capture-incident-response-file "~/org/incidents"))
+    ("x" "Incident Notes" entry (file capture-incident-response-file)
      (file ,(concat para/org-cap-templates-dir "/incident.org"))
      :clock-in t)
     ("X" "Item to Current Clock" item
@@ -1725,12 +1726,6 @@ The remaining capture templates are things that don't fit neatly into any one gr
      (clock)
      "%i" :immediate-finish t :empty-lines 1)))
 #+end_src
-
-**** TODO Needs Work [0/1]
-- [ ] The =C-c c x= 'Incident Notes' capture template isn't working
- #+begin_example
- Invalid file location: nil
- #+end_example
 
 
 *** Nested Groups Test

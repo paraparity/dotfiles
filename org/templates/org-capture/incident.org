@@ -1,7 +1,12 @@
-* %(format-time-string org-journal-time-format)Incident Response
+* %<%Y-%m-%d> %^{Summary} Incident Response
 
 ** Overview
 %?
+
+** Incident Notes
+
+-
+
 
 ** Five Whys
 
@@ -10,6 +15,7 @@
 3.
 4.
 5.
+
 
 ** Action Items
 
