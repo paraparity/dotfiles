@@ -7,11 +7,6 @@
 setopt ignore_eof
 #setopt print_exit_value # I've opted to define $? at the start of my prompt
 
-# Globs
-# BASH: shopt -s extglob # Reg-ex globbing (e.g: 'ls ?(a*|b*)' # list files starting with a or b; Uses '?!*+@'
-setopt extended_glob
-setopt case_glob
-
 # History Settings
 setopt append_history      # Multiple zsh sessions contribute to shared history
 setopt share_history       # import and append to history file
@@ -135,6 +130,18 @@ ex ()
     echo "'$1' is not a valid file"
   fi
 }
+
+
+################################################################################
+# Final Settings
+################################################################################
+# Working around an issue with NVM
+# https://github.com/nvm-sh/nvm/issues/3885
+
+# Globs
+# BASH: shopt -s extglob # Reg-ex globbing (e.g: 'ls ?(a*|b*)' # list files starting with a or b; Uses '?!*+@'
+setopt extended_glob
+setopt case_glob
 
 ################################################################################
 # Source Locals
