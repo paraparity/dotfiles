@@ -8,13 +8,13 @@
 ;;(setq debug-on-error t)
 
 (if init-file-debug
-    (setq debug-on-error t))
+    (setopt debug-on-error t))
 
 ;; Restore garbage collection settings after startup
 (add-hook 'after-init-hook
 	  (lambda ()
-	    (setq gc-cons-threshold 100000000
-                  gc-cons-percentage 0.2)
+	    (setopt gc-cons-threshold 100000000
+                    gc-cons-percentage 0.2)
 	    (message "gc-cons-threshold restored to %s and gc-cons-percentage to %s"
                      gc-cons-threshold
                      gc-cons-percentage)))
@@ -74,7 +74,7 @@
           (daemonp))
   :config
   (if init-file-debug
-      (setq exec-path-from-shell-debug t))
+      (setopt exec-path-from-shell-debug t))
   (exec-path-from-shell-initialize))
 
 ;; Broken in [feature/native-comp]
@@ -91,9 +91,9 @@
 ;; Conditionally enable native-comp
 (if (and (fboundp 'native-comp-available-p)
 	 (native-comp-available-p))
-    (setq package-native-compile t
-          native-comp-async-report-warnings-errors 'silent
-          byte-compile-warnings '(not docstrings free-vars lexical))
+    (setopt package-native-compile t
+            native-comp-async-report-warnings-errors 'silent
+            byte-compile-warnings '(not docstrings free-vars lexical))
   (message "Native compilation is *not* available"))
 
 (add-hook 'after-init-hook

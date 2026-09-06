@@ -132,7 +132,7 @@ than anything. Given I predominantly work on single-user environments that sync 
 until I need it.
 
 #+begin_src emacs-lisp
-(setq create-lockfiles nil)
+(setopt create-lockfiles nil)
 #+end_src
 
 This is my old config for lock files which I keep around in case I need to restore it. This section is not tangled.
@@ -199,7 +199,7 @@ more lines of sweet, sweet text. I also find the visual bell annoying, so let's 
 (menu-bar-mode -1)
 (scroll-bar-mode -1)
 
-(setq ring-bell-function 'ignore)
+(setopt ring-bell-function 'ignore)
 #+end_src
 
 
@@ -217,7 +217,7 @@ can use these to alias, hide, or even programmatically define =mode-line= mode i
 Let's give Emacs a name, I think Emacs sounds nice.
 
 #+begin_src emacs-lisp
-(setq frame-title-format "Emacs")
+(setopt frame-title-format "Emacs")
 #+end_src
 
 Let's make sure our buffers have unique names. If we were to open a file of the same name, but a different location we
@@ -246,7 +246,7 @@ Let's keep track of time in the mode-line.
 Let's also keep track of which column we're on in the buffer.
 
 #+begin_src emacs-lisp
-(setq column-number-mode t)
+(setopt column-number-mode t)
 #+end_src
 
 Let's add some transparency. Despite how powerful it is, I don't use Emacs for everything and this lets me read whatever
@@ -342,14 +342,14 @@ At one point I had some slowness with cursor movement and scrolling. I forget wh
 some answer that said disable this, and I've never looked back since.
 
 #+begin_src emacs-lisp
-(setq auto-window-vscroll nil)
+(setopt auto-window-vscroll nil)
 #+end_src
 
 In general I use screens that aren't limited to 80 characters width. I'd prefer to take advantage of that width and have
 a better default fill-column.
 
 #+begin_src emacs-lisp
-(setq-default fill-column 120)
+(setopt fill-column 120)
 #+end_src
 
 I also find it useful in some languages and environments to have a hard tab stop list to get spacing right.
@@ -661,8 +661,6 @@ Let's also update a few general settings and behavior.
 #+begin_src emacs-lisp
 (add-hook 'org-mode-hook 'turn-on-auto-fill)
 (add-hook 'org-mode-hook 'org-indent-mode)
-(add-hook 'org-mode-hook
-          #'(lambda () (origami-mode nil)))
 
 (setopt org-src-fontify-natively t
         org-src-tab-acts-natively t
@@ -979,7 +977,7 @@ we can really get some value out of this functionality.
 
 ;; TODO: Move these somewhere more appropriate
 (setopt org-src-window-setup 'current-window)
-(setq org-html-postamble nil)
+(setopt org-html-postamble nil)
 
 (org-clock-persistence-insinuate); Resume clocking task when emacs is restarted
 #+end_src
@@ -1723,8 +1721,8 @@ just want to move something.
 I can even use org-mode to publish static content!
 
 #+begin_src emacs-lisp
-(setq org-publish-project-alist
-      '(("notes-content"
+(setopt org-publish-project-alist
+        '(("notes-content"
          :base-directory "~/org/testnotes"
          :base-extension "org"
          :publishing-directory "~/public_html/"
@@ -1857,8 +1855,8 @@ tooling that converts these to whatever is standard for the code base we collabo
 Set tabbing to spaces, keep things condensed with 2 spaces.
 
 #+begin_src emacs-lisp
-(setq-default indent-tabs-mode nil)
-(setq tab-width 2)
+(setopt indent-tabs-mode nil)
+(setopt tab-width 2)
 #+end_src
 
 
@@ -1886,7 +1884,7 @@ chosen to leverage =lsp-mode= as my language server client.
 ;; LSP mode configuration
 (use-package lsp-mode
   :commands lsp
-  :init (setq lsp-keymap-prefix "C-c l")
+  :init (setopt lsp-keymap-prefix "C-c l")
   :hook (c-mode
          c++-mode
          js2-mode
@@ -1919,7 +1917,7 @@ chosen to leverage =lsp-mode= as my language server client.
   (require 'dap-python)
   (require 'dap-cpptools)
   (require 'dap-chrome)
-  (setq dap-python-debugger 'debugpy)
+  (setopt dap-python-debugger 'debugpy)
   (defun dap-python--pyenv-executable-find (command)
     (with-venv (executable-find "python")))
   (add-hook 'dap-stopped-hook
@@ -2447,7 +2445,7 @@ Initial configuration informed through:
   :hook
   (rust-mode . cargo-minor-mode)
   :config
-  (setq compilation-scroll-output t))
+  (setopt compilation-scroll-output t))
 #+end_src
 
 *** TeX
@@ -2514,7 +2512,7 @@ Ledger, the command line double booking entry system. A geeky way to track your 
         (with-demoted-errors (ledger-mode-clean-buffer))
         (save-buffer))))
   :init
-  (setq ledger-post-amount-alignment-column 80))
+  (setopt ledger-post-amount-alignment-column 80))
 
 (use-package flycheck-ledger
   :after ledger-mode)
