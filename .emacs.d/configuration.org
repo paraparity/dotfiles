@@ -2198,7 +2198,7 @@ immediately. This enforces a tight feedback loop in development.
                 perl-perlcritic
                 python-flak8
                 python-pylint
-                rust
+                rust-cargo
                 sh-bash
                 sh-zsh
                 sh-spellcheck
@@ -2535,12 +2535,21 @@ Initial configuration informed through:
               ("M-j" . lsp-ui-imenu)
               ("M-?" . lsp-find-references))
   :custom
-  (rustic-analyzer-command '("rustup" "run" "stable" "rust-analyzer"))
-  :custom
-  (rustic-format-on-save t)
-  (rustic-indent-offset 2))
+  (rust-format-on-save t)
+  (rust-indent-offset 2))
 #+end_src
 
+**** Cargo Mode
+
+#+begin_src emacs-lisp
+(use-package cargo)
+
+(use-package cargo-mode
+  :hook
+  (rust-mode . cargo-minor-mode)
+  :config
+  (setq compilation-scroll-output t))
+#+end_src
 
 *** TeX
 
