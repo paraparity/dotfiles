@@ -40,12 +40,11 @@
   (package-initialize))
 
 ;; Ensure desired packages are installed, cache package refresh contents
-(unless	(and (package-installed-p 'use-package)
+(unless	(and (package-installed-p 'use-package-ensure-system-package)
 	     (package-installed-p 'org-contrib))
   (package-refresh-contents)
 
-  (unless (package-installed-p 'use-package)
-    (package-install 'use-package)
+  (unless (package-installed-p 'use-package-ensure-system-package)
     (package-install 'use-package-ensure-system-package))
 
   (unless (package-installed-p 'org-contrib)
@@ -92,8 +91,7 @@
 ;; Conditionally enable native-comp
 (if (and (fboundp 'native-comp-available-p)
 	 (native-comp-available-p))
-    (setq comp-deferred-compilation t
-          package-native-compile t
+    (setq package-native-compile t
           native-comp-async-report-warnings-errors 'silent
           byte-compile-warnings '(not docstrings free-vars lexical))
   (message "Native compilation is *not* available"))

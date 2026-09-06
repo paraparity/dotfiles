@@ -91,15 +91,6 @@ Needs to first check =gpg= exists on the system and conditionally loads.
 ** Where Files Live
 Let's set up where to load configurations from, where to store saves, and give files homes.
 
-*** Setup Load Paths
-Emacs only includes packages under the =user-emacs-directory= (default =~/.emacs.d/elpa/=), so if we want to load
-anything else up we'll need to tell Emacs where to look.
-
-#+begin_src emacs-lisp
-(add-to-list 'load-path "~/.emacs.d/elisp/")
-#+end_src
-
-
 *** Offload Custom File
 I manage my custom literate configuration, but sometimes use Emacs easy configuration to tweak settings. Until I know I
 want to keep these tweaks, I'll give them their own home.
@@ -337,7 +328,7 @@ When present Emacs can be configured to support it using the =ligature.el= packa
 Enable quick Y/N prompts.
 
 #+begin_src emacs-lisp
-(fset 'yes-or-no-p 'y-or-n-p)
+(setopt use-short-answers t)
 #+end_src
 
 I want to quickly get back to files I've recently been working in. Emacs can help with that using =recentf-mode=. We can
@@ -415,13 +406,11 @@ heading or function to the topmost part of a buffer which helps me keep track of
               mode-line-misc-info) mode-line-misc-info)
       which-func-header-line-format '(which-func-mode ("" which-func-format)))
 
-(defadvice which-func-ff-hook (after header-line activate)
-  "Hook for which-func formatting."
+(define-advice which-func-ff-hook (:after () header-line)
+  "Route which-func into the header line instead of the mode line."
   (when which-func-mode
     (setq mode-line-misc-info
-          (delete
-           (assoc 'which-func-mode
-                  mode-line-misc-info) mode-line-misc-info)
+          (delete (assoc 'which-func-mode mode-line-misc-info) mode-line-misc-info)
           header-line-format which-func-header-line-format)))
 #+end_src
 
@@ -510,27 +499,6 @@ can lead to some pretty impressive editing and refactoring feats.
 #+end_src
 
 For a quick intro to =helm=, see: https://tuhdo.github.io/helm-intro.html
-
-
-** Buffer Folding with =origami=
-=origami= minor-mode enables text folding across Emacs. It's pretty useful, though sometimes slow and sometimes
-buggy. With =origami-reset= you can always unfold everything and reset the file, which has always been enough to ignore
-some of the hiccups.
-
-I find this very helpful in collapsing functions in source code and narrowing my focus to the important parts of a file.
-
-#+begin_src emacs-lisp
-(use-package origami
-  :diminish origami-mode
-  :bind (("C-<tab>" . origami-recursively-toggle-node)
-         ("C-c o u"   . origami-open-all-nodes)
-         ("C-c o f"   . origami-close-all-nodes)
-         ("C-c o n"   . origami-show-only-node)
-         ("C-c o r"   . origami-reset))
-  :config
-  (global-origami-mode t))
-
-#+end_src
 
 
 ** Text Expansion with =abbrev=
@@ -668,17 +636,10 @@ Let's load all the things! Well, all the things I use anyway.
 #+begin_src emacs-lisp
 (use-package org
   :pin gnu
-  :mode ("\\.org$" . org-mode)
-  :config (define-key org-mode-map (kbd "C-c C-r") verb-command-map))
-(use-package ob-C :ensure nil)
-(use-package ob-ditaa :ensure nil)
-(use-package ob-dot :ensure nil)
-(use-package ob-js :ensure nil)
+  :mode ("\\.org$" . org-mode))
+
 (use-package ob-mermaid :ensure nil
   :config (setopt ob-mermaid-cli-path "mmdc"))
-(use-package ob-perl :ensure nil)
-(use-package ob-plantuml :ensure nil)
-(use-package ob-sql-mode)
 (use-package org-agenda :ensure nil)
 (use-package org-capture :ensure nil)
 (use-package org-clock :ensure nil)
@@ -691,8 +652,6 @@ Let's load all the things! Well, all the things I use anyway.
 (use-package ox-pandoc)
 
 ;; This wasn't loading well via use-package...
-(require 'org-tempo)
-
 (setopt org-modules
         '(ol-doi ol-bbdb ol-bibtex ol-docview ol-gnus ol-info ol-eww org-habit org-tempo))
 #+end_src
@@ -786,21 +745,6 @@ vs. Obsidian.
                  (direction . right)
                  (window-width . 0.33)
                  (window-height . fit-window-to-buffer))))
-#+end_src
-
-And maybe org-roam-ui for visualization.
-
-#+begin_src emacs-lisp
-(use-package websocket
-  :after org-roam)
-
-(use-package org-roam-ui
-  :after org-roam
-  :custom
-  (org-roam-ui-sync-theme t)
-  (org-roam-ui-follow t)
-  (org-roam-ui-update-on-save t)
-  (org-roam-ui-open-on-start nil))
 #+end_src
 
 
@@ -1073,12 +1017,12 @@ block. We can customize this to add a few I commonly use.
 #+end_src
 
 
-** Org Reporting with =org-ql=
+** TODO Org Reporting with =org-ql=
 =org-ql= is a package that lets us query our org files with a bit more power and flexibility than default methods. As
 such I use =org-ql= to dig a bit deeper into my Org usage. Let's also make it play nice with Helm.
 
 #+begin_src emacs-lisp :tangle no
-(use-package orq-ql)
+(use-package org-ql)
 
 (use-package helm-org-ql
   :after org-ql)
@@ -1949,7 +1893,6 @@ chosen to leverage =lsp-mode= as my language server client.
          rust-mode
          python-mode)
   :custom
-  (lsp-prefer-flymake nil)
   (gc-cons-threshold (* 100 1024 1024))
   (read-process-output-max (* 1024 1024))
   (lsp-idle-delay 0.200)
@@ -2152,21 +2095,13 @@ richer set of programming interactions.
 
 ** HTTP Interactions
 
-*** With =restclient=
-Interactively making REST calls of a server. Mode associated with =*.http= files.
-
-#+begin_src emacs-lisp
-(use-package restclient
-  :mode ("\\.http$"))
-#+end_src
-
-
-*** With =verb=
 I've recently been experimenting with =verb-mode= as it integrates directly with =org-mode= and has worked pretty much
 as is for me.
 
 #+begin_src emacs-lisp
-(use-package verb)
+(use-package verb
+  :after org
+  :bind (:map org-mode-map ("C-c C-r" . verb-command-map)))
 #+end_src
 
 This may load after =org-mode= which may cause problems... I may just need to hoist it earlier in the configs or do some
@@ -2290,6 +2225,7 @@ Setup =eshell=.
 
 #+begin_src emacs-lisp
 (use-package eshell
+  :ensure nil
   :custom
   (eshell-scroll-to-bottom-on-input 'all)
   (eshell-hist-ignoredups t)
@@ -2406,15 +2342,6 @@ Set up =js2-mode= and =js2-refactor= extensions.
   (js2r-add-keybindings-with-prefix "C-c C-r"))
 #+end_src
 
-Finally we map =rjsx-mode= to =.jsx= files. =js2-mode= has some handling for these files, but I've liked this mode a bit
-more so far.
-
-#+begin_src emacs-lisp
-(use-package rjsx-mode
-  :after js2-mode
-  :mode ("\\.jsx" . rjsx-mode))
-#+end_src
-
 
 **** Pretty Printing with =prettier-js=
 #+begin_src emacs-lisp
@@ -2466,6 +2393,7 @@ was definitely better than the Vanilla Emacs defaults.
 
 #+begin_src emacs-lisp
 (use-package cperl-mode
+  :ensure nil
   :custom
   (cperl-close-paren-offset 0)
   (cperl-continued-statement-offset 0)
@@ -2487,33 +2415,6 @@ was definitely better than the Vanilla Emacs defaults.
          (setcdr pair 'cperl-mode)))
    (append auto-mode-alist interpreter-mode-alist)))
 #+end_src
-
-#+begin_src emacs-lisp
-(use-package helm-perldoc
-  :after (helm cperl-mode)
-  :config
-  (helm-perldoc:setup))
-#+end_src
-
-
-*** Python
-#+begin_src emacs-lisp
-(use-package python-mode
-  :mode "\\.py\\'"
-  :interpreter "python3")
-
-(use-package with-venv
-  :after python-mode)
-#+end_src
-
-#+begin_src emacs-lisp
-(use-package helm-pydoc
-  :after (helm python-mode)
-  :bind (:map python-mode-map
-         ("C-c C-d" . helm-pydoc)))
-#+end_src
-
-**** TODO Formatting Python with Black
 
 
 *** Rust
@@ -2542,8 +2443,6 @@ Initial configuration informed through:
 **** Cargo Mode
 
 #+begin_src emacs-lisp
-(use-package cargo)
-
 (use-package cargo-mode
   :hook
   (rust-mode . cargo-minor-mode)
@@ -2906,5 +2805,21 @@ Research Topics or Reading Material:
 ** Report of Configuration Org File TODOs
 
 #+BEGIN: org-ql :query (and (todo) (not (done))) :columns (todo (priority "P") heading) :sort (priority)
-
+| Todo | P | Heading                                                  |
+|------+---+----------------------------------------------------------|
+| TODO |   | [[=docker-tramp=][=docker-tramp=]]                                           |
+| TODO |   | [[Consider customizing =org-agenda-sorting-strategy=][Consider customizing =org-agenda-sorting-strategy=]]       |
+| TODO |   | [[Fix inherited tag overrides][Fix inherited tag overrides]]                              |
+| TODO |   | [[Tweak org-my-archive-done-tasks to make work in my setup][Tweak org-my-archive-done-tasks to make work in my setup]] |
+| TODO |   | [[Org Reporting with =org-ql=][Org Reporting with =org-ql=]]                              |
+| TODO |   | [[Fix "With Deadline Columns" Filter][Fix "With Deadline Columns" Filter]]                       |
+| TODO |   | [[Make "Maybe Archive" Time Sensitive][Make "Maybe Archive" Time Sensitive]]                      |
+| TODO |   | [[Test Archive Queries then Enable][Test Archive Queries then Enable]]                         |
+| TODO |   | [[Periodic Reflection Capture][Periodic Reflection Capture]]                              |
+| TODO |   | [[Incubation Capture][Incubation Capture]]                                       |
+| TODO |   | [[Research =org-publish=][Research =org-publish=]]                                   |
+| TODO |   | [[Research Presentations from Org Files][Research Presentations from Org Files]]                    |
+| TODO |   | [[Expand Org Refile][Expand Org Refile]]                                        |
+| TODO |   | [[=helm-eshell= throws error unavailable][=helm-eshell= throws error unavailable]]                   |
+| TODO |   | [[Explore others' Emacs Configurations][Explore others' Emacs Configurations]]                     |
 #+END:
