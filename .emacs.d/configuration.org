@@ -2906,24 +2906,5 @@ Research Topics or Reading Material:
 ** Report of Configuration Org File TODOs
 
 #+BEGIN: org-ql :query (and (todo) (not (done))) :columns (todo (priority "P") heading) :sort (priority)
-| Todo | P | Heading                                                  |
-|------+---+----------------------------------------------------------|
-| TODO |   | [[Bookmarks][Bookmarks]]                                                |
-| TODO |   | [[=docker-tramp=][=docker-tramp=]]                                           |
-| TODO |   | [[Consider customizing =org-agenda-sorting-strategy=][Consider customizing =org-agenda-sorting-strategy=]]       |
-| TODO |   | [[Fix inherited tag overrides][Fix inherited tag overrides]]                              |
-| TODO |   | [[Tweak org-my-archive-done-tasks to make work in my setup][Tweak org-my-archive-done-tasks to make work in my setup]] |
-| TODO |   | [[DRY up these blocks][DRY up these blocks]]                                      |
-| TODO |   | [[Fix "With Deadline Columns" Filter][Fix "With Deadline Columns" Filter]]                       |
-| TODO |   | [[Make "Maybe Archive" Time Sensitive][Make "Maybe Archive" Time Sensitive]]                      |
-| TODO |   | [[Test Archive Queries then Enable][Test Archive Queries then Enable]]                         |
-| TODO |   | [[Periodic Reflection Capture][Periodic Reflection Capture]]                              |
-| TODO |   | [[Incubation Capture][Incubation Capture]]                                       |
-| TODO |   | [[Needs Work][Needs Work]]                                               |
-| TODO |   | [[Research =org-publish=][Research =org-publish=]]                                   |
-| TODO |   | [[Research Presentations from Org Files][Research Presentations from Org Files]]                    |
-| TODO |   | [[Expand Org Refile][Expand Org Refile]]                                        |
-| TODO |   | [[=helm-eshell= throws error unavailable][=helm-eshell= throws error unavailable]]                   |
-| TODO |   | [[Formatting Python with Black][Formatting Python with Black]]                             |
-| TODO |   | [[Explore others' Emacs Configurations][Explore others' Emacs Configurations]]                     |
+
 #+END:
